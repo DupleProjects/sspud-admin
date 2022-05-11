@@ -1,0 +1,83 @@
+name: deploy_to_test
+
+on:
+  push:
+    branches:
+      - test
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_HOST_TEST }}
+          username: ${{ secrets.AWS_TEST_HOST_USER }}
+          key: ${{ secrets.AWS_TEST_HOST_KEY }}
+          script: sh deploy-sspud-admin.sh
+      - name: Deploy to Test
+        run: |
+          echo "Deploying to Test..."
+          echo "github.event_name: ${{github.event_name}}"
+          echo "github.ref: ${{github.ref}}"
+          echo "DEPLOY_STATE=successful"  >> $GITHUB_ENV
+      - name: Failed Deployment
+        if: failure()
+        run: echo "DEPLOY_STATE=failed" >> $GITHUB_ENV
+      - name: Parse Jira Keys from All Commits
+        id: jira_keys
+        if: always()
+        uses: HighwayThree/jira-extract-issue-keys@master
+        with:
+          is-pull-request: ${{ github.event_name == 'pull_request' }}
+          parse-all-commits: ${{ github.event_name == 'push' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Confirm Deploy State and Jira Key Values
+        if: always()
+        run: |
+          echo "DEPLOY_STATE: ${{env.DEPLOY_STATE}}"
+          echo "Jira Keys: ${{steps.jira_keys.outputs.jira-keys}}"
+      - name: Push Deployment Info to Jira
+        if: steps.jira_keys.outputs.jira-keys != ''
+        id: push_deployment_info_to_jira
+        uses: HighwayThree/jira-upload-deployment-info@master
+        with:
+          cloud-instance-base-url: '${{ secrets.JIRA_CLOUD_INSTANCE_BASE_URL }}'
+          client-id: '${{ secrets.JIRA_CLIENT_ID }}'
+          client-secret: '${{ secrets.JIRA_CLIENT_SECRET }}'
+          deployment-sequence-number: '${{ github.run_id }}'
+          update-sequence-number: '${{ github.run_id }}'
+          issue-keys: "${{ steps.jira_keys.outputs.jira-keys }}"
+          display-name: "Deployment number asdf"
+          url: "${{github.event.repository.url}}/actions/runs/${{github.run_id}}"
+          description: "Test Deployment"
+          last-updated: '${{github.event.head_commit.timestamp}}'
+          label: 'Test Deployment Label'
+          state: '${{env.DEPLOY_STATE}}'
+          pipeline-id: '${{ github.repository }} ${{ github.workflow }}'
+          pipeline-display-name: 'Workflow: ${{ github.workflow }} (#${{ github.run_number }})'
+          pipeline-url: '${{github.event.repository.url}}/actions/runs/${{github.run_id}}'
+          environment-id: 'Test_2'
+          environment-display-name: 'Admin-Test'
+          environment-type: 'testing'
+      - name: Confirm Jira Deploy Output
+        if: success()
+        run: |
+          echo "Jira Upload Deploy Info response: ${{steps.push_deployment_info_to_jira.outputs.response}}"
+      - name: notify success
+        if: ${{ success() }}
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: "🌈🌈 Success: {{EVENT_PAYLOAD.sender.login}} deployed new code to Test Server for {{EVENT_PAYLOAD.repository.full_name}} 🌈🌈"
+      - name: notify failure
+        if: ${{ failure() }}
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: "🧟🧟 Failed: {{EVENT_PAYLOAD.sender.login}} failed to deploy to Test Server for {{EVENT_PAYLOAD.repository.full_name}} 🧟🧟"
