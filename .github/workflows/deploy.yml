@@ -73,7 +73,7 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
-          args: "🌈🌈 Success: {{EVENT_PAYLOAD.sender.login}} deployed new code to Test Server for {{EVENT_PAYLOAD.repository.full_name}} 🌈🌈"
+          args: "🌈🌈 Success: {{EVENT_PAYLOAD.sender.login}} deployed new code to Test Server for {{EVENT_PAYLOAD.repository.full_name}} {{EVENT_PAYLOAD.head_commit.message}} 🌈🌈"
       - name: notify failure
         if: ${{ failure() }}
         uses: Ilshidur/action-discord@master
