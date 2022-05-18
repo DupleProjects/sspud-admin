@@ -54,6 +54,7 @@ export default {
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     '@node_modules/bootstrap/dist/css/bootstrap.css',
+    '@assets/css/main.css'
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
@@ -72,6 +73,10 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
   ],
+
+  router: {
+    middleware: ['auth'],
+  },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {

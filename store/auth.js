@@ -10,12 +10,7 @@ export const authStore = {
 
   getters: {
     isUserLoggedIn(state) {
-      if (state.user != null) {
-        return true
-      }
-      else {
-        return false
-      }
+      return !!state.user;
     }
   },
 
@@ -36,7 +31,7 @@ export const authStore = {
     async fetch({ commit }, currCookie) {
 
       console.log("Fetching from: ");
-      console.log(process.env.baseURL);
+      console.log(process.env.apiURL);
 
       var body = {
         cooki : currCookie
@@ -44,10 +39,11 @@ export const authStore = {
 
       let me = await axios({
         method: 'post',
-        url: process.env.baseURL + 'api/auth/me',
+        url: process.env.baseURL + '/auth/me',
         headers: {},
         data: body
       })
+      console.log('me', me)
       try{
         await commit('set_user', me.data.result)
         return;

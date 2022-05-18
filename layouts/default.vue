@@ -1,6 +1,7 @@
 <template>
   <v-app dark>
     <v-navigation-drawer
+      v-if="this.isUserLoggedIn"
       v-model="drawer"
       :mini-variant="miniVariant"
       :clipped="clipped"
@@ -22,8 +23,7 @@
           :key="i"
           :to="item.to"
           router
-          exact
-        >
+          exact>
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
@@ -71,27 +71,25 @@
         <Nuxt />
       </v-container>
     </v-main>
-    <v-navigation-drawer
-      v-model="rightDrawer"
-      :right="right"
-      temporary
-      fixed
-    >
-      <v-list>
-        <v-list-item @click.native="right = !right">
-          <v-list-item-action>
-            <v-icon light>
-              mdi-repeat
-            </v-icon>
-          </v-list-item-action>
-          <v-list-item-title>Switch drawer (click me)</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
+<!--    <v-navigation-drawer-->
+<!--      v-model="rightDrawer"-->
+<!--      :right="right"-->
+<!--      temporary-->
+<!--      fixed>-->
+<!--      <v-list>-->
+<!--        <v-list-item @click.native="right = !right">-->
+<!--          <v-list-item-action>-->
+<!--            <v-icon light>-->
+<!--              mdi-repeat-->
+<!--            </v-icon>-->
+<!--          </v-list-item-action>-->
+<!--          <v-list-item-title>Switch drawer (click me)</v-list-item-title>-->
+<!--        </v-list-item>-->
+<!--      </v-list>-->
+<!--    </v-navigation-drawer>-->
     <v-footer
       :absolute="!fixed"
-      app
-    >
+      app>
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
   </v-app>
@@ -120,6 +118,16 @@ export default {
           icon: 'mdi-chart-bubble',
           title: 'Scraped Products',
           to: '/products/scraped'
+        },
+        {
+          icon: 'mdi-chart-bubble',
+          title: 'Manage Categories',
+          to: '/categories/manage'
+        },
+        {
+          icon: 'mdi-chart-bubble',
+          title: 'Link Categories',
+          to: '/categories/link'
         }
       ],
       miniVariant: true,
@@ -127,6 +135,23 @@ export default {
       rightDrawer: false,
       title: 'Vuetify.js'
     }
-  }
+  },
+  beforeMount() {
+    this.$nextTick(async function () {
+
+    })
+  },
+  computed: {
+    isUserLoggedIn() {
+      // return this.$store.state.auth.user != null;
+      return true;
+    },
+    userEmail() {
+      if (this.$store.state.auth.user) {
+        return this.$store.state.auth.user.email
+      }
+      return 'Not logged in'
+    },
+  },
 }
 </script>

@@ -30,10 +30,10 @@ const createStore = () => {
         console.log("Starting server")
         return new Promise((resolve, reject) => {
           const cookies = cookie.parse(context.req.headers.cookie || '')
-          if (cookies.hasOwnProperty('tmmgo-access-token')) {
+          if (cookies.hasOwnProperty('sppud-access-token')) {
             console.log("Fetching user");
-            setAuthToken(cookies['tmmgo-access-token'])
-            dispatch('fetch',cookies['tmmgo-access-token'])
+            setAuthToken(cookies['sppud-access-token'])
+            dispatch('fetch',cookies['sppud-access-token'])
               .then(result => {
                 console.log("Dispatching fetch method");
                 resolve(true)
