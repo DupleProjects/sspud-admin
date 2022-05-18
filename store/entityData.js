@@ -17,5 +17,20 @@ export const entityDataStore = {
 
       return response.data
     },
+    async callMiddlewareRoute({ commit }, data) {
+      if (data.hasOwnProperty('route')) {
+        const response = await axios({
+          method: 'post',
+          url: process.env.baseURL + '/'+ data.route,
+          headers: {},
+          data: data,
+        })
+        return response.data
+      }
+      return {
+        success: false,
+        message: 'No route provided'
+      }
+    },
   },
 }

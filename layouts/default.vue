@@ -115,6 +115,11 @@ export default {
           icon: 'mdi-chart-bubble',
           title: 'Inspire',
           to: '/inspire'
+        },
+        {
+          icon: 'mdi-chart-bubble',
+          title: 'Scraped Products',
+          to: '/products/scraped'
         }
       ],
       miniVariant: true,
