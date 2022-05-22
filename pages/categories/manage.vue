@@ -10,28 +10,8 @@
       </div>
     </div>
     <!--Table-->
-    <div class="table-responsive">
-      <table class="table table-striped table-sm">
-        <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Header</th>
-          <th scope="col">Header</th>
-          <th scope="col">Header</th>
-          <th scope="col">Header</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="(category, index) of categories" :key="index">
-          <td>{{category.name}}</td>
-          <td>random</td>
-          <td>data</td>
-          <td>placeholder</td>
-          <td>text</td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
+    <categories-category-list
+        :categories="displayedCategories"/>
     <!--Pagination-->
     <template>
       <div class="text-end">
@@ -57,6 +37,8 @@ export default {
       numberPerPage: 20,
       categoryCount: 0,
       categories: [],
+      filteredCategories: [],
+      displayedCategories: [],
     }
   },
   watch: {
@@ -73,15 +55,16 @@ export default {
       // Load the products
       const categoriesResponse = await this.$store.dispatch('dataGate', {
         tableName: 'mappedCategories',
-        operation: 'read',
-        page: 1,
-        numberPerPage: this.numberPerPage
+        operation: 'read'
       });
       if (categoriesResponse.count) {
         this.categoryCount = categoriesResponse.count;
       }
       if (categoriesResponse.data) {
+        console.log('categoriesResponse.data', categoriesResponse.data)
         this.categories = categoriesResponse.data;
+        this.filteredCategories = this.categories;
+        this.setPage();
       }
       this.loading = false
     })
@@ -92,7 +75,37 @@ export default {
     })
   },
   methods: {
-
+    categoryCreateCallBack(newCategory) {
+      this.categories.push(newCategory)
+    },
+    goToCategoryDashboard(category) {
+      this.$router.push(
+          {
+            name: 'categories-dashboard-id',
+            params: {id: category.id}
+          }
+      )
+    },
+    // Pagination
+    setPage() {
+      this.displayedCategories = []
+      function numPages(total, numPerPage) {
+        return Math.ceil(total / numPerPage)
+      }
+      // Validate page
+      if (this.page < 1) this.page = 1
+      if (this.page > numPages(this.filteredCategories.length, this.numberPerPage))
+        this.page = numPages(this.filteredCategories.length, this.numberPerPage)
+      for (
+          let i = (this.page - 1) * this.numberPerPage;
+          i < this.page * this.numberPerPage && i < this.filteredCategories.length;
+          i++
+      ) {
+        if (this.filteredCategories[i]) {
+          this.displayedCategories.push(this.filteredCategories[i])
+        }
+      }
+    },
   },
 }
 </script>

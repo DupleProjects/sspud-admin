@@ -11,7 +11,9 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="(product, index) of products" :key="index">
+      <tr
+          @click="goToProductDashboard(product)"
+          v-for="(product, index) of products" :key="index">
         <td>{{product.name}}</td>
         <td>random</td>
         <td>data</td>
@@ -26,6 +28,7 @@
 <script>
 export default {
   props: {
+    type: '',
     products: []
   },
   data() {
@@ -35,6 +38,34 @@ export default {
   },
   mounted() {
 
+  },
+  methods: {
+    goToProductDashboard(product) {
+      const params = {id: product.id};
+      // Go to different dashboards based on type
+      if (this.type === 'scraped') {
+        this.$router.push(
+            {
+              name: 'products-scraped-dashboard-id',
+              params
+            }
+        )
+      } else if (this.type === 'staged') {
+        this.$router.push(
+            {
+              name: 'categories-dashboard-id',
+              params
+            }
+        )
+      } else if (this.type === 'published') {
+        this.$router.push(
+            {
+              name: 'categories-dashboard-id',
+              params
+            }
+        )
+      }
+    },
   }
 }
 </script>

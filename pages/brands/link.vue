@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Category Dashboard</h2>
+    <h2>Link Brands</h2>
   </div>
 </template>
 
@@ -29,18 +29,18 @@ export default {
     this.$nextTick(async function () {
       // var loggedInUser = this.$store.state.auth.user
       // Load the products
-      // const categoriesResponse = await this.$store.dispatch('dataGate', {
-      //   tableName: 'mappedCategories',
-      //   operation: 'read',
-      //   page: 1,
-      //   numberPerPage: this.numberPerPage
-      // });
-      // if (categoriesResponse.count) {
-      //   this.categoryCount = categoriesResponse.count;
-      // }
-      // if (categoriesResponse.data) {
-      //   this.categories = categoriesResponse.data;
-      // }
+      const categoriesResponse = await this.$store.dispatch('dataGate', {
+        tableName: 'mappedCategories',
+        operation: 'read',
+        page: 1,
+        numberPerPage: this.numberPerPage
+      });
+      if (categoriesResponse.count) {
+        this.categoryCount = categoriesResponse.count;
+      }
+      if (categoriesResponse.data) {
+        this.categories = categoriesResponse.data;
+      }
       this.loading = false
     })
   },
