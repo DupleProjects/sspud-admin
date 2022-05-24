@@ -16,7 +16,7 @@ jobs:
           host: ${{ secrets.AWS_HOST_PROD }}
           username: ${{ secrets.AWS_PROD_HOST_USER }}
           key: ${{ secrets.AWS_PROD_HOST_KEY }}
-          script: sh deploy-sspud-admin.sh
+          script: sh deploy.sh
       - name: Deploy to Production
         run: |
           echo "Deploying to Production..."
