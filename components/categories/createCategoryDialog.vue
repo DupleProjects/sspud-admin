@@ -29,7 +29,9 @@
             <v-select
                 prepend-icon="mdi-clipboard-check-multiple"
                 label="Parent"
-                :items="categories"
+                :item-text="'name'"
+                :item-value="'id'"
+                :items="mainCategories"
                 v-model="category.parentId"
                 :messages="['Choose a parent or leave blank']"
             ></v-select>
@@ -74,6 +76,7 @@ export default {
       validCategoryForm: true,
       newCategoryDialog: false,
       category: null,
+      mainCategories:[],
     }
   },
   mounted() {
@@ -82,6 +85,12 @@ export default {
   methods: {
     async openDialog() {
       this.newCategoryDialog = true;
+      this.mainCategories = [];
+      this.categories.forEach(element => {
+        if(element.parentId == 0){
+          this.mainCategories.push(element);
+        }
+      });
       // Create new  default category
       this.category = {
         name: '',
@@ -91,7 +100,10 @@ export default {
     },
     async saveCategory() {
       this.loading = true;
-      // Save the new category if the form is valid
+    //   // Save the new category if the form is valid
+    if(this.category.parentId == null){
+      this.category.parentId = 0;
+    }
       if (this.$refs.newCategoryForm.validate()) {
         const response = await this.$store.dispatch('dataGate', {
           primaryKey: 'id',
@@ -101,7 +113,9 @@ export default {
         })
         // If valid response return value
         if (response && response.response) {
-          this.saveCallBack(response.response);
+          this.saveCallBack = response.response;
+          console.log("this.saveCallBack",this.saveCallBack);
+          this.categories.push(this.category);
         }
       }
       this.newCategoryDialog = false;

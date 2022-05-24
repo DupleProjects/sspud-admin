@@ -27,15 +27,18 @@
       </v-form>
     </div>
     <!--Linked Section-->
-    <p>Linked Categories</p>
+    <div>
     <categories-category-list
         :type="'mapped'"
-        :categories="linkedCategories"/>
+        :categories="linkedCategories"
+        :title="'Linked Categories'"/>
+    </div>
     <!--Linked Scraped Categories Section-->
-    <p>Linked Scraped Categories</p>
+    <!-- <h4 class="section-heading">Linked Scraped Categories</h4> -->
     <categories-category-list
         :type="'scraped'"
-        :categories="linkedScrapedCategories"/>
+        :categories="linkedScrapedCategories"
+        :title="'Linked Scraped Categories'"/>
   </div>
 </template>
 
@@ -63,7 +66,7 @@ export default {
   },
   beforeMount() {
     this.$nextTick(async function () {
-      console.log(this.$route.params.id);
+      // console.log(this.$route.params.id);
       if (this.$route.params.id) {
         // Load all the categories so that the parent can still be chosen
         const categoriesResponse = await this.$store.dispatch('dataGate', {
@@ -72,12 +75,15 @@ export default {
         });
         if (categoriesResponse.data) {
           this.categories = categoriesResponse.data;
+          console.log("👉👉👉",this.categories);
           // Get the actual category and the linked ones
           for (let i = 0; i < this.categories.length; i++) {
+              // console.log("this.categories[i]",this.categories[i]);
             if (this.categories[i].id === Number(this.$route.params.id)) {
-              console.log('this.category', this.category)
+              // console.log('this.category', this.category)
               this.category = this.categories[i];
-            } else if (this.categories[i].id === this.categories[i].parentId) {
+              console.log("🔥👉👇THIS CATEGORY",this.category);
+            } else if (this.categories[i].parentId === Number(this.$route.params.id)) {
               this.linkedCategories.push(this.categories[i]);
             }
           }

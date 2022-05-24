@@ -1,8 +1,9 @@
 <template>
   <div class="table-responsive">
+    <h4 class="section-heading">{{title}}</h4>
     <div class="table-responsive">
       <table class="table table-striped table-sm">
-        <thead>
+        <!-- <thead>
         <tr>
           <th scope="col">#</th>
           <th scope="col">Header</th>
@@ -10,7 +11,7 @@
           <th scope="col">Header</th>
           <th scope="col">Header</th>
         </tr>
-        </thead>
+        </thead> -->
         <tbody>
         <tr
             @click="goToCategoryDashboard(category)"
@@ -31,7 +32,8 @@
 export default {
   props: {
     type: '',
-    categories: []
+    categories: [],
+    title:[]
   },
   data() {
     return {
@@ -39,7 +41,7 @@ export default {
     }
   },
   mounted() {
-
+    console.log("🔥",this.categories);
   },
   methods: {
     goToCategoryDashboard(category) {
@@ -55,5 +57,11 @@ export default {
 </script>
 
 <style scoped>
+
+
+.section-heading{
+  margin-top: 30px;
+}
+
 
 </style>
