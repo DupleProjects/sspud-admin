@@ -9,7 +9,7 @@ if (process.env.NODE_ENV === 'production') {
   base_uri = 'https://admin.mineshift.co.za/'
   site_title = 'SSPUUD'
 } else {
-  api_uri = 'http://localhost:4000'
+  api_uri = 'https://api.bambazonke.shop'
   base_uri = 'http://localhost:3000/'
   site_title = 'SSPUUD'
 }
@@ -58,6 +58,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~/plugins/fontawesome.js',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

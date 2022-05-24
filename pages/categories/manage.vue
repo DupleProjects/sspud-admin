@@ -5,12 +5,13 @@
       <h1 class="h2">Manage Categories</h1>
       <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
-          <categories-create-category-dialog />
+          <categories-create-category-dialog
+            :categories="displayedCategories" />
         </div>
       </div>
     </div>
     <!--Table-->
-    <categories-category-list
+    <categories-all-categories
         :categories="displayedCategories"/>
     <!--Pagination-->
     <template>
@@ -63,6 +64,7 @@ export default {
       if (categoriesResponse.data) {
         console.log('categoriesResponse.data', categoriesResponse.data)
         this.categories = categoriesResponse.data;
+        console.log('this.categories',this.categories)
         this.filteredCategories = this.categories;
         this.setPage();
       }

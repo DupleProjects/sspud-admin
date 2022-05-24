@@ -2,7 +2,7 @@
   <div class="table-responsive">
     <div class="table-responsive">
       <table class="table table-striped table-sm">
-        <thead>
+        <!-- <thead>
         <tr>
           <th scope="col">#</th>
           <th scope="col">Header</th>
@@ -10,7 +10,7 @@
           <th scope="col">Header</th>
           <th scope="col">Header</th>
         </tr>
-        </thead>
+        </thead> -->
         <tbody>
         <tr
             @click="goToCategoryDashboard(category)"
@@ -39,7 +39,7 @@ export default {
     }
   },
   mounted() {
-
+    console.log("🔥",this.categories);
   },
   methods: {
     goToCategoryDashboard(category) {
