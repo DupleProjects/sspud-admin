@@ -1,5 +1,6 @@
 <template>
   <div class="table-responsive">
+    <h4 class="section-heading">{{title}}</h4>
     <div class="table-responsive">
       <table class="table table-striped table-sm">
         <!-- <thead>
@@ -31,7 +32,8 @@
 export default {
   props: {
     type: '',
-    categories: []
+    categories: [],
+    title:[]
   },
   data() {
     return {
@@ -55,5 +57,11 @@ export default {
 </script>
 
 <style scoped>
+
+
+.section-heading{
+  margin-top: 30px;
+}
+
 
 </style>

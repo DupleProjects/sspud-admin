@@ -27,15 +27,18 @@
       </v-form>
     </div>
     <!--Linked Section-->
-    <p>Linked Categories</p>
+    <div>
     <categories-category-list
         :type="'mapped'"
-        :categories="linkedCategories"/>
+        :categories="linkedCategories"
+        :title="'Linked Categories'"/>
+    </div>
     <!--Linked Scraped Categories Section-->
-    <p>Linked Scraped Categories</p>
+    <!-- <h4 class="section-heading">Linked Scraped Categories</h4> -->
     <categories-category-list
         :type="'scraped'"
-        :categories="linkedScrapedCategories"/>
+        :categories="linkedScrapedCategories"
+        :title="'Linked Scraped Categories'"/>
   </div>
 </template>
 
@@ -79,6 +82,7 @@ export default {
             if (this.categories[i].id === Number(this.$route.params.id)) {
               // console.log('this.category', this.category)
               this.category = this.categories[i];
+              console.log("🔥👉👇THIS CATEGORY",this.category);
             } else if (this.categories[i].parentId === Number(this.$route.params.id)) {
               this.linkedCategories.push(this.categories[i]);
             }

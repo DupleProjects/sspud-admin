@@ -31,7 +31,7 @@
                 label="Parent"
                 :item-text="'name'"
                 :item-value="'id'"
-                :items="categories"
+                :items="mainCategories"
                 v-model="category.parentId"
                 :messages="['Choose a parent or leave blank']"
             ></v-select>
@@ -76,6 +76,7 @@ export default {
       validCategoryForm: true,
       newCategoryDialog: false,
       category: null,
+      mainCategories:[],
     }
   },
   mounted() {
@@ -84,6 +85,12 @@ export default {
   methods: {
     async openDialog() {
       this.newCategoryDialog = true;
+      this.mainCategories = [];
+      this.categories.forEach(element => {
+        if(element.parentId == 0){
+          this.mainCategories.push(element);
+        }
+      });
       // Create new  default category
       this.category = {
         name: '',
@@ -94,7 +101,6 @@ export default {
     async saveCategory() {
       this.loading = true;
     //   // Save the new category if the form is valid
-    console.log("SAVED this.category",this.category);
     if(this.category.parentId == null){
       this.category.parentId = 0;
     }
