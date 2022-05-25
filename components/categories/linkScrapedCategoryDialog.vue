@@ -3,37 +3,36 @@
     <button
         @click="openDialog()"
         type="button" class="btn btn-sm btn-outline-secondary">
-      New Category
+      <i class="fa fas fa-arrow-right" style="margin-top:5px"></i>
     </button>
     <!--New Category Dialog-->
     <v-dialog style="z-index: 10000" v-model="newCategoryDialog" max-width="800">
-      <v-card v-if="category">
+      <v-card v-if="scrapedCategory">
         <v-card-title>
-          New Category
+          Link Scraped Category to BambaZonke Category
         </v-card-title>
-        <v-card-subtitle>
-          Create a new category
-        </v-card-subtitle>
         <v-card-text class="pb-0">
           <v-form
               ref="newCategoryForm"
               v-model="validCategoryForm"
               lazy-validation>
-            <v-text-field
-                prepend-icon="mdi-card-account-details-outline"
-                v-model="category.name"
-                :rules="[(v) => !!v || 'A Name is required']"
-                hint="The name of the category"
-                label="Name"
-            ></v-text-field>
             <v-select
                 prepend-icon="mdi-clipboard-check-multiple"
-                label="Parent"
+                label="Scraped Category"
                 :item-text="'name'"
                 :item-value="'id'"
-                :items="mainCategories"
-                v-model="category.parentId"
-                :messages="['Choose a parent or leave blank']"
+                :items="scrapedCategories"
+                v-model="selectedScrapedCategory"
+                disabled
+            ></v-select>
+            <v-select
+                prepend-icon="mdi-clipboard-check-multiple"
+                label="BambaZonke Category"
+                :item-text="'name'"
+                :item-value="'id'"
+                :items="categories"
+                v-model="selectedCategory"
+                :messages="['Choose a BambaZonke category for this scraped category to be linked to']"
             ></v-select>
           </v-form>
         </v-card-text>
@@ -50,7 +49,7 @@
               :disabled="!validCategoryForm"
               color="primary"
               text
-              v-on:click="saveCategory">
+              v-on:click="linkToCategory()">
             Save
           </v-btn>
           <v-btn
@@ -68,7 +67,10 @@
 export default {
   props: {
     categories: [],
-    saveCallBack: null
+    scrapedCategories: [],
+    saveCallBack: null,
+    selectedScrapedCategory: [],
+    selectedCategory: [],
   },
   data() {
     return {
@@ -76,6 +78,7 @@ export default {
       validCategoryForm: true,
       newCategoryDialog: false,
       category: null,
+      scrapedCategory: null,
       mainCategories:[],
     }
   },
@@ -92,35 +95,27 @@ export default {
         }
       });
       // Create new  default category
-      this.category = {
-        name: '',
-        parentId: null,
-        publish: false
+      this.scrapedCategory = {
+        ...this.selectedScrapedCategory
       }
-    },
-    async saveCategory() {
-      this.loading = true;
-    //   // Save the new category if the form is valid
-    if(this.category.parentId == null){
-      this.category.parentId = 0;
-    }
-      if (this.$refs.newCategoryForm.validate()) {
-        const response = await this.$store.dispatch('dataGate', {
+      console.log("SCRAP CAT",this.scrapedCategory);
+    },    
+    async linkToCategory(){
+      this.scrapedCategory.mappedCategoryId = this.selectedCategory.id;
+      const scrapedCategoriesResponse = await this.$store.dispatch('dataGate', {
           primaryKey: 'id',
-          entity: this.category,
-          tableName: 'mappedCategories',
-          operation: 'create',
-        })
-        // If valid response return value
-        if (response && response.response) {
-          this.saveCallBack = response.response;
-          console.log("this.saveCallBack",this.saveCallBack);
-          this.categories.push(this.category);
-        }
+          entity: this.scrapedCategory,
+          tableName: 'scrapedCategories',
+          operation: 'update',
+      });
+      // If valid response return value
+      if (scrapedCategoriesResponse && scrapedCategoriesResponse.response) {
+        // this.saveCallBack = scrapedCategoriesResponse.response;
+        // console.log("this.saveCallBack",this.saveCallBack);
+        // this.categories.push(this.category);
       }
       this.newCategoryDialog = false;
-      this.loading = false;
-    },
+    }
   }
 }
 </script>
