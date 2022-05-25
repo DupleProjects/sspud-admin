@@ -2,13 +2,11 @@
   <div>
     <h2>Product Dashboard</h2>
     <products-product-dashboard />
-    <products-product-publish />
-    <products-product-log />
   </div>
 </template>
 
 <script>
-import baseMixin from '@/mixins/baseMixin.js'
+import baseMixin from "@/mixins/baseMixin.js";
 export default {
   mixins: [baseMixin],
   data() {
@@ -18,26 +16,20 @@ export default {
       numberPerPage: 20,
       categoryCount: 0,
       categories: [],
-    }
+    };
   },
   beforeMount() {
     this.$nextTick(async function () {
-      this.loading = true
+      this.loading = true;
 
-      this.loading = false
-    })
+      this.loading = false;
+    });
   },
   unmounted() {
-    this.$nextTick(async function () {
-
-    })
+    this.$nextTick(async function () {});
   },
-  methods: {
-
-  },
-}
+  methods: {},
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
