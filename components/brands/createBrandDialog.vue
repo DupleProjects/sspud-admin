@@ -19,7 +19,7 @@
         <v-card-text class="pb-0">
           <v-form
             ref="newCategoryForm"
-            v-model="validCategoryForm"
+            v-model="validBrandForm"
             lazy-validation
           >
             <v-text-field
