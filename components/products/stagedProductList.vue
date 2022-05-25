@@ -3,29 +3,24 @@
     <table class="table table-striped table-sm">
       <thead>
       <tr>
-        <th scope="col">#</th>
-        <th scope="col">Header</th>
-        <th scope="col">Header</th>
-        <th scope="col">Header</th>
-        <th scope="col">Header</th>
-        <th scope="col">Actions</th>
+        <th class="name-column" scope="col">Name</th>
+        <th class="info-column" scope="col">Price</th>
+        <th class="info-column" scope="col">Category</th>
+        <th class="info-column" scope="col">Subcategory</th>
+        <th class="info-column" scope="col">Brand</th>
+        <th class="info-column" scope="col">Model Number</th>
       </tr>
       </thead>
       <tbody>
       <tr
           @click="goToProductDashboard(product)"
           v-for="(product, index) of products" :key="index">
-        <td>{{product.name}}</td>
-        <td>random</td>
-        <td>data</td>
-        <td>placeholder</td>
-        <td>text</td>
-        <td class="info-column">
-            <div>
-                <i class="fa fas fa-pencil" style="margin-right:15px" ></i>
-                <i class="fa fas fa-trash" style="margin-right:15px" ></i>
-            </div>
-        </td>
+        <td class="name-column">{{product.name}}</td>
+        <td class="info-column">R{{product.price}}</td>
+        <td class="info-column">{{product.categoryName}}</td>
+        <td class="info-column">{{product.subCategoryName}}</td>
+        <td class="info-column">{{product.brand}}</td>
+        <td class="info-column">{{product.modelNumber}}</td>
       </tr>
       </tbody>
     </table>
@@ -78,5 +73,13 @@ export default {
 </script>
 
 <style scoped>
+
+.name-column{
+  width:25%;
+}
+
+.info-column{
+    width: 15%;
+}
 
 </style>

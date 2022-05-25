@@ -22,7 +22,7 @@
     <div v-if="!loading">
       <!--Table-->
       <h2>Scraped Products</h2>
-      <products-product-list :type="'scraped'" :products="products" />
+      <products-staged-product-list :type="'scraped'" :products="products" />
       <!--Pagination-->
       <template>
         <div class="text-end">
