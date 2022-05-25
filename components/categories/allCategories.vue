@@ -19,7 +19,6 @@
                 <tr
                   v-for="(category, index) of categories"
                   :key="index"
-                  v-if="category.parentId == 0"
                 >
                   <td class="cell-style" @click="filterSubcategories(category)"><h5>{{ category.name }}</h5></td>
                   <td class="edit-button-cell-style"><h6 @click="goToCategoryDashboard(category)"><i class="fa fas fa-pencil"   style="margin-top:5px" ></i></h6></td>
@@ -28,7 +27,7 @@
             </table>
           </div>
           <div class="vr" style="width:2px;"></div>
-          <!-- Subcategores -->
+          <!-- Subcategories -->
           <div class="col-sm">
             <div>
               <h3 style="margin-bottom:20px;">Subcategories</h3>
@@ -79,13 +78,19 @@ export default {
         params: { id: category.id },
       });
     },
-    filterSubcategories(category){
+    async filterSubcategories(category){
       this.filteredSubcategories = [];
-      this.categories.forEach(element => {
-        if(element.parentId == category.id){
-          this.filteredSubcategories.push(element);
-        }
-      });     
+      console.log("⚡👉🔥👇",category);
+
+      const subcategoriesResponse = await this.$store.dispatch('dataGate', {
+        tableName: 'mappedCategories',
+        operation: 'read',
+        whereCriteria: {parentId: category.id}
+      });
+
+      if(subcategoriesResponse.data){
+        this.filteredSubcategories = subcategoriesResponse.data   
+      }
     }
   },
 };

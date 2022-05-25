@@ -86,11 +86,17 @@ export default {
     async openDialog() {
       this.newCategoryDialog = true;
       this.mainCategories = [];
-      this.categories.forEach(element => {
-        if(element.parentId == 0){
-          this.mainCategories.push(element);
-        }
+      const categoriesResponse = await this.$store.dispatch('dataGate', {
+        tableName: 'mappedCategories',
+        operation: 'read',
+        whereCriteria: {parentId: 0}
       });
+      // this.categories.forEach(element => {
+      //   if(element.parentId == 0){
+          // this.mainCategories.push(element);
+          this.mainCategories = categoriesResponse.data;
+      //   }
+      // });
       // Create new  default category
       this.category = {
         name: '',
@@ -113,9 +119,9 @@ export default {
         })
         // If valid response return value
         if (response && response.response) {
-          this.saveCallBack = response.response;
-          console.log("this.saveCallBack",this.saveCallBack);
-          this.categories.push(this.category);
+          this.saveCallBack(this.category)
+          // console.log("this.saveCallBack",this.saveCallBack);
+          // this.categories.push(this.category);
         }
       }
       this.newCategoryDialog = false;
