@@ -8,6 +8,7 @@
           <th scope="col">Header</th>
           <th scope="col">Header</th>
           <th scope="col">Header</th>
+          <th scope="col">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -21,6 +22,12 @@
           <td>data</td>
           <td>placeholder</td>
           <td>text</td>
+          <td class="info-column">
+            <div>
+                <i class="fa fas fa-pencil" style="margin-right:15px" ></i>
+                <i class="fa fas fa-trash" style="margin-right:15px" ></i>
+            </div>
+        </td>
         </tr>
       </tbody>
     </table>

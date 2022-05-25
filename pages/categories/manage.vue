@@ -6,7 +6,7 @@
       <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
           <categories-create-category-dialog
-            :categories="displayedCategories" />
+            :categories="displayedCategories" :saveCallBack="saveCallBack" />
         </div>
       </div>
     </div>
@@ -40,6 +40,7 @@ export default {
       categories: [],
       filteredCategories: [],
       displayedCategories: [],
+      subCategories: [],
     }
   },
   watch: {
@@ -56,11 +57,14 @@ export default {
       // Load the products
       const categoriesResponse = await this.$store.dispatch('dataGate', {
         tableName: 'mappedCategories',
-        operation: 'read'
+        operation: 'read',
+        whereCriteria: {parentId: 0}
       });
+
       if (categoriesResponse.count) {
         this.categoryCount = categoriesResponse.count;
       }
+
       if (categoriesResponse.data) {
         console.log('categoriesResponse.data', categoriesResponse.data)
         this.categories = categoriesResponse.data;
@@ -77,8 +81,22 @@ export default {
     })
   },
   methods: {
-    categoryCreateCallBack(newCategory) {
-      this.categories.push(newCategory)
+    async saveCallBack(newCategory) {
+      // if(newCategory.parentId == 0){
+      //   this.categories.push(newCategory)
+      //   this.setPage();
+      // }
+      const categoriesResponse = await this.$store.dispatch('dataGate', {
+        tableName: 'mappedCategories',
+        operation: 'read',
+        whereCriteria: {parentId: 0}
+      });
+
+      this.categories = categoriesResponse.data;
+      this.filteredCategories = this.categories;
+      this.setPage();
+
+
     },
     goToCategoryDashboard(category) {
       this.$router.push(
