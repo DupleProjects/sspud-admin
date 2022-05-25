@@ -2,31 +2,26 @@
   <div class="table-responsive">
     <table class="table table-striped table-sm">
       <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Header</th>
-        <th scope="col">Header</th>
-        <th scope="col">Header</th>
-        <th scope="col">Header</th>
-        <th scope="col">Actions</th>
-      </tr>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Header</th>
+          <th scope="col">Header</th>
+          <th scope="col">Header</th>
+          <th scope="col">Header</th>
+        </tr>
       </thead>
       <tbody>
-      <tr
+        <tr
           @click="goToProductDashboard(product)"
-          v-for="(product, index) of products" :key="index">
-        <td>{{product.name}}</td>
-        <td>random</td>
-        <td>data</td>
-        <td>placeholder</td>
-        <td>text</td>
-        <td class="info-column">
-            <div>
-                <i class="fa fas fa-pencil" style="margin-right:15px" ></i>
-                <i class="fa fas fa-trash" style="margin-right:15px" ></i>
-            </div>
-        </td>
-      </tr>
+          v-for="(product, index) of products"
+          :key="index"
+        >
+          <td>{{ product.name }}</td>
+          <td>random</td>
+          <td>data</td>
+          <td>placeholder</td>
+          <td>text</td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -35,48 +30,36 @@
 <script>
 export default {
   props: {
-    type: '',
-    products: []
+    type: "",
+    products: [],
   },
   data() {
-    return {
-
-    }
+    return {};
   },
-  mounted() {
-
-  },
+  mounted() {},
   methods: {
     goToProductDashboard(product) {
-      const params = {id: product.id};
+      const params = { product: product, type: this.type };
       // Go to different dashboards based on type
-      if (this.type === 'scraped') {
-        this.$router.push(
-            {
-              name: 'products-scraped-dashboard-id',
-              params
-            }
-        )
-      } else if (this.type === 'staged') {
-        this.$router.push(
-            {
-              name: 'categories-dashboard-id',
-              params
-            }
-        )
-      } else if (this.type === 'published') {
-        this.$router.push(
-            {
-              name: 'categories-dashboard-id',
-              params
-            }
-        )
+      if (this.type === "scraped") {
+        this.$router.push({
+          name: "products-scraped-dashboard-id",
+          params: params,
+        });
+      } else if (this.type === "staged") {
+        this.$router.push({
+          name: "categories-dashboard-id",
+          params: params,
+        });
+      } else if (this.type === "published") {
+        this.$router.push({
+          name: "categories-dashboard-id",
+          params: params,
+        });
       }
     },
-  }
-}
+  },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

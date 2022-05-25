@@ -1,23 +1,21 @@
 <template>
-  <h1>Product Dashboard Component</h1>
+  <products-product-detail
+    :type="this.$router.currentRoute.params.type"
+    :edit="true"
+    :product="this.$router.currentRoute.params.product"
+  />
 </template>
 
 <script>
 export default {
   props: {
-    product: []
+    product: [],
   },
   data() {
-    return {
-
-    }
+    return {};
   },
-  mounted() {
-
-  }
-}
+  mounted() {},
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
