@@ -320,7 +320,6 @@ export default {
       }
     },
     async filterBrands() {
-      console.log(this.searchBrands);
       if (this.searchBrands == "") {
         const brandResponse = await this.$store.dispatch("dataGate", {
           tableName: "mappedBrands",
@@ -339,7 +338,6 @@ export default {
           tableName: "mappedBrands",
           operation: "read",
           numberPerPage: this.numberPerPage,
-          whereCriteria: { name: this.searchBrands },
         });
         if (brandResponse.count) {
           this.brandCount = brandResponse.count;
@@ -347,6 +345,7 @@ export default {
         if (brandResponse.data) {
           this.brands = brandResponse.data;
         }
+        console.log(this.brands);
       }
     },
     async brandCreateCallBackEdit() {
