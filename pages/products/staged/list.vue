@@ -22,7 +22,7 @@
     <div v-if="!loading">
       <!--Table-->
       <h2>Staged Products</h2>
-      <products-product-list :type="'staged'" :products="products" />
+      <products-product-list :type="'staged'" :products="products" :canDelete="true" :allCategories="allCategories" :allBrands="allBrands" />
       <!--Pagination-->
       <template>
         <div class="text-end">
@@ -49,6 +49,8 @@ export default {
       numberPerPage: 20,
       productCount: 0,
       products: [],
+      allCategories: [],
+      allBrands: []
     }
   },
   watch: {
@@ -87,6 +89,28 @@ export default {
       if (scrapedProducts.data) {
         this.products = scrapedProducts.data;
       }
+
+      
+      const categories = await this.$store.dispatch("dataGate", {
+        tableName: "mappedCategories",
+        operation: "read",
+      });
+
+
+      if(categories.data){
+        this.allCategories = categories.data
+      }
+
+      const brands = await this.$store.dispatch("dataGate", {
+        tableName: "mappedBrands",
+        operation: "read",
+      });
+
+
+      if(brands.data){
+        this.allBrands = brands.data
+      }
+
       this.loading = false
     },
   },

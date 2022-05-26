@@ -3,12 +3,12 @@
     <table class="table table-striped table-sm">
       <thead>
         <tr>
-          <th scope="col">#</th>
-          <th scope="col">Header</th>
-          <th scope="col">Header</th>
-          <th scope="col">Header</th>
-          <th scope="col">Header</th>
-          <th scope="col">Actions</th>
+          <th class="name-column" scope="col">Name</th>
+          <th class="info-column2" scope="col">Price</th>
+          <th class="info-column" scope="col">Category</th>
+          <th class="info-column" scope="col">Subcategory</th>
+          <th class="info-column" scope="col">Brand</th>
+          <th class="info-column2" scope="col">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -17,15 +17,18 @@
           v-for="(product, index) of products"
           :key="index"
         >
-          <td>{{ product.name }}</td>
-          <td>random</td>
-          <td>data</td>
-          <td>placeholder</td>
-          <td>text</td>
-          <td class="info-column">
+          <td class="name-column">{{ product.name }}</td>
+          <td class="info-column2">R{{ product.price }}</td>
+          <td v-if="type === 'scraped'" class="info-column">{{ product.categoryName }}</td>
+          <td v-if="type === 'staged'" class="info-column"><span  v-if="allCategories.find(x => x.id === product.categoryId) != undefined">{{ allCategories.find(x => x.id === product.categoryId).name }}</span></td>
+          <td v-if="type === 'scraped'" class="info-column">{{ product.subCategoryName }}</td>
+          <td v-if="type === 'staged'" class="info-column"><span  v-if="allCategories.find(x => x.id === product.subCategoryId) != undefined">{{ allCategories.find(x => x.id === product.subCategoryId).name }}</span></td>
+          <td v-if="type === 'scraped'" class="info-column">{{ product.brand}}</td>
+          <td v-if="type === 'staged'" class="info-column"><span  v-if="allBrands.find(x => x.id === product.brandId) != undefined">{{ allBrands.find(x => x.id === product.brandId).name }}</span></td>
+          <td class="info-column2">
             <div>
                 <i class="fa fas fa-pencil" style="margin-right:15px" ></i>
-                <i class="fa fas fa-trash" style="margin-right:15px" ></i>
+                <i v-if="canDelete" class="fa fas fa-trash" style="margin-right:15px" ></i>
             </div>
         </td>
         </tr>
@@ -35,13 +38,19 @@
 </template>
 
 <script>
+import allCategoriesVue from '../categories/allCategories.vue';
 export default {
   props: {
     type: "",
     products: [],
+    canDelete: false,
+    allCategories: [],
+    allBrands: []
   },
   data() {
-    return {};
+    return {
+      
+    };
   },
   mounted() {},
   methods: {
@@ -55,7 +64,7 @@ export default {
         });
       } else if (this.type === "staged") {
         this.$router.push({
-          name: "categories-dashboard-id",
+          name: "products-staged-dashboard-id",
           params,
         });
       } else if (this.type === "published") {
@@ -69,4 +78,17 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+
+.info-column{
+  width: 15%;
+}
+.info-column2{
+  width: 7%;
+}
+
+.name-column{
+  width: 28%;
+}
+
+</style>
