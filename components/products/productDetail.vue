@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="row">
+    <div class="row" v-if="product">
       <div class="col-3">
         <v-img
           style="border-style: solid; width: 100%; border-color: yellow"
@@ -135,20 +135,22 @@ export default {
         operation: "read",
       });
 
-      categorys.data.forEach((element) => {
-        if (element.name == this.product.categoryName) {
-          this.category = element.id;
-        }
-        if (element.name == this.product.subCategoryName) {
-          this.subCategory = element.id;
-        }
+      if (this.product) {
+        categorys.data.forEach((element) => {
+          if (element.name == this.product.categoryName) {
+            this.category = element.id;
+          }
+          if (element.name == this.product.subCategoryName) {
+            this.subCategory = element.id;
+          }
 
-        if (element.parentId == 0) {
-          this.categories.push(element);
-        } else {
-          this.subCategories.push(element);
-        }
-      });
+          if (element.parentId == 0) {
+            this.categories.push(element);
+          } else {
+            this.subCategories.push(element);
+          }
+        });
+      }
     });
   },
   methods: {

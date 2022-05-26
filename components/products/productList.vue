@@ -46,22 +46,22 @@ export default {
   mounted() {},
   methods: {
     goToProductDashboard(product) {
-      const params = { product: product, type: this.type };
+      const params = {id: product.id};
       // Go to different dashboards based on type
       if (this.type === "scraped") {
         this.$router.push({
           name: "products-scraped-dashboard-id",
-          params: params,
+          params,
         });
       } else if (this.type === "staged") {
         this.$router.push({
           name: "categories-dashboard-id",
-          params: params,
+          params,
         });
       } else if (this.type === "published") {
         this.$router.push({
           name: "categories-dashboard-id",
-          params: params,
+          params,
         });
       }
     },
