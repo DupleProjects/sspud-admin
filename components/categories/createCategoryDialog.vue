@@ -120,8 +120,6 @@ export default {
         // If valid response return value
         if (response && response.response) {
           this.saveCallBack(this.category)
-          // console.log("this.saveCallBack",this.saveCallBack);
-          // this.categories.push(this.category);
         }
       }
       this.newCategoryDialog = false;

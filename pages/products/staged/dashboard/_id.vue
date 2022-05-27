@@ -2,7 +2,7 @@
   <div>
     <h2>Product Dashboard</h2>
     <products-product-detail
-        :type="'scraped'"
+        :type="'staged'"
         :edit="true"
         :product="product"
     />
@@ -26,7 +26,7 @@ export default {
       console.log('this.$router.currentRoute.params.id', this.$router.currentRoute.params.id)
       if (this.$router.currentRoute.params.id) {
         const productResponse = await this.$store.dispatch('dataGate', {
-          tableName: 'scrapedProducts',
+          tableName: 'stagedProducts',
           operation: 'read',
           whereCriteria: {id: this.$router.currentRoute.params.id}
         });

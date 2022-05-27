@@ -3,7 +3,7 @@
     <h2>Product Dashboard</h2>
     <products-product-detail
         :type="'scraped'"
-        :edit="true"
+        :edit="false"
         :product="product"
     />
   </div>
