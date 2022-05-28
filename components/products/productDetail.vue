@@ -13,18 +13,18 @@
           label="Name"
           v-model="product.name"
           outlined
-          v-if="edit == true"
+          :disabled="!edit"
         ></v-text-field>
         <v-textarea
           label="Descrition"
           outlined
           v-model="product.description"
-          v-if="edit == true"
+          :disabled="!edit"
         ></v-textarea>
         <div class="row">
           <div class="col-6">
             <p v-if="type == 'scraped'" style="color: Red">
-              Currnet Category:<u> {{ product.categoryName }}</u>
+              Current Category:<u> {{ product.categoryName }}</u>
             </p>
             <v-select
               style="padding-top: 0px"
@@ -37,19 +37,19 @@
               width="100%"
               v-model="category"
               class="mt-3"
-              v-if="edit == true"
+              :disabled="!edit"
             ></v-select>
 
             <v-text-field
               label="Price"
               v-model="product.price"
               outlined
-              v-if="edit == true"
+              :disabled="!edit"
             ></v-text-field>
           </div>
           <div class="col-6">
             <p style="color: Red" v-if="type == 'scraped'">
-              Currnet Sub Category:<u> {{ product.subCategoryName }}</u>
+              Current Sub Category:<u> {{ product.subCategoryName }}</u>
             </p>
             <v-select
               style="padding-top: 0px"
@@ -62,37 +62,37 @@
               width="100%"
               v-model="subCategory"
               class="mt-3"
-              v-if="edit == true"
+              :disabled="!edit"
             ></v-select>
             <v-text-field
               label="Brand"
               v-model="product.brand"
               outlined
-              v-if="edit == true"
+              :disabled="!edit"
             ></v-text-field>
             <v-text-field
               label="Shipping Weight"
               v-model="product.shippingWeight"
               outlined
-              v-if="edit == true"
+              :disabled="!edit"
             ></v-text-field>
             <v-text-field
               label="Shipping Length"
               v-model="product.shippingLength"
               outlined
-              v-if="edit == true"
+              :disabled="!edit"
             ></v-text-field>
             <v-text-field
               label="Shipping Width"
               v-model="product.shippingWidth"
               outlined
-              v-if="edit == true"
+              :disabled="!edit"
             ></v-text-field>
             <v-text-field
               label="Shipping Heigth"
               v-model="product.shippingHeight"
               outlined
-              v-if="edit == true"
+              :disabled="!edit"
             ></v-text-field>
           </div>
         </div>
@@ -103,6 +103,7 @@
         <button
           class="btn btn-sm btn-outline-secondary"
           @click="saveProductInfo()"
+          :disabled="!edit"
         >
           Save Product Information
         </button>
@@ -129,28 +130,54 @@ export default {
   mounted() {},
   beforeMount() {
     this.$nextTick(async function () {
-      console.log(this.product);
-      const categorys = await this.$store.dispatch("dataGate", {
+      console.log("🤩🤩🤩PRODUCT ON DETAIL PAGE",this.product);
+
+      if(this.type == 'scraped'){
+        const categorys = await this.$store.dispatch("dataGate", {
         tableName: "mappedCategories",
         operation: "read",
       });
 
-      if (this.product) {
-        categorys.data.forEach((element) => {
-          if (element.name == this.product.categoryName) {
-            this.category = element.id;
-          }
-          if (element.name == this.product.subCategoryName) {
-            this.subCategory = element.id;
-          }
+        if (this.product) {
+          categorys.data.forEach((element) => {
+            if (element.name == this.product.categoryName) {
+              this.category = element.id;
+            }
+            if (element.name == this.product.subCategoryName) {
+              this.subCategory = element.id;
+            }
 
-          if (element.parentId == 0) {
-            this.categories.push(element);
-          } else {
-            this.subCategories.push(element);
-          }
+            if (element.parentId == 0) {
+              this.categories.push(element);
+            } else {
+              this.subCategories.push(element);
+            }
+          });
+        }
+      }else if(this.type == 'staged'){
+        const categorys = await this.$store.dispatch("dataGate", {
+          tableName: "mappedCategories",
+          operation: "read",
         });
+
+        if (this.product) {
+          categorys.data.forEach((element) => {
+            if (element.id == this.product.categoryId) {
+              this.category = element.id;
+            }
+            if (element.id == this.product.subCategoryId) {
+              this.subCategory = element.id;
+            }
+
+            if (element.parentId == 0) {
+              this.categories.push(element);
+            } else {
+              this.subCategories.push(element);
+            }
+          });
+        }
       }
+      
     });
   },
   methods: {
