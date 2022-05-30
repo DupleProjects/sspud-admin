@@ -9,98 +9,116 @@
         ></v-img>
       </div>
       <div class="col-9">
-        <v-text-field
-          label="Name"
-          v-model="product.name"
-          outlined
-          :disabled="!edit"
-        ></v-text-field>
-        <v-textarea
-          label="Descrition"
-          outlined
-          v-model="product.description"
-          :disabled="!edit"
-        ></v-textarea>
-        <div class="row">
-          <div class="col-6">
-            <p v-if="type == 'scraped'" style="color: Red">
-              Current Category:<u> {{ product.categoryName }}</u>
-            </p>
-            <v-select
-              style="padding-top: 0px"
-              outlined
-              label="Category"
-              return-object
-              item-text="name"
-              item-value="id"
-              :items="categories"
-              width="100%"
-              v-model="category"
-              class="mt-3"
-              :disabled="!edit"
-            ></v-select>
-
-            <v-text-field
-              label="Price"
-              v-model="product.price"
+        <v-form
+            ref="validProductForm"
+            v-model="validProductForm"
+            lazy-validation>
+          <v-text-field
+              label="Name"
+              v-model="product.name"
               outlined
               :disabled="!edit"
-            ></v-text-field>
+          ></v-text-field>
+          <v-textarea
+              label="Description"
+              outlined
+              v-model="product.description"
+              :disabled="!edit"
+          ></v-textarea>
+          <div class="row">
+            <div class="col-6">
+              <p v-if="type === 'scraped'" style="color: Red">
+                Category:<u> {{ product.categoryName }}</u>
+              </p>
+              <v-autocomplete
+                  v-if="type === 'staged'"
+                  style="padding-top: 0px"
+                  v-model="product.categoryId"
+                  :items="categories"
+                  :item-value="'id'"
+                  :item-text="'name'"
+                  outlined
+                  :disabled="!edit"
+                  label="Category"
+                  prepend-icon="mdi-tractor"
+                  :rules="[(v) => !!v || 'A category is required']"
+                  :messages="['Choose a BambaZonke category for this product']"
+              ></v-autocomplete>
+              <v-text-field
+                  label="Price"
+                  v-model="product.price"
+                  outlined
+                  :disabled="!edit"
+              ></v-text-field>
+            </div>
+            <div class="col-6">
+              <p style="color: Red" v-if="type == 'scraped'">
+                Sub Category:<u> {{ product.subCategoryName }}</u>
+              </p>
+              <v-autocomplete
+                  v-if="type === 'staged'"
+                  style="padding-top: 0px"
+                  v-model="product.subCategoryId"
+                  :items="subCategories"
+                  :item-value="'id'"
+                  :item-text="'name'"
+                  outlined
+                  :disabled="!edit"
+                  label="Sub Category"
+                  prepend-icon="mdi-tractor"
+                  :rules="[(v) => !!v || 'A sub category is required']"
+                  :messages="['Choose a BambaZonke sub category for this product']"
+              ></v-autocomplete>
+              <p style="color: Red" v-if="type == 'scraped'">
+                Brand:<u> {{ product.brand }}</u>
+              </p>
+              <v-autocomplete
+                  v-if="type === 'staged'"
+                  style="padding-top: 0px"
+                  v-model="product.brandId"
+                  :items="brands"
+                  :item-value="'id'"
+                  :item-text="'name'"
+                  outlined
+                  :disabled="!edit"
+                  label="Brand"
+                  prepend-icon="mdi-tractor"
+                  :rules="[(v) => !!v || 'A sub category is required']"
+                  :messages="['Choose a BambaZonke sub category for this product']"
+              ></v-autocomplete>
+              <v-text-field
+                  label="Shipping Weight"
+                  v-model="product.shippingWeight"
+                  outlined
+                  :disabled="!edit"
+              ></v-text-field>
+              <v-text-field
+                  label="Shipping Length"
+                  v-model="product.shippingLength"
+                  outlined
+                  :disabled="!edit"
+              ></v-text-field>
+              <v-text-field
+                  label="Shipping Width"
+                  v-model="product.shippingWidth"
+                  outlined
+                  :disabled="!edit"
+              ></v-text-field>
+              <v-text-field
+                  label="Shipping Heigth"
+                  v-model="product.shippingHeight"
+                  outlined
+                  :disabled="!edit"
+              ></v-text-field>
+            </div>
           </div>
-          <div class="col-6">
-            <p style="color: Red" v-if="type == 'scraped'">
-              Current Sub Category:<u> {{ product.subCategoryName }}</u>
-            </p>
-            <v-select
-              style="padding-top: 0px"
-              outlined
-              label="Sub Category"
-              return-object
-              item-text="name"
-              item-value="id"
-              :items="subCategories"
-              width="100%"
-              v-model="subCategory"
-              class="mt-3"
-              :disabled="!edit"
-            ></v-select>
-            <v-text-field
-              label="Brand"
-              v-model="product.brand"
-              outlined
-              :disabled="!edit"
-            ></v-text-field>
-            <v-text-field
-              label="Shipping Weight"
-              v-model="product.shippingWeight"
-              outlined
-              :disabled="!edit"
-            ></v-text-field>
-            <v-text-field
-              label="Shipping Length"
-              v-model="product.shippingLength"
-              outlined
-              :disabled="!edit"
-            ></v-text-field>
-            <v-text-field
-              label="Shipping Width"
-              v-model="product.shippingWidth"
-              outlined
-              :disabled="!edit"
-            ></v-text-field>
-            <v-text-field
-              label="Shipping Heigth"
-              v-model="product.shippingHeight"
-              outlined
-              :disabled="!edit"
-            ></v-text-field>
-          </div>
-        </div>
+        </v-form>
       </div>
     </div>
     <div class="container">
       <div class="center">
         <button
+            v-if="type === 'staged'"
           class="btn btn-sm btn-outline-secondary"
           @click="saveProductInfo()"
           :disabled="!edit"
@@ -121,8 +139,10 @@ export default {
   },
   data() {
     return {
+      validProductForm: false,
       categories: [],
       subCategories: [],
+      brands: [],
       category: null,
       subCategory: null,
     };
@@ -131,53 +151,31 @@ export default {
   beforeMount() {
     this.$nextTick(async function () {
       console.log("🤩🤩🤩PRODUCT ON DETAIL PAGE",this.product);
+      if (this.type === 'scraped'){
 
-      if(this.type == 'scraped'){
-        const categorys = await this.$store.dispatch("dataGate", {
-        tableName: "mappedCategories",
-        operation: "read",
-      });
-
-        if (this.product) {
-          categorys.data.forEach((element) => {
-            if (element.name == this.product.categoryName) {
-              this.category = element.id;
-            }
-            if (element.name == this.product.subCategoryName) {
-              this.subCategory = element.id;
-            }
-
-            if (element.parentId == 0) {
-              this.categories.push(element);
-            } else {
-              this.subCategories.push(element);
-            }
-          });
-        }
-      }else if(this.type == 'staged'){
-        const categorys = await this.$store.dispatch("dataGate", {
+      } else if (this.type === 'staged') {
+        const categories = await this.$store.dispatch("dataGate", {
           tableName: "mappedCategories",
           operation: "read",
         });
-
         if (this.product) {
-          categorys.data.forEach((element) => {
-            if (element.id == this.product.categoryId) {
-              this.category = element.id;
-            }
-            if (element.id == this.product.subCategoryId) {
-              this.subCategory = element.id;
-            }
-
-            if (element.parentId == 0) {
-              this.categories.push(element);
+          categories.data.forEach((category) => {
+            if (category.parentId) {
+              this.subCategories.push(category);
             } else {
-              this.subCategories.push(element);
+              this.categories.push(category);
             }
           });
         }
+        console.log('this.categories', this.categories)
+        const brandsResponse = await this.$store.dispatch("dataGate", {
+          tableName: "mappedBrands",
+          operation: "read",
+        });
+        if (brandsResponse.hasOwnProperty('data')) {
+          this.brands = brandsResponse.data;
+        }
       }
-      
     });
   },
   methods: {
@@ -185,69 +183,31 @@ export default {
       console.log(this.product);
       console.log(this.category);
       console.log(this.subCategory);
-
-      if (this.type == "scraped") {
-        if (this.category.id != null) {
-          this.product.categoryName = this.category.name;
-        } else {
-          this.product.categoryName = this.categories.find(
-            (x) => x.id === this.category
-          ).name;
+      if (this.$refs.validProductForm.validate()) {
+        if (this.type === "scraped") {
+          console.log(this.product);
+          // Can't
+          // const response = await this.$store.dispatch("dataGate", {
+          //   primaryKey: "id",
+          //   entity: this.product,
+          //   tableName: "scrapedProducts",
+          //   operation: "update",
+          // });
+        } else if (this.type === "staged") {
+          const response = await this.$store.dispatch("dataGate", {
+            primaryKey: "id",
+            entity: this.product,
+            tableName: "stagedProducts",
+            operation: "update",
+          });
+        } else if (this.type === "published") {
+          const response = await this.$store.dispatch("dataGate", {
+            primaryKey: "id",
+            entity: this.product,
+            tableName: "publishedProducts",
+            operation: "update",
+          });
         }
-
-        if (this.subCategory.id != null) {
-          this.product.subCategoryName = this.subCategory.name;
-        } else {
-          this.product.subCategoryName = this.subCategory.find(
-            (x) => x.id === this.subCategory
-          ).name;
-        }
-
-        console.log(this.product);
-        const response = await this.$store.dispatch("dataGate", {
-          primaryKey: "id",
-          entity: this.product,
-          tableName: "scrapedProducts",
-          operation: "update",
-        });
-      } else if (this.type == "staged") {
-        if (this.category.id != null) {
-          this.product.categoryName = this.category.id;
-        } else {
-          this.product.categoryName = this.category;
-        }
-
-        if (this.subCategory.id != null) {
-          this.product.subCategoryName = this.subCategory.id;
-        } else {
-          this.product.subCategoryName = this.subCategory;
-        }
-
-        const response = await this.$store.dispatch("dataGate", {
-          primaryKey: "id",
-          entity: this.product,
-          tableName: "stagedProducts",
-          operation: "update",
-        });
-      } else if (this.type == "published") {
-        if (this.category.id != null) {
-          this.product.categoryName = this.category.id;
-        } else {
-          this.product.categoryName = this.category;
-        }
-
-        if (this.subCategory.id != null) {
-          this.product.subCategoryName = this.subCategory.id;
-        } else {
-          this.product.subCategoryName = this.subCategory;
-        }
-
-        const response = await this.$store.dispatch("dataGate", {
-          primaryKey: "id",
-          entity: this.product,
-          tableName: "publishedProducts",
-          operation: "update",
-        });
       }
     },
   },

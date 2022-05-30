@@ -6,6 +6,7 @@
         :edit="true"
         :product="product"
     />
+    <products-product-publish :product="product"/>
   </div>
 </template>
 

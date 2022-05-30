@@ -9,8 +9,8 @@ if (process.env.NODE_ENV === 'production') {
   base_uri = 'https://admin.mineshift.co.za/'
   site_title = 'SSPUUD'
 } else {
-  api_uri = 'https://api.bambazonke.shop'
-  base_uri = 'http://localhost:3000/'
+  // api_uri = 'https://api.bambazonke.shop'
+  api_uri = 'http://localhost:4000'
   site_title = 'SSPUUD'
 }
 

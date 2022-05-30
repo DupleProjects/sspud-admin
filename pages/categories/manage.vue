@@ -3,6 +3,11 @@
     <!--Header-->
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
       <h1 class="h2">Manage Categories</h1>
+      <v-text-field
+          v-model="search"
+          label="Search"
+          class="mb-4"
+      ></v-text-field>
       <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
           <categories-create-category-dialog
@@ -11,7 +16,7 @@
       </div>
     </div>
     <!--Table-->
-    <categories-all-categories
+    <categories-category-list
         :categories="displayedCategories"/>
     <!--Pagination-->
     <template>
@@ -35,6 +40,7 @@ export default {
     return {
       loading: false,
       page: 1,
+      search: '',
       numberPerPage: 20,
       categoryCount: 0,
       categories: [],
@@ -45,10 +51,16 @@ export default {
   },
   watch: {
     page(val) {
-
+      this.setPage();
     },
-    search(val) {
 
+    search(val) {
+      this.filteredCategories = this.categories.filter((category) => {
+        return (
+            category.name.toLowerCase().includes(val.toLowerCase())
+        )
+      })
+      this.setPage()
     },
   },
   beforeMount() {
@@ -57,8 +69,7 @@ export default {
       // Load the products
       const categoriesResponse = await this.$store.dispatch('dataGate', {
         tableName: 'mappedCategories',
-        operation: 'read',
-        whereCriteria: {parentId: 0}
+        operation: 'read'
       });
 
       if (categoriesResponse.count) {
@@ -81,22 +92,16 @@ export default {
     })
   },
   methods: {
-    async saveCallBack(newCategory) {
-      // if(newCategory.parentId == 0){
-      //   this.categories.push(newCategory)
-      //   this.setPage();
-      // }
+    async loadCategories() {
       const categoriesResponse = await this.$store.dispatch('dataGate', {
         tableName: 'mappedCategories',
         operation: 'read',
-        whereCriteria: {parentId: 0}
       });
-
-      this.categories = categoriesResponse.data;
-      this.filteredCategories = this.categories;
+      this.filteredCategories = categoriesResponse.data;
       this.setPage();
-
-
+    },
+    async saveCallBack() {
+      await this.loadCategories()
     },
     goToCategoryDashboard(category) {
       this.$router.push(

@@ -8,6 +8,12 @@
           <th class="info-column" scope="col">Category</th>
           <th class="info-column" scope="col">Subcategory</th>
           <th class="info-column2" scope="col">Brand</th>
+          <th v-if="type === 'staged'" class="info-column2" scope="col">
+            Publish
+          </th>
+          <th v-if="type === 'staged'" class="info-column2" scope="col">
+            Review Required
+          </th>
           <th class="actions-column" scope="col"></th>
         </tr>
       </thead>
@@ -18,40 +24,26 @@
           <td v-if="type === 'scraped'" class="info-column">
             {{ product.categoryName }}
           </td>
-          <td v-if="type === 'staged'" class="info-column">
-            <span
-              v-if="
-                allCategories.find((x) => x.id === product.categoryId) !=
-                undefined
-              "
-            >
-              {{ allCategories.find((x) => x.id === product.categoryId).name }}
-            </span>
+          <td v-if="type === 'staged' || type === 'published'" class="info-column">
+            {{ getCategoryName(product.categoryId)}}
           </td>
           <td v-if="type === 'scraped'" class="info-column">
             {{ product.subCategoryName }}
           </td>
-          <td v-if="type === 'staged'" class="info-column">
-            <span
-              v-if="
-                allCategories.find((x) => x.id === product.subCategoryId) !=
-                undefined
-              "
-              >{{
-                allCategories.find((x) => x.id === product.subCategoryId).name
-              }}</span
-            >
+          <td v-if="type === 'staged' || type === 'published'" class="info-column">
+            {{ getCategoryName(product.subCategoryId)}}
           </td>
           <td v-if="type === 'scraped'" class="info-column">
             {{ product.brand }}
           </td>
-          <td v-if="type === 'staged'" class="info-column2">
-            <span
-              v-if="
-                allBrands.find((x) => x.id === product.brandId) != undefined
-              "
-              >{{ allBrands.find((x) => x.id === product.brandId).name }}</span
-            >
+          <td v-if="type === 'staged' || type === 'published'" class="info-column2">
+            {{getBrandName(product.brandId)}}
+          </td>
+          <td v-if="type === 'staged'">
+            {{ product.publish }}
+          </td>
+          <td v-if="type === 'staged' || type === 'published'">
+            {{ product.reviewRequired }}
           </td>
           <td class="actions-column">
             <div>
@@ -59,7 +51,7 @@
               <v-tooltip top>
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
-                    v-if="canEdit"
+                    v-if="type === 'staged'"
                     small
                     class="button-style"
                     text
@@ -73,12 +65,11 @@
                 </template>
                 <span>Edit</span>
               </v-tooltip>
-              <!-- :disabled="!canEdit" -->
               <!-- View Button -->
               <v-tooltip top>
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
-                    v-if="!canEdit"
+                    v-if="type !== 'staged'"
                     small
                     class=""
                     text
@@ -92,25 +83,25 @@
                 </template>
                 <span>View</span>
               </v-tooltip>
-                <v-tooltip top>
+              <!-- View Button -->
+              <v-tooltip top>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
-                      :disabled="!canDelete"
+                      :disabled="type !== 'staged'"
                       small
                       class="button-style"
                       text
                       @click="openTheDeleteDialog(product)"
                       style="text-align: center"
                       v-bind="attrs"
-                      v-on="on"
-                    >
+                      v-on="on">
                       <v-icon small>mdi-trash-can</v-icon>
                     </v-btn>
                   </template>
                   <span>Delete</span>
                 </v-tooltip>
-                <!--New Category Dialog-->
-                <v-dialog
+              <!--Delete Dialog-->
+              <v-dialog
                   style="z-index: 10000"
                   v-model="deleteDialog"
                   max-width="800"
@@ -145,7 +136,6 @@
                     </v-card-actions>
                   </v-card>
                 </v-dialog>
-              <!-- :disabled="!canDelete" -->
             </div>
           </td>
         </tr>
@@ -160,8 +150,6 @@ export default {
   props: {
     type: "",
     products: [],
-    canDelete: false,
-    canEdit: false,
     allCategories: [],
     allBrands: [],
     deleteProductCallBack: null
@@ -190,7 +178,7 @@ export default {
         });
       } else if (this.type === "published") {
         this.$router.push({
-          name: "categories-dashboard-id",
+          name: "products-published-dashboard-id",
           params,
         });
       }
@@ -198,6 +186,24 @@ export default {
     closeTheDeleteDialog() {
       this.deleteDialog = false;
       this.productToDelete = {};
+    },
+    getBrandName(brandId) {
+      if (this.allBrands) {
+        const brand = this.allBrands.find((x) => x.id === brandId);
+        if (brand) {
+          return brand.name;
+        }
+      }
+      return 'Brand Not Found';
+    },
+    getCategoryName(categoryId) {
+      if (this.allCategories) {
+        const category = this.allCategories.find((x) => x.id === categoryId);
+        if (category) {
+          return category.name;
+        }
+      }
+      return 'Category Not Found';
     },
     async deleteThisProduct() {
       console.log("🔥🔥🔥🔥On Confirm",this.productToDelete.id);

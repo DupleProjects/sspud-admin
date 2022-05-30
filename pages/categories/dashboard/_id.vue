@@ -25,16 +25,20 @@
             :messages="['Choose a parent or leave blank']"
         ></v-select>
       </v-form>
+      <button
+          @click="saveCategory()"
+          class="btn btn-success">Save</button>
     </div>
     <!--Linked Section-->
     <div>
+      <h3>Linked Categories</h3>
     <categories-category-list
         :type="'mapped'"
         :categories="linkedCategories"
         :title="'Linked Categories'"/>
     </div>
     <!--Linked Scraped Categories Section-->
-    <!-- <h4 class="section-heading">Linked Scraped Categories</h4> -->
+     <h4 class="section-heading">Linked Scraped Categories</h4>
     <categories-category-list
         :type="'scraped'"
         :categories="linkedScrapedCategories"
@@ -75,10 +79,8 @@ export default {
         });
         if (categoriesResponse.data) {
           this.categories = categoriesResponse.data;
-          console.log("👉👉👉",this.categories);
           // Get the actual category and the linked ones
           for (let i = 0; i < this.categories.length; i++) {
-              // console.log("this.categories[i]",this.categories[i]);
             if (this.categories[i].id === Number(this.$route.params.id)) {
               // console.log('this.category', this.category)
               this.category = this.categories[i];
@@ -109,7 +111,15 @@ export default {
     })
   },
   methods: {
-
+    async saveCategory() {
+      const categoryResponse = await this.$store.dispatch('dataGate', {
+        primaryKey: 'id',
+        tableName: 'mappedCategories',
+        operation: 'update',
+        entity: this.category
+      });
+      console.log('categoryResponse', categoryResponse)
+    }
   },
 }
 </script>
