@@ -100,6 +100,11 @@ export default {
           title: 'Published Products',
           to: '/products/published/list'
         },
+        {
+          icon: 'mdi-chart-bubble',
+          title: 'Users',
+          to: '/users/manage'
+        },
       ],
       miniVariant: true,
       right: true,
