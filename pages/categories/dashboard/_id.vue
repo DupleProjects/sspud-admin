@@ -25,8 +25,16 @@
             :messages="['Choose a parent or leave blank']"
         ></v-select>
         <v-switch
+            v-model="category.publish"
+            :label="`Publish`"
+        ></v-switch>
+        <v-switch
             v-model="category.BOBSRequired"
             :label="`BOBS Required`"
+        ></v-switch>
+        <v-switch
+            v-model="category.SABSRequired"
+            :label="`SABS Required`"
         ></v-switch>
       </v-form>
       <button

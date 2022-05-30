@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="row" v-if="product">
+    <div class="row" v-if="product && showDetail">
       <div class="col-3">
         <v-img
           style="border-style: solid; width: 100%; border-color: yellow"
@@ -121,8 +121,7 @@
             v-if="type === 'staged'"
           class="btn btn-sm btn-outline-secondary"
           @click="saveProductInfo()"
-          :disabled="!edit"
-        >
+          :disabled="!edit">
           Save Product Information
         </button>
       </div>
@@ -139,6 +138,7 @@ export default {
   },
   data() {
     return {
+      showDetail: false,
       validProductForm: false,
       categories: [],
       subCategories: [],
@@ -159,6 +159,7 @@ export default {
           operation: "read",
         });
         if (this.product) {
+          console.log('this.product', this.product)
           categories.data.forEach((category) => {
             if (category.parentId) {
               this.subCategories.push(category);
@@ -176,6 +177,7 @@ export default {
           this.brands = brandsResponse.data;
         }
       }
+      this.showDetail = true;
     });
   },
   methods: {
