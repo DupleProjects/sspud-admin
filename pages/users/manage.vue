@@ -1,137 +1,141 @@
 <template>
-    <div>
-        <!--Header-->
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2">Manage Users</h1>
-            <v-text-field
-                v-model="search"
-                label="Search"
-                class="mb-4"
-            ></v-text-field>
-            <div class="btn-toolbar mb-2 mb-md-0">
-                <div class="btn-group me-2">
-                    <categories-create-category-dialog
-                    :categories="displayedCategories" :saveCallBack="saveCallBack" />
-                </div>
-            </div>
+  <div>
+    <!--Header-->
+    <div
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+      <h1 class="h2">Manage Users</h1>
+      <v-text-field
+          v-model="search"
+          label="Search"
+          class="mb-4"
+      ></v-text-field>
+      <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+          <categories-create-category-dialog
+              :categories="displayedCategories" :saveCallBack="saveCallBack"/>
         </div>
-        <!--Table-->
-        <categories-category-list
-        :categories="displayedCategories"/>
-        <!--Pagination-->
-        <template>
-            <div class="text-end">
-                <v-pagination
-                    color="primary"
-                    v-model="page"
-                :length="Math.ceil(this.userCount / this.numberPerPage)"
-                :total-visible="7"
-                ></v-pagination>
+      </div>
     </div>
-</template>
-</div>
+    <!--Table-->
+    <categories-category-list
+        :categories="displayedCategories"/>
+    <!--Pagination-->
+    <template>
+      <div class="text-end">
+        <v-pagination
+            color="primary"
+            v-model="page"
+            :length="Math.ceil(this.userCount / this.numberPerPage)"
+            :total-visible="7"
+        ></v-pagination>
+      </div>
+    </template>
+  </div>
 </template>
 
 <script>
-    import baseMixin from '@/mixins/baseMixin.js'
-    export default {
-    mixins: [baseMixin],
-    data() {
+import baseMixin from '@/mixins/baseMixin.js'
+
+export default {
+  mixins: [baseMixin],
+  data() {
     return {
-    loading: false,
-    page: 1,
-    search: '',
-    numberPerPage: 20,
-    userCount: 0,
-    users: [],
-    filteredusers: [],
-    displayedCategories: [],
-    subCategories: [],
-}
-},
-    watch: {
+      loading: false,
+      page: 1,
+      search: '',
+      numberPerPage: 20,
+      userCount: 0,
+      users: [],
+      filteredusers: [],
+      displayedCategories: [],
+      subCategories: [],
+    }
+  },
+  watch: {
     page(val) {
-    this.setPage();
-},
+      this.setPage();
+    },
 
     search(val) {
-    this.filteredusers = this.users.filter((category) => {
-    return (
-    category.name.toLowerCase().includes(val.toLowerCase())
-    )
-})
-    this.setPage()
-},
-},
-    beforeMount() {
+      this.filteredusers = this.users.filter((category) => {
+        return (
+            category.name.toLowerCase().includes(val.toLowerCase())
+        )
+      })
+      this.setPage()
+    },
+  },
+  beforeMount() {
     this.$nextTick(async function () {
-    // var loggedInUser = this.$store.state.auth.user
-    // Load the products
-    const usersResponse = await this.$store.dispatch('dataGate', {
-    tableName: 'users',
-    operation: 'read'
-});
+      // var loggedInUser = this.$store.state.auth.user
+      // Load the products
+      const usersResponse = await this.$store.dispatch('dataGate', {
+        tableName: 'users',
+        operation: 'read'
+      });
 
-    if (usersResponse.count) {
-    this.userCount = usersResponse.count;
-}
+      if (usersResponse.count) {
+        this.userCount = usersResponse.count;
+      }
 
-    if (usersResponse.data) {
-    console.log('usersResponse.data', usersResponse.data)
-    this.users = usersResponse.data;
-    console.log('this.users',this.users)
-    this.filteredusers = this.users;
-    this.setPage();
-}
-    this.loading = false
-})
-},
-    unmounted() {
+      if (usersResponse.data) {
+        console.log('usersResponse.data', usersResponse.data)
+        this.users = usersResponse.data;
+        console.log('this.users', this.users)
+        this.filteredusers = this.users;
+        this.setPage();
+      }
+      this.loading = false
+    })
+  },
+  unmounted() {
     this.$nextTick(async function () {
 
-})
-},
-    methods: {
+    })
+  },
+  methods: {
     async loadCategories() {
-    const usersResponse = await this.$store.dispatch('dataGate', {
-    tableName: 'mappedCategories',
-    operation: 'read',
-});
-    this.filteredusers = usersResponse.data;
-    this.setPage();
-},
+      const usersResponse = await this.$store.dispatch('dataGate', {
+        tableName: 'mappedCategories',
+        operation: 'read',
+      });
+      this.filteredusers = usersResponse.data;
+      this.setPage();
+    },
     async saveCallBack() {
-    await this.loadCategories()
-},
+      await this.loadCategories()
+    },
     goToCategoryDashboard(category) {
-    this.$router.push(
-{
-    name: 'users-dashboard-id',
-    params: {id: category.id}
-}
-    )
-},
+      this.$router.push(
+          {
+            name: 'users-dashboard-id',
+            params: {id: category.id}
+          }
+      )
+    },
     // Pagination
     setPage() {
-    this.displayedCategories = []
-    function numPages(total, numPerPage) {
-    return Math.ceil(total / numPerPage)
-}
-    // Validate page
-    if (this.page < 1) this.page = 1
-    if (this.page > numPages(this.filteredusers.length, this.numberPerPage))
-    this.page = numPages(this.filteredusers.length, this.numberPerPage)
-    for (
-    let i = (this.page - 1) * this.numberPerPage;
-    i < this.page * this.numberPerPage && i < this.filteredusers.length;
-    i++
-    ) {
-    if (this.filteredusers[i]) {
-    this.displayedCategories.push(this.filteredusers[i])
-}
-}
-},
-},
+      this.displayedCategories = []
+
+      function numPages(total, numPerPage) {
+        return Math.ceil(total / numPerPage)
+      }
+
+      // Validate page
+      if (this.page < 1) this.page = 1
+      if (this.page > numPages(this.filteredusers.length, this.numberPerPage))
+        this.page = numPages(this.filteredusers.length, this.numberPerPage)
+      for (
+          let i = (this.page - 1) * this.numberPerPage;
+          i < this.page * this.numberPerPage && i < this.filteredusers.length;
+          i++
+      ) {
+        if (this.filteredusers[i]) {
+          this.displayedCategories.push(this.filteredusers[i])
+        }
+      }
+    },
+  },
 }
 </script>
 
