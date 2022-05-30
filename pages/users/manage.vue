@@ -11,14 +11,14 @@
       ></v-text-field>
       <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
-          <categories-create-category-dialog
-              :categories="displayedCategories" :saveCallBack="saveCallBack"/>
+          <create-user-dialog
+              :categories="users" :saveCallBack="saveCallBack"/>
         </div>
       </div>
     </div>
     <!--Table-->
-    <categories-category-list
-        :categories="displayedCategories"/>
+    <users-list
+        :users="users"/>
     <!--Pagination-->
     <template>
       <div class="text-end">
@@ -35,8 +35,11 @@
 
 <script>
 import baseMixin from '@/mixins/baseMixin.js'
+import usersList from '../../components/users/usersList.vue';
+import CreateUserDialog from '../../components/users/createUserDialog.vue';
 
 export default {
+  components: { usersList, CreateUserDialog },
   mixins: [baseMixin],
   data() {
     return {
@@ -94,16 +97,16 @@ export default {
     })
   },
   methods: {
-    async loadCategories() {
+    async loadUsers() {
       const usersResponse = await this.$store.dispatch('dataGate', {
-        tableName: 'mappedCategories',
+        tableName: 'users',
         operation: 'read',
       });
       this.filteredusers = usersResponse.data;
       this.setPage();
     },
-    async saveCallBack() {
-      await this.loadCategories()
+    async saveCallBack(user) {
+      await this.loadUsers()
     },
     goToCategoryDashboard(category) {
       this.$router.push(
