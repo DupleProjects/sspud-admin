@@ -22,7 +22,11 @@
     <div v-if="!loading">
       <!--Table-->
       <h2>Published Products</h2>
-      <products-product-list :type="'published'" :products="products" />
+      <products-product-list
+          :type="'published'"
+          :allCategories="allCategories"
+          :allBrands="allBrands"
+          :products="products" />
       <!--Pagination-->
       <template>
         <div class="text-end">
@@ -49,6 +53,8 @@ export default {
       numberPerPage: 20,
       productCount: 0,
       products: [],
+      allCategories: [],
+      allBrands: [],
     }
   },
   watch: {
@@ -61,9 +67,12 @@ export default {
   },
   beforeMount() {
     this.$nextTick(async function () {
+      this.loading = true;
       // var loggedInUser = this.$store.state.auth.user
       // Load Products
-      await this.loadProducts()
+      await this.loadProducts();
+      await this.loadCategoriesAndBrands();
+      this.loading = false;
     })
   },
   unmounted() {
@@ -73,7 +82,6 @@ export default {
   methods: {
     // Loading stuff
     async loadProducts() {
-      this.loading = true
       // Load the products
       const scrapedProducts = await this.$store.dispatch('dataGate', {
         tableName: 'publishedProducts',
@@ -87,7 +95,25 @@ export default {
       if (scrapedProducts.data) {
         this.products = scrapedProducts.data;
       }
-      this.loading = false
+    },
+    async loadCategoriesAndBrands() {
+      const categories = await this.$store.dispatch("dataGate", {
+        tableName: "mappedCategories",
+        operation: "read",
+      });
+
+      if (categories.data) {
+        this.allCategories = categories.data;
+      }
+
+      const brands = await this.$store.dispatch("dataGate", {
+        tableName: "mappedBrands",
+        operation: "read",
+      });
+
+      if (brands.data) {
+        this.allBrands = brands.data;
+      }
     },
   },
 }

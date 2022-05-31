@@ -56,16 +56,6 @@ export default {
       fixed: false,
       items: [
         {
-          icon: 'mdi-apps',
-          title: 'Welcome',
-          to: '/'
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire'
-        },
-        {
           icon: 'mdi-chart-bubble',
           title: 'Manage Categories',
           to: '/categories/manage'
@@ -99,6 +89,11 @@ export default {
           icon: 'mdi-chart-bubble',
           title: 'Published Products',
           to: '/products/published/list'
+        },
+        {
+          icon: 'mdi-chart-bubble',
+          title: 'Users',
+          to: '/users/manage'
         },
       ],
       miniVariant: true,

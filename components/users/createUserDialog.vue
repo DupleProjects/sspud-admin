@@ -3,16 +3,16 @@
     <button
         @click="openDialog()"
         type="button" class="btn btn-sm btn-outline-secondary">
-      New Category
+      New User
     </button>
     <!--New Category Dialog-->
-    <v-dialog style="z-index: 10000" v-model="newCategoryDialog" max-width="800">
-      <v-card v-if="category">
+    <v-dialog style="z-index: 10000" v-model="newUserDialog" max-width="800">
+      <v-card v-if="user">
         <v-card-title>
-          New Category
+          New User
         </v-card-title>
         <v-card-subtitle>
-          Create a new category
+          Create a new user
         </v-card-subtitle>
         <v-card-text class="pb-0">
           <v-form
@@ -21,20 +21,25 @@
               lazy-validation>
             <v-text-field
                 prepend-icon="mdi-card-account-details-outline"
-                v-model="category.name"
-                :rules="[(v) => !!v || 'A Name is required']"
-                hint="The name of the category"
+                v-model="user.name"
+                :rules="[(v) => !!v || 'A name is required']"
+                hint="The user's name"
                 label="Name"
             ></v-text-field>
-            <v-select
-                prepend-icon="mdi-clipboard-check-multiple"
-                label="Parent"
-                :item-text="'name'"
-                :item-value="'id'"
-                :items="categories"
-                v-model="category.parentId"
-                :messages="['Choose a parent or leave blank']"
-            ></v-select>
+            <v-text-field
+                prepend-icon="mdi-card-account-details-outline"
+                v-model="user.surname"
+                :rules="[(v) => !!v || 'A surname is required']"
+                hint="The user's surname"
+                label="Surname"
+            ></v-text-field>
+            <v-text-field
+                prepend-icon="mdi-card-account-details-outline"
+                v-model="user.email"
+                :rules="[(v) => !!v || 'An email address is required']"
+                hint="The user's email address"
+                label="Email"
+            ></v-text-field>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -50,14 +55,14 @@
               :disabled="!validCategoryForm"
               color="primary"
               text
-              v-on:click="saveCategory">
+              v-on:click="saveUser">
             Save
           </v-btn>
           <v-btn
               :disabled="loading"
               color="primary"
               text
-              @click="newCategoryDialog = false">Close</v-btn>
+              @click="newUserDialog = false">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -67,15 +72,15 @@
 <script>
 export default {
   props: {
-    categories: [],
-    saveCallBack: null
+    users: [],
+    saveCallBack: null,
   },
   data() {
     return {
       loading: false,
       validCategoryForm: true,
-      newCategoryDialog: false,
-      category: null,
+      newUserDialog: false,
+      user: null,
     }
   },
   mounted() {
@@ -83,30 +88,32 @@ export default {
   },
   methods: {
     async openDialog() {
-      this.newCategoryDialog = true;
-      // Create new  default category
-      this.category = {
+      this.newUserDialog = true;
+      // Create new  default user
+      this.user = {
         name: '',
-        parentId: null,
-        publish: false
+        surname: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
       }
     },
-    async saveCategory() {
+    async saveUser() {
       this.loading = true;
-     // Save the new category if the form is valid
+      console.log("✔️✔️", this.user);
+     // Save the new user if the form is valid
       if (this.$refs.newCategoryForm.validate()) {
         const response = await this.$store.dispatch('dataGate', {
-          primaryKey: 'id',
-          entity: this.category,
-          tableName: 'mappedCategories',
+          entity: this.user,
+          tableName: 'users',
           operation: 'create',
         })
         // If valid response return value
         if (response && response.response) {
-          this.saveCallBack(this.category)
+          this.saveCallBack(this.user)
         }
       }
-      this.newCategoryDialog = false;
+      this.newUserDialog = false;
       this.loading = false;
     },
   }

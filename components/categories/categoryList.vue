@@ -1,26 +1,23 @@
 <template>
   <div class="table-responsive">
-    <h4 class="section-heading">{{title}}</h4>
     <div class="table-responsive">
       <table class="table table-striped table-sm">
-        <!-- <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Header</th>
-          <th scope="col">Header</th>
-          <th scope="col">Header</th>
-          <th scope="col">Header</th>
-        </tr>
-        </thead> -->
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Parent</th>
+            <th scope="col">Publish</th>
+            <th scope="col">CreatedAt</th>
+          </tr>
+        </thead>
         <tbody>
         <tr
             @click="goToCategoryDashboard(category)"
             v-for="(category, index) of categories" :key="index">
           <td>{{category.name}}</td>
-          <td>random</td>
-          <td>data</td>
-          <td>placeholder</td>
-          <td>text</td>
+          <td>{{parentCategoryName(category.parentId)}}</td>
+          <td>{{category.publish}}</td>
+          <td>{{category.createdAt}}</td>
         </tr>
         </tbody>
       </table>
@@ -29,11 +26,12 @@
 </template>
 
 <script>
+import baseMixin from "@/mixins/baseMixin";
+
 export default {
   props: {
     type: '',
     categories: [],
-    title:[]
   },
   data() {
     return {
@@ -51,6 +49,17 @@ export default {
             params: {id: category.id}
           }
       )
+    },
+    parentCategoryName: function (parentId) {
+      const parentCategory = baseMixin.methods.getObjectsWhereKeysHaveValues(
+          this.categories,
+          {id: parentId},
+          true
+      )
+      if (parentCategory) {
+        return parentCategory.name;
+      }
+      return 'No parent category'
     },
   }
 }

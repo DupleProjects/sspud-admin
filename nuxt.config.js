@@ -10,7 +10,7 @@ if (process.env.NODE_ENV === 'production') {
   site_title = 'SSPUUD'
 } else {
   api_uri = 'https://api.bambazonke.shop'
-  base_uri = 'http://localhost:3000/'
+  // api_uri = 'http://localhost:4000'
   site_title = 'SSPUUD'
 }
 

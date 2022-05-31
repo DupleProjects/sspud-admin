@@ -26,8 +26,6 @@
       <products-product-list
         :type="'staged'"
         :products="products"
-        :canDelete="true"
-        :canEdit="true"
         :allCategories="allCategories"
         :allBrands="allBrands"
         :deleteProductCallBack="deleteProductCallBack"
@@ -70,9 +68,12 @@ export default {
   },
   beforeMount() {
     this.$nextTick(async function () {
+      this.loading = true;
       // var loggedInUser = this.$store.state.auth.user
       // Load Products
       await this.loadProducts();
+      await this.loadCategoriesAndBrands();
+      this.loading = false;
     });
   },
   unmounted() {
@@ -81,7 +82,6 @@ export default {
   methods: {
     // Loading stuff
     async loadProducts() {
-      this.loading = true;
       // Load the products
       const scrapedProducts = await this.$store.dispatch("dataGate", {
         tableName: "stagedProducts",
@@ -95,7 +95,8 @@ export default {
       if (scrapedProducts.data) {
         this.products = scrapedProducts.data;
       }
-
+    },
+    async loadCategoriesAndBrands() {
       const categories = await this.$store.dispatch("dataGate", {
         tableName: "mappedCategories",
         operation: "read",
@@ -113,21 +114,9 @@ export default {
       if (brands.data) {
         this.allBrands = brands.data;
       }
-
-      this.loading = false;
     },
     async deleteProductCallBack() {
-      const deletedProductResponse = await this.$store.dispatch("dataGate", {
-        tableName: "stagedProducts",
-        operation: "read",
-      });
-      if (deletedProductResponse.count) {
-        this.productCount = deletedProductResponse.count;
-      }
-      if (deletedProductResponse.data) {
-        console.log("deletedProductResponse.data", deletedProductResponse.data);
-        this.products = deletedProductResponse.data;
-      }
+      await this.loadProducts();
     },
   },
 };
