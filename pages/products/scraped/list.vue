@@ -22,7 +22,7 @@
     <div v-if="!loading">
       <!--Table-->
       <h2>Scraped Products</h2>
-      <products-product-list :type="'scraped'" :products="products" />
+      <products-product-list :type="'scraped'" :products="products" :canDelete="false" />
       <!--Pagination-->
       <template>
         <div class="text-end">
@@ -87,6 +87,7 @@ export default {
       if (scrapedProducts.data) {
         this.products = scrapedProducts.data;
       }
+
       this.loading = false
     },
   },

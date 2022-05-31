@@ -1,43 +1,50 @@
 <template>
   <div>
     <h2>Product Dashboard</h2>
-    <products-product-dashboard />
-    <products-product-publish />
-    <products-product-log />
+    <products-product-detail
+        :type="'staged'"
+        :edit="true"
+        :product="product"
+    />
+    <products-product-publish :product="product"/>
   </div>
 </template>
 
 <script>
-import baseMixin from '@/mixins/baseMixin.js'
+import baseMixin from "@/mixins/baseMixin.js";
 export default {
   mixins: [baseMixin],
   data() {
     return {
+      product: null,
       loading: false,
-      page: 1,
-      numberPerPage: 20,
-      categoryCount: 0,
-      categories: [],
-    }
+    };
   },
   beforeMount() {
     this.$nextTick(async function () {
-      this.loading = true
-
-      this.loading = false
-    })
+      this.loading = true;
+      // Get the product for the product id
+      console.log('this.$router.currentRoute.params.id', this.$router.currentRoute.params.id)
+      if (this.$router.currentRoute.params.id) {
+        const productResponse = await this.$store.dispatch('dataGate', {
+          tableName: 'stagedProducts',
+          operation: 'read',
+          whereCriteria: {id: this.$router.currentRoute.params.id}
+        });
+        console.log('productResponse', productResponse)
+        // Check if valid response
+        if (productResponse.data && productResponse.data.length > 0) {
+          this.product = productResponse.data[0];
+        }
+      }
+      this.loading = false;
+    });
   },
   unmounted() {
-    this.$nextTick(async function () {
-
-    })
+    this.$nextTick(async function () {});
   },
-  methods: {
-
-  },
-}
+  methods: {},
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

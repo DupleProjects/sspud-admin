@@ -35,7 +35,7 @@ export const entityDataStore = {
       if (data.hasOwnProperty("route")) {
         const response = await axios({
           method: "post",
-          url: process.env.baseURL + "/" + data.route,
+          url: process.env.apiURL + "/" + data.route,
           headers: {},
           data: data,
         });
