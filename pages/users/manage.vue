@@ -18,7 +18,7 @@
     </div>
     <!--Table-->
     <users-list
-        :users="users"/>
+        :users="displayedUsers" :saveCallBack="saveCallBack"/>
     <!--Pagination-->
     <template>
       <div class="text-end">
@@ -50,7 +50,7 @@ export default {
       userCount: 0,
       users: [],
       filteredusers: [],
-      displayedCategories: [],
+      displayedUsers: [],
       subCategories: [],
     }
   },
@@ -103,9 +103,11 @@ export default {
         operation: 'read',
       });
       this.filteredusers = usersResponse.data;
+      console.log("3. MANAGE loadUsers");
       this.setPage();
     },
     async saveCallBack(user) {
+      console.log("2. MANAGE saveCallBack");
       await this.loadUsers()
     },
     goToCategoryDashboard(category) {
@@ -118,7 +120,8 @@ export default {
     },
     // Pagination
     setPage() {
-      this.displayedCategories = []
+      console.log("4. MANAGE setPage");
+      this.displayedUsers = []
 
       function numPages(total, numPerPage) {
         return Math.ceil(total / numPerPage)
@@ -134,9 +137,35 @@ export default {
           i++
       ) {
         if (this.filteredusers[i]) {
-          this.displayedCategories.push(this.filteredusers[i])
+          this.displayedUsers.push(this.filteredusers[i])
         }
       }
+    },
+    async deleteUser(brand) {
+      console.log(brand);
+      const response = await this.$store.dispatch("dataGate", {
+        primaryKey: "id",
+        entity: brand,
+        tableName: "mappedBrands",
+        operation: "delete",
+      });
+
+      this.loading = true;
+
+      const brandsResponse = await this.$store.dispatch("dataGate", {
+        tableName: "mappedBrands",
+        operation: "read",
+      });
+      if (brandsResponse.count) {
+        this.brandCount = brandsResponse.count;
+      }
+      if (brandsResponse.data) {
+        console.log("brandsResponse.data", brandsResponse.data);
+        this.brands = brandsResponse.data;
+        this.filteredBrands = this.brands;
+        this.setPage();
+      }
+      this.loading = false;
     },
   },
 }

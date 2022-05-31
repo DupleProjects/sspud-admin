@@ -102,6 +102,11 @@ export default {
         },
         {
           icon: 'mdi-chart-bubble',
+          title: 'Published Products',
+          to: '/products/deleted/list'
+        },
+        {
+          icon: 'mdi-chart-bubble',
           title: 'Users',
           to: '/users/manage'
         },

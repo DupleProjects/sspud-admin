@@ -16,7 +16,7 @@
           <td class="info-column">{{ user.email }}</td>
           <td class="actions-column">
             <div>
-              <edit-user-dialog :users="users" :editedUser="user" :usersCallBack="usersCallBack" />
+              <edit-user-dialog :users="users" :editedUser="user" :usersCallBackEdit="usersCallBackEdit" />
               <!-- View Button -->
               <!-- <v-tooltip top>
                 <template v-slot:activator="{ on, attrs }">
@@ -42,7 +42,7 @@
                       small
                       class="button-style"
                       text
-                      @click="openTheDeleteDialog(product)"
+                      @click="openTheDeleteDialog(user)"
                       style="text-align: center"
                       v-bind="attrs"
                       v-on="on">
@@ -58,10 +58,9 @@
                   max-width="800"
                 >
                   <v-card>
-                    <v-card-title> Delete Product </v-card-title>
+                    <v-card-title> Delete User </v-card-title>
                     <v-card-subtitle>
-                      Are you sure that you want to delete this product from
-                      staged products? This action cannot be undone.
+                      Are you sure that you want to delete this user? This action cannot be undone.
                     </v-card-subtitle>
                     <v-card-actions>
                       <v-spacer></v-spacer>
@@ -74,7 +73,7 @@
                       <v-btn
                         color="primary"
                         text
-                        v-on:click="deleteThisProduct()"
+                        v-on:click="deleteUser(userToDelete)"
                       >
                         Confirm Delete
                       </v-btn>
@@ -104,17 +103,15 @@ export default {
     type: "",
     products: [],
     allCategories: [],
-    allBrands: [],
     deleteProductCallBack: null,
     users: [],
-    usersCallBack: null,
     saveCallBack: null
   },
   data() {
     return {
       deleteDialog: false,
       loading: false,
-      productToDelete: {}
+      userToDelete: {}
     };
   },
   mounted() {},
@@ -141,16 +138,7 @@ export default {
     },
     closeTheDeleteDialog() {
       this.deleteDialog = false;
-      this.productToDelete = {};
-    },
-    getBrandName(brandId) {
-      if (this.allBrands) {
-        const brand = this.allBrands.find((x) => x.id === brandId);
-        if (brand) {
-          return brand.name;
-        }
-      }
-      return 'Brand Not Found';
+      this.userToDelete = {};
     },
     getCategoryName(categoryId) {
       if (this.allCategories) {
@@ -161,33 +149,36 @@ export default {
       }
       return 'Category Not Found';
     },
-    async deleteThisProduct() {
-      console.log("🔥🔥🔥🔥On Confirm",this.productToDelete.id);
-      //delete the product from scrapedProducts
-      const deleteResponse = await this.$store.dispatch("dataGate", {
+    async openTheDeleteDialog(user) { 
+      this.userToDelete = user;
+      console.log("🔥🔥On Click",this.userToDelete.id);   
+      this.deleteDialog = true;
+    },
+    async usersCallBackEdit(usersCallBack){
+        await this.saveCallBack();
+    },
+    async deleteUser(user) {
+      console.log("USER TO DELETE",user);
+      const response = await this.$store.dispatch("dataGate", {
         primaryKey: "id",
-        entity: this.productToDelete,
-        tableName: "stagedProducts",
+        entity: user,
+        tableName: "users",
         operation: "delete",
       });
 
-      if (deleteResponse && deleteResponse.response) {
-        console.log("😁SUCCESSFULLY DELETED PRODUCT",this.productToDelete.id);
-          this.deleteProductCallBack()
-      } else {
-        console.log("🔥COULD NOT DELETE PRODUCT");
-      }
-      this.deleteDialog = false;
-      this.closeTheDeleteDialog();
-    },
-    async openTheDeleteDialog(product) { 
-      this.productToDelete = product;
-      console.log("🔥🔥On Click",this.productToDelete.id);   
-      this.deleteDialog = true;
-    },
-    usersCallBack(usersCallBack){
+      this.loading = true;
+
+      const usersResponse = await this.$store.dispatch("dataGate", {
+        tableName: "users",
+        operation: "read",
+      });
+
+      if (usersResponse.data) {
         this.saveCallBack();
-    }
+      }
+      this.loading = false;
+      this.deleteDialog = false;
+    },
   },
 };
 </script>

@@ -94,8 +94,7 @@ export default {
         name: '',
         surname: '',
         email: '',
-        password: '',
-        confirmPassword: ''
+        password: ''
       }
     },
     async saveUser() {
@@ -110,7 +109,8 @@ export default {
         })
         // If valid response return value
         if (response && response.response) {
-          this.saveCallBack(this.user)
+            console.log("1. createUserDialog Response Received!");
+          await this.saveCallBack(this.user)
         }
       }
       this.newUserDialog = false;
