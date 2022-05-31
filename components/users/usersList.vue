@@ -174,12 +174,21 @@ export default {
       });
 
       if (usersResponse.data) {
-        this.saveCallBack();
+          this.deleteProductCallBack()
       }
       this.loading = false;
       this.deleteDialog = false;
     },
-  },
+    async openTheDeleteDialog(product) { 
+      this.productToDelete = product;
+      console.log("🔥🔥On Click",this.productToDelete.id);   
+      this.deleteDialog = true;
+    },
+    usersCallBack(usersCallBack) {
+        this.saveCallBack();
+      }
+      
+    },
 };
 </script>
 
