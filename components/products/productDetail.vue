@@ -7,6 +7,9 @@
           lazy-src="https://picsum.photos/id/11/10/6"
           :src="product.imageSrc"
         ></v-img>
+        <p>Has Stock: {{product.hasStock}}</p>
+        <p>Special: {{product.special}}</p>
+        <a target="_blank" :href="product.href">Shop Link</a>
       </div>
       <div class="col-9">
         <v-form
@@ -34,6 +37,7 @@
                   v-if="type === 'staged'"
                   style="padding-top: 0px"
                   v-model="product.categoryId"
+                  v-on:change="onCategoryChange()"
                   :items="categories"
                   :item-value="'id'"
                   :item-text="'name'"
@@ -59,6 +63,7 @@
                   v-if="type === 'staged'"
                   style="padding-top: 0px"
                   v-model="product.subCategoryId"
+                  v-on:change="onCategoryChange()"
                   :items="subCategories"
                   :item-value="'id'"
                   :item-text="'name'"
@@ -130,6 +135,8 @@
 </template>
 
 <script>
+import baseMixin from "@/mixins/baseMixin";
+
 export default {
   props: {
     product: null,
@@ -140,6 +147,7 @@ export default {
     return {
       showDetail: false,
       validProductForm: false,
+      allCategories: [],
       categories: [],
       subCategories: [],
       brands: [],
@@ -159,7 +167,7 @@ export default {
           operation: "read",
         });
         if (this.product) {
-          console.log('this.product', this.product)
+          this.allCategories = categories.data;
           categories.data.forEach((category) => {
             if (category.parentId) {
               this.subCategories.push(category);
@@ -168,7 +176,6 @@ export default {
             }
           });
         }
-        console.log('this.categories', this.categories)
         const brandsResponse = await this.$store.dispatch("dataGate", {
           tableName: "mappedBrands",
           operation: "read",
@@ -182,9 +189,6 @@ export default {
   },
   methods: {
     async saveProductInfo() {
-      console.log(this.product);
-      console.log(this.category);
-      console.log(this.subCategory);
       if (this.$refs.validProductForm.validate()) {
         if (this.type === "scraped") {
           console.log(this.product);
@@ -212,6 +216,27 @@ export default {
         }
       }
     },
+    onCategoryChange() {
+      let BOBSRequired = false;
+      let subBOBSRequired = false;
+      let SABSRequired = false;
+      let subSABSRequired = false;
+      // Check subcategory
+      console.log('this.allCategories', this.allCategories)
+      const category = baseMixin.methods.getObjectsWhereKeysHaveValues(this.allCategories, {id: this.product.categoryId}, true);
+      if (category) {
+        BOBSRequired = category.BOBSRequired;
+        SABSRequired = category.SABSRequired;
+      }
+      // Check subcategory
+      const subCategory = baseMixin.methods.getObjectsWhereKeysHaveValues(this.allCategories, {id: this.product.subCategoryId}, true);
+      if (subCategory) {
+        subBOBSRequired = subCategory.BOBSRequired;
+        subSABSRequired = subCategory.SABSRequired;
+      }
+      this.product.BOBSRequired = BOBSRequired || subBOBSRequired;
+      this.product.SABSRequired = SABSRequired || subSABSRequired;
+    }
   },
 };
 </script>

@@ -19,7 +19,7 @@
         This Product is  published
       </v-alert>
       <v-alert
-          v-if="product.BOBSRequired"
+          v-if="product.BOBSRequired && !product.BOBSCertificate"
           border="right"
           colored-border
           type="error"
@@ -35,10 +35,10 @@
         This Product does not require a BOBS Certificate
       </v-alert>
       <div class="d-flex mb-3">
-<!--        <v-btn-->
-<!--            :disabled="!product.BOBSCertificate"-->
-<!--            @click="downloadBOBSCertificate()"-->
-<!--            class="mt-3">Download BOBS</v-btn>-->
+        <v-btn
+            :disabled="!product.BOBSCertificate"
+            @click="downloadBOBSCertificate()"
+            class="mt-3">Download BOBS</v-btn>
         <v-file-input
             label="BOBS Certificate"
             hide-input
@@ -47,7 +47,7 @@
         ></v-file-input>
       </div>
       <v-alert
-          v-if="product.SABSRequired"
+          v-if="product.SABSRequired && !product.SABSCertificate"
           border="right"
           colored-border
           type="error"
@@ -76,12 +76,10 @@
       </div>
       <v-btn
           v-if="!product.publish"
-          :disabled="product.publish"
           @click="publishProduct()"
           color="primary">Publish Product</v-btn>
       <v-btn
           v-if="product.publish"
-          :disabled="!product.publish"
           @click="publishProduct()"
           color="warning">Un Publish Product</v-btn>
     </div>
@@ -106,8 +104,15 @@ export default {
   methods: {
     async publishProduct() {
       console.log('this.product', this.product)
-      if (productMixin.methods.evaluateProduct(this.product)) {
+      if (productMixin.methods.canPublishProduct(this.product)) {
+        this.product.publish = !this.product.publish;
+        // Remove review required if we are publishing
+        if (this.product.publish) {
+          this.product.reviewRequired = false;
+        }
         await this.saveProduct();
+      } else {
+        alert('You can not publish this product. Stuff is still missing.')
       }
     },
     async saveProduct() {
@@ -133,17 +138,18 @@ export default {
           folder
         });
         if (response) {
-          this.product.BOBSCertificate = response;
+          if (folder === 'BOBSCertificates') {
+            self.product.BOBSCertificate = response;
+          } else if (folder === 'SABSCertificates') {
+            self.product.SABSCertificate = response;
+          }
+          await self.saveProduct();
         }
       }
       fileReader.readAsDataURL(this.BOBSCertificate)
     },
     downloadBOBSCertificate() {
       const link = document.createElement('a');
-      // create a blobURI pointing to our Blob
-      // link.href = this.product.BOBSCertificate;
-      console.log('this.product.BOBSCertificate', this.product.BOBSCertificate)
-
       link.href = 'https://tsazonkeimages.s3.af-south-1.amazonaws.com/BOBSCertificates/test.pdf';
       link.download = 'test.pdf';
       // some browser needs the anchor to be in the doc

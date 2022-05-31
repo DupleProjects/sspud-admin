@@ -107,7 +107,6 @@ export default {
     allBrands: [],
     deleteProductCallBack: null,
     users: [],
-    usersCallBack: null,
     saveCallBack: null
   },
   data() {
@@ -185,7 +184,7 @@ export default {
       console.log("🔥🔥On Click",this.productToDelete.id);   
       this.deleteDialog = true;
     },
-    usersCallBack(usersCallBack){
+    usersCallBack(usersCallBack) {
         this.saveCallBack();
     }
   },
