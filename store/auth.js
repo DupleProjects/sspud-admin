@@ -30,8 +30,7 @@ export const authStore = {
   actions: {
     async fetch({ commit }, currCookie) {
 
-      console.log("Fetching from: ");
-      console.log(process.env.apiURL);
+      console.log("Fetching from: ", process.env.apiURL);
 
       var body = {
         cooki : currCookie
@@ -54,8 +53,7 @@ export const authStore = {
     },
     async login({ commit }, data) {
       console.log("Logging in....");
-      console.log(data);
-      console.log(process.env.apiURL);
+      console.log('process.env.apiURL', process.env.apiURL);
       var body = data;
       let logInUser = await axios({
         method: 'post',
@@ -63,21 +61,20 @@ export const authStore = {
         headers: {},
         data: body
       })
-      console.log(logInUser.data);
+      console.log('logged in user: ', logInUser.data);
       await commit('set_user', logInUser.data.user)
-      await setAuthToken(logInUser.data.token)
+      // await setAuthToken(logInUser.data.token)
       cookies.set('sspud-access-token', logInUser.data.token, { expires: 7 })
       return logInUser
     },
     async setState({ commit }, data) {
       await commit('set_user', data)
-
     },
     async reset({ commit }) {
       await commit('reset_user')
-      cookies.set('tmmgo-access-token', { expires: Date.now() });
+      cookies.set('sspud-access-token', { expires: Date.now() });
       await resetAuthToken()
-      cookies.remove('tmmgo-access-token')
+      cookies.remove('sspud-access-token')
       return Promise.resolve()
     },
     async getQuickSightDetails(vuexContext){

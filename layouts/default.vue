@@ -164,5 +164,8 @@ export default {
       this.loading = false
     },
   },
+  created() {
+    this.$root.$refs.default = this
+  }
 }
 </script>
