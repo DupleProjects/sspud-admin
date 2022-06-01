@@ -87,6 +87,7 @@ export default {
         tableName: "stagedProducts",
         operation: "read",
         page: this.page,
+        whereCriteria: {deleted:0},
         numberPerPage: this.numberPerPage,
       });
       if (scrapedProducts.count) {
