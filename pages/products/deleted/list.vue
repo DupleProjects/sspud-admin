@@ -16,15 +16,13 @@
             indeterminate
             color="primary"
           ></v-progress-circular>
-          <h1>Loading Scraped Products</h1>
+          <h1>Loading Deleted Products</h1>
         </div>
       </v-overlay>
     </client-only>
     <div v-if="!loading">
       <!--Table-->
-      <h2>Staged Products</h2>
-      <!--Filter-->
-      <products-product-list-filter :filterChangeCallBack="filterChangeCallBack" :filter="filter" :type="'staged'" />
+      <h2>Deleted Products</h2>
       <products-product-list
         :type="'staged'"
         :products="products"
@@ -56,7 +54,6 @@ export default {
       loading: false,
       page: 1,
       numberPerPage: 20,
-      filter: {},
       productCount: 0,
       products: [],
       allCategories: [],
@@ -67,6 +64,7 @@ export default {
     page(val) {
       this.loadProducts();
     },
+    search(val) {},
   },
   beforeMount() {
     this.$nextTick(async function () {
@@ -83,20 +81,20 @@ export default {
   },
   methods: {
     // Loading stuff
-    async loadProducts(criteria) {
+    async loadProducts() {
       // Load the products
-      const scrapedProducts = await this.$store.dispatch("dataGate", {
+      const deletedProducts = await this.$store.dispatch("dataGate", {
         tableName: "stagedProducts",
         operation: "read",
-        whereCriteria: criteria ? criteria : {deleted: 0},
+        whereCriteria: {deleted: 1},
         page: this.page,
         numberPerPage: this.numberPerPage,
       });
-      if (scrapedProducts.count) {
-        this.productCount = scrapedProducts.count;
+      if (deletedProducts.count) {
+        this.productCount = deletedProducts.count;
       }
-      if (scrapedProducts.data) {
-        this.products = scrapedProducts.data;
+      if (deletedProducts.data) {
+        this.products = deletedProducts.data;
       }
     },
     async loadCategoriesAndBrands() {
@@ -121,28 +119,6 @@ export default {
     async deleteProductCallBack() {
       await this.loadProducts();
     },
-    async filterChangeCallBack(filter) {
-      // Build the where clause
-      if (filter) {
-        const criteria = {
-          deleted: 0
-        }
-        if (filter.name) {
-          criteria.name = { like: filter.name }
-        }
-        if (filter.categoryId) {
-          criteria.categoryId = filter.categoryId;
-        }
-        if (filter.subCategoryId) {
-          criteria.subCategoryId = filter.subCategoryId;
-        }
-        if (filter.brandId) {
-          criteria.brandId = filter.brandId;
-        }
-        await this.loadProducts(criteria);
-      }
-
-    }
   },
 };
 </script>

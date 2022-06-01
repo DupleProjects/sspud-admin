@@ -2,6 +2,7 @@
   <div>
     <h2>Product Dashboard</h2>
     <products-product-detail
+        v-if="product"
         :type="'staged'"
         :edit="true"
         :product="product"
