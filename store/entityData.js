@@ -1,5 +1,10 @@
 import axios from "axios";
 
+const headers = {
+  'Content-Type': 'application/json',
+  Authorization: '',
+}
+
 export const entityDataStore = {
   getters: {},
 
@@ -8,10 +13,11 @@ export const entityDataStore = {
     async dataGate({ commit }, data) {
       const body = data;
       console.log("dataGate " + data.tableName + " request data", data);
+      headers.Authorization = 'Bearer ' + 'blabla'
       const response = await axios({
         method: "post",
         url: process.env.apiURL + "/dataGate",
-        headers: {},
+        headers,
         data: body,
       });
       console.log(data.tableName + " response", response);
@@ -36,7 +42,7 @@ export const entityDataStore = {
         const response = await axios({
           method: "post",
           url: process.env.apiURL + "/" + data.route,
-          headers: {},
+          headers,
           data: data,
         });
         return response.data;
