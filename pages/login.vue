@@ -8,7 +8,7 @@
           <v-text-field label="Email" v-model="email"></v-text-field>
           <v-text-field label="Password" v-model="password" type="password"></v-text-field>
           <div style="text-align:right;">
-              <p><span><a href="/forgot">Forgot password? </a></span></p>
+              <p><span><a href="/forgotPassword">Forgot password? </a></span></p>
           </div>
           <v-btn type="submit" color="primary" :loading="loading" :disabled="loading">Log in</v-btn>
         </v-form>
@@ -28,8 +28,6 @@ export default {
       password: '',
       alert: null,
       loading: false,
-      google_loading: false,
-      google_ready: false
     }
   },
   mounted () {
@@ -43,7 +41,6 @@ export default {
         email: this.email,
         password: this.password
       }).then(result => {
-        this.alert = {type: 'success', message: result.data.message}
         this.loading = false
         // this.$root.$refs.default.loggedInUser();
         this.$router.push("/");

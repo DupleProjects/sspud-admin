@@ -94,7 +94,6 @@ export default {
         name: '',
         surname: '',
         email: '',
-        password: ''
       }
     },
     async saveUser() {
@@ -102,11 +101,11 @@ export default {
       console.log("✔️✔️", this.user);
      // Save the new user if the form is valid
       if (this.$refs.newCategoryForm.validate()) {
-        const response = await this.$store.dispatch('dataGate', {
-          entity: this.user,
-          tableName: 'users',
-          operation: 'create',
+        const response = await this.$store.dispatch('callMiddlewareRoute', {
+          user: this.user,
+          route: 'users/createUser'
         })
+        console.log('response', response)
         // If valid response return value
         if (response && response.response) {
             console.log("1. createUserDialog Response Received!");

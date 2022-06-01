@@ -71,7 +71,8 @@ export default {
   beforeMount() {
     this.$nextTick(async function () {
       this.loading = true;
-      // var loggedInUser = this.$store.state.auth.user
+      var loggedInUser = this.$store.state.auth.user
+      console.log('loggedInUser', loggedInUser)
       // Load Products
       await this.loadProducts();
       await this.loadCategoriesAndBrands();
@@ -85,19 +86,18 @@ export default {
     // Loading stuff
     async loadProducts(criteria) {
       // Load the products
-      const scrapedProducts = await this.$store.dispatch("dataGate", {
+      const stagedProducts = await this.$store.dispatch("dataGate", {
         tableName: "stagedProducts",
         operation: "read",
         whereCriteria: criteria ? criteria : {deleted: 0},
         page: this.page,
-        whereCriteria: {deleted:0},
         numberPerPage: this.numberPerPage,
       });
-      if (scrapedProducts.count) {
-        this.productCount = scrapedProducts.count;
+      if (stagedProducts.count) {
+        this.productCount = stagedProducts.count;
       }
-      if (scrapedProducts.data) {
-        this.products = scrapedProducts.data;
+      if (stagedProducts.data) {
+        this.products = stagedProducts.data;
       }
     },
     async loadCategoriesAndBrands() {
