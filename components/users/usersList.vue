@@ -16,76 +16,54 @@
           <td class="info-column">{{ user.email }}</td>
           <td class="actions-column">
             <div>
-              <edit-user-dialog :users="users" :editedUser="user" :usersCallBackEdit="usersCallBackEdit" />
-              <!-- View Button -->
-              <!-- <v-tooltip top>
+              <edit-user-dialog
+                :users="users"
+                :editedUser="user"
+                :usersCallBackEdit="usersCallBackEdit"
+              />
+              <v-tooltip top>
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
-                    v-if="type !== 'staged'"
                     small
-                    class=""
+                    class="button-style"
                     text
-                    @click="goToProductDashboard(product)"
+                    @click="openTheDeleteDialog(user)"
                     style="text-align: center"
                     v-bind="attrs"
                     v-on="on"
                   >
-                    <v-icon small>mdi-eye</v-icon>
+                    <v-icon small>mdi-trash-can</v-icon>
                   </v-btn>
                 </template>
-                <span>View</span>
-              </v-tooltip> -->
-              <!-- View Button -->
-              <v-tooltip top>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      small
-                      class="button-style"
-                      text
-                      @click="openTheDeleteDialog(user)"
-                      style="text-align: center"
-                      v-bind="attrs"
-                      v-on="on">
-                      <v-icon small>mdi-trash-can</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Delete</span>
-                </v-tooltip>
+                <span>Delete</span>
+              </v-tooltip>
               <!--Delete Dialog-->
               <v-dialog
-                  style="z-index: 10000"
-                  v-model="deleteDialog"
-                  max-width="800"
-                >
-                  <v-card>
-                    <v-card-title> Delete User </v-card-title>
-                    <v-card-subtitle>
-                      Are you sure that you want to delete this user? This action cannot be undone.
-                    </v-card-subtitle>
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <!-- <v-progress-circular
-                        v-if="loading"
-                        :size="20"
-                        indeterminate
-                        color="primary"
-                      ></v-progress-circular> -->
-                      <v-btn
-                        color="primary"
-                        text
-                        v-on:click="deleteUser(userToDelete)"
-                      >
-                        Confirm Delete
-                      </v-btn>
-                      <v-btn
-                        color="primary"
-                        text
-                        @click="closeTheDeleteDialog()"
-                        >Close</v-btn
-                      >
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
+                style="z-index: 10000"
+                v-model="deleteDialog"
+                max-width="800"
+              >
+                <v-card>
+                  <v-card-title> Delete User </v-card-title>
+                  <v-card-subtitle>
+                    Are you sure that you want to delete this user? This action
+                    cannot be undone.
+                  </v-card-subtitle>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                      color="primary"
+                      text
+                      v-on:click="deleteUser(userToDelete)"
+                    >
+                      Confirm Delete
+                    </v-btn>
+                    <v-btn color="primary" text @click="closeTheDeleteDialog()"
+                      >Close</v-btn
+                    >
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
             </div>
           </td>
         </tr>
@@ -96,7 +74,7 @@
 
 
 <script>
-import editUserDialog from './editUserDialog.vue';
+import editUserDialog from "./editUserDialog.vue";
 export default {
   components: { editUserDialog },
   props: {
@@ -105,13 +83,13 @@ export default {
     allCategories: [],
     deleteProductCallBack: null,
     users: [],
-    saveCallBack: null
+    saveCallBack: null,
   },
   data() {
     return {
       deleteDialog: false,
       loading: false,
-      userToDelete: {}
+      userToDelete: {},
     };
   },
   mounted() {},
@@ -147,18 +125,18 @@ export default {
           return category.name;
         }
       }
-      return 'Category Not Found';
+      return "Category Not Found";
     },
-    async openTheDeleteDialog(user) { 
+    openTheDeleteDialog(user) {
       this.userToDelete = user;
-      console.log("🔥🔥On Click",this.userToDelete.id);   
+      console.log("🔥🔥On Click", this.userToDelete.id);
       this.deleteDialog = true;
     },
-    async usersCallBackEdit(usersCallBack){
-        await this.saveCallBack();
+    async usersCallBackEdit(usersCallBack) {
+      await this.saveCallBack();
     },
     async deleteUser(user) {
-      console.log("USER TO DELETE",user);
+      console.log("USER TO DELETE", user);
       const response = await this.$store.dispatch("dataGate", {
         primaryKey: "id",
         entity: user,
@@ -174,21 +152,12 @@ export default {
       });
 
       if (usersResponse.data) {
-          this.deleteProductCallBack()
+          this.saveCallBack()
       }
       this.loading = false;
       this.deleteDialog = false;
     },
-    async openTheDeleteDialog(product) { 
-      this.productToDelete = product;
-      console.log("🔥🔥On Click",this.productToDelete.id);   
-      this.deleteDialog = true;
-    },
-    usersCallBack(usersCallBack) {
-        this.saveCallBack();
-      }
-      
-    },
+  },
 };
 </script>
 

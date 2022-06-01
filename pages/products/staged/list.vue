@@ -90,6 +90,7 @@ export default {
         operation: "read",
         whereCriteria: criteria ? criteria : {deleted: 0},
         page: this.page,
+        whereCriteria: {deleted:0},
         numberPerPage: this.numberPerPage,
       });
       if (scrapedProducts.count) {
