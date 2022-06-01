@@ -56,36 +56,19 @@ export const authStore = {
     async login({ commit }, data) {
       console.log("Logging in....");
       console.log(data);
+      console.log(process.env.apiURL);
       var body = data;
-      console.log(process.env.baseURL);
       let logInUser = await axios({
         method: 'post',
-        url: process.env.api_uri + 'auth/login',
+        url: process.env.apiURL + '/users/login',
         headers: {},
         data: body
       })
-
       console.log(logInUser.data);
       await commit('set_user', logInUser.data.user)
       await setAuthToken(logInUser.data.token)
       cookies.set('sspud-access-token', logInUser.data.token, { expires: 7 })
       return logInUser
-    },
-    async onboardClient({commit}, data)
-    {
-      var body = data
-
-      console.log(body);
-
-      let submitClient = await axios({
-        method: 'post',
-        url: process.env.baseURL + 'api/auth/onboard',
-        headers: {},
-        data: body
-      })
-
-      return submitClient;
-
     },
     async setState({ commit }, data) {
       await commit('set_user', data)
@@ -110,7 +93,7 @@ export const authStore = {
       console.log(process.env.baseURL);
       let savePassword = await axios({
         method: 'post',
-        url: process.env.baseURL + 'api/newpassword',
+        url: process.env.api_uri + 'users/newPassword',
         headers: {},
         data: body
       })

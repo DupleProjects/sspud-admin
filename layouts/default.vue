@@ -32,6 +32,29 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
+      <template v-slot:append>
+        <v-list>
+          <v-list-item
+              class="v-list-item--link">
+            <v-list-item-action>
+              <v-icon :color="'yellow'" >mdi-alert</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title v-text="userEmail" />
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item
+              v-on:click="signOut()"
+              class="v-list-item--link">
+            <v-list-item-action>
+              <v-icon :color="'yellow'" >mdi-alert</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title v-text="'Sign out'" />
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </template>
     </v-navigation-drawer>
     <v-main>
       <v-container fluid>
@@ -123,14 +146,22 @@ export default {
   },
   computed: {
     isUserLoggedIn() {
-      // return this.$store.state.auth.user != null;
-      return true;
+      return this.$store.state.auth.user != null;
+      // return true;
     },
     userEmail() {
       if (this.$store.state.auth.user) {
         return this.$store.state.auth.user.email
       }
       return 'Not logged in'
+    },
+  },
+  methods: {
+    signOut() {
+      this.loading = true
+      this.$store.dispatch('reset')
+      this.$router.push('/login')
+      this.loading = false
     },
   },
 }

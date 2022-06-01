@@ -234,6 +234,8 @@ export default {
   mounted() {},
   beforeMount() {
     this.$nextTick(async function () {
+      await this.getData();
+      this.showDetail = true;
       this.loading = true;
       if (this.type === 'scraped'){
 
@@ -321,6 +323,37 @@ export default {
       }
       this.product.BOBSRequired = BOBSRequired || subBOBSRequired;
       this.product.SABSRequired = SABSRequired || subSABSRequired;
+    },
+    async getData(){
+      console.log("🤩🤩🤩PRODUCT ON DETAIL PAGE",this.product);
+      if (this.type === 'scraped'){
+
+      } else if (this.type === 'staged') {
+        const categories = await this.$store.dispatch("dataGate", {
+          tableName: "mappedCategories",
+          operation: "read",
+        });
+        console.log("",this.product);
+        if (this.product) {
+          this.allCategories = categories.data;
+          categories.data.forEach((category) => {
+            if (category.parentId) {
+              this.subCategories.push(category);
+            } else {
+              this.categories.push(category);
+            }
+          });
+          console.log("ALL SUBCATEGORIES",this.subCategories);
+          console.log("ALL CATEGORIES",this.categories);
+        }
+        const brandsResponse = await this.$store.dispatch("dataGate", {
+          tableName: "mappedBrands",
+          operation: "read",
+        });
+        if (brandsResponse.hasOwnProperty('data')) {
+          this.brands = brandsResponse.data;
+        }
+      }
     }
   },
 };

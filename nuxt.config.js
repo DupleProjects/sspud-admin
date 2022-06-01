@@ -5,8 +5,7 @@ let api_uri
 let site_title
 
 if (process.env.NODE_ENV === 'production') {
-  api_uri = 'https://api.mineshift.co.za/'
-  base_uri = 'https://admin.mineshift.co.za/'
+  api_uri = 'https://api.bambazonke.shop'
   site_title = 'SSPUUD'
 } else {
   api_uri = 'https://api.bambazonke.shop'
