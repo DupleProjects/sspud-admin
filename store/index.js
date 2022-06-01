@@ -28,11 +28,12 @@ const createStore = () => {
     {
       nuxtServerInit ({dispatch}, context) {
         console.log("Starting server")
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
           const cookies = cookie.parse(context.req.headers.cookie || '')
+          console.log('cookies[sspud-access-token]', cookies['sspud-access-token'])
           if (cookies.hasOwnProperty('sspud-access-token')) {
             console.log("Fetching user");
-            setAuthToken(cookies['sspud-access-token'])
+            await setAuthToken(cookies['sspud-access-token'])
             dispatch('fetch', cookies['sspud-access-token'])
               .then(result => {
                 console.log("Dispatching fetch method");
