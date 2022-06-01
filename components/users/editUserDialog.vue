@@ -86,7 +86,7 @@ export default {
   props: {
     users: [],
     saveCallBack: null,
-    usersCallBack: null,
+    usersCallBackEdit: null,
     editedUser: null
   },
   data() {
@@ -126,7 +126,7 @@ export default {
         });
         // If valid response return value
         if (response && response.response) {
-          this.usersCallBack(this.editedUser)
+          this.usersCallBackEdit(this.editedUser)
         }
       }
       this.editUserDialog = false;
