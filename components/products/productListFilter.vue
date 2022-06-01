@@ -2,7 +2,7 @@
   <div>
     <div class="d-flex" v-if="filter">
       <v-text-field
-          v-model="filter.name"
+          v-model="search"
           label="Search"
           @change="onSearchChange"
           class="mb-n4"
@@ -16,6 +16,7 @@
           :item-text="'name'"
           label="Category"
           prepend-icon="mdi-shape"
+          clearable
       ></v-autocomplete>
       <v-autocomplete
           v-if="type === 'staged'"
@@ -26,6 +27,7 @@
           :item-text="'name'"
           label="Sub Category"
           prepend-icon="mdi-shape"
+          clearable
       ></v-autocomplete>
       <v-autocomplete
           v-if="type === 'staged'"
@@ -36,6 +38,7 @@
           :item-text="'name'"
           label="Brand"
           prepend-icon="mdi-watermark"
+          clearable
       ></v-autocomplete>
     </div>
   </div>
@@ -53,9 +56,20 @@ export default {
   data() {
     return {
       loading: false,
+      search: '',
       brands: [],
       categories: [],
       subCategories: []
+    }
+  },
+  watch: {
+    filter(val) {
+      console.log('val', val)
+      this.filterChangeCallBack(val);
+    },
+    search(val) {
+      this.filter.name = val;
+      this.filterChangeCallBack(this.filter);
     }
   },
   mounted() {
