@@ -174,6 +174,16 @@ export default {
     },
     async deleteBrand(brand) {
       console.log(brand);
+
+      //update product tables
+      const responseProducts = await this.$store.dispatch(
+        "callMiddlewareRoute",
+        {
+          brandId: brand.id,
+          route: "brands/deleteBrand",
+        }
+      );
+
       const response = await this.$store.dispatch("dataGate", {
         primaryKey: "id",
         entity: brand,
