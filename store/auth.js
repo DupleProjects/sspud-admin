@@ -39,11 +39,10 @@ export const authStore = {
 
       let me = await axios({
         method: 'post',
-        url: process.env.baseURL + '/auth/me',
+        url: process.env.apiURL + '/users/me',
         headers: {},
         data: body
       })
-      console.log('me', me)
       try{
         await commit('set_user', me.data.result)
         return;
@@ -74,44 +73,6 @@ export const authStore = {
       await commit('set_user', data)
 
     },
-    async resetpw({ commit }, data) {
-      console.log("Resetting password");
-
-      let body = data
-
-      let email = await axios({
-        method: 'post',
-        url: process.env.baseURL + 'api/sendmail',
-        headers: {},
-        data: body
-      })
-      return email.data;
-    },
-    async savenewpw({ commit }, data) {
-
-      var body = data;
-      console.log(process.env.baseURL);
-      let savePassword = await axios({
-        method: 'post',
-        url: process.env.api_uri + 'users/newPassword',
-        headers: {},
-        data: body
-      })
-
-      await commit('set_user', savePassword.data.user)
-      await setAuthToken(savePassword.data.token)
-      cookies.set('tmmgo-access-token', savePassword.data.token, { expires: 7 })
-      return savePassword.data;
-    },
-    // register({ commit }, data) {
-    //   return api.auth.register(data)
-    //     .then(response => {
-    //       commit('set_user', response.data.user)
-    //       setAuthToken(response.data.token)
-    //       cookies.set('tmmgo-access-token', response.data.token, { expires: 7 })
-    //       return response
-    //     })
-    // },
     async reset({ commit }) {
       await commit('reset_user')
       cookies.set('tmmgo-access-token', { expires: Date.now() });
