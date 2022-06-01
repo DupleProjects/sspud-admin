@@ -25,7 +25,7 @@
           router
           exact>
           <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
+            <v-icon :color="item.colour ? item.colour : 'blue'" >{{ item.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title v-text="item.title" />
@@ -56,49 +56,58 @@ export default {
       fixed: false,
       items: [
         {
-          icon: 'mdi-chart-bubble',
+          icon: 'mdi-shape',
           title: 'Manage Categories',
-          to: '/categories/manage'
+          to: '/categories/manage',
+          colour: 'purple'
         },
         {
-          icon: 'mdi-chart-bubble',
+          icon: 'mdi-shape',
           title: 'Link Categories',
-          to: '/categories/link'
+          to: '/categories/link',
+          colour: 'purple'
         },
         {
-          icon: 'mdi-chart-bubble',
+          icon: 'mdi-watermark',
           title: 'Manage Brands',
-          to: '/brands/manage'
+          to: '/brands/manage',
+          colour: 'green'
         },
         {
-          icon: 'mdi-chart-bubble',
+          icon: 'mdi-watermark',
           title: 'Link Brands',
-          to: '/brands/link'
+          to: '/brands/link',
+          colour: 'green'
         },
         {
-          icon: 'mdi-chart-bubble',
+          icon: 'mdi-cart-variant',
           title: 'Scraped Products',
-          to: '/products/scraped/list'
+          to: '/products/scraped/list',
+          colour: 'red'
         },
         {
-          icon: 'mdi-chart-bubble',
+          icon: 'mdi-cart-variant',
           title: 'Staged Products',
-          to: '/products/staged/list'
+          to: '/products/staged/list',
+          colour: 'red'
         },
         {
-          icon: 'mdi-chart-bubble',
+          icon: 'mdi-cart-variant',
           title: 'Published Products',
-          to: '/products/published/list'
+          to: '/products/published/list',
+          colour: 'red'
         },
         {
-          icon: 'mdi-chart-bubble',
-          title: 'Published Products',
-          to: '/products/deleted/list'
+          icon: 'mdi-cart-variant',
+          title: 'Deleted Products',
+          to: '/products/deleted/list',
+          colour: 'red'
         },
         {
-          icon: 'mdi-chart-bubble',
+          icon: 'mdi-account-group',
           title: 'Users',
-          to: '/users/manage'
+          to: '/users/manage',
+          colour: 'blue'
         },
       ],
       miniVariant: true,

@@ -23,6 +23,8 @@
     <div v-if="!loading">
       <!--Table-->
       <h2>Staged Products</h2>
+      <!--Filter-->
+      <products-product-list-filter :filterChangeCallBack="filterChangeCallBack" :filter="filter" :type="'staged'" />
       <products-product-list
         :type="'staged'"
         :products="products"
@@ -54,6 +56,7 @@ export default {
       loading: false,
       page: 1,
       numberPerPage: 20,
+      filter: {},
       productCount: 0,
       products: [],
       allCategories: [],
@@ -64,7 +67,6 @@ export default {
     page(val) {
       this.loadProducts();
     },
-    search(val) {},
   },
   beforeMount() {
     this.$nextTick(async function () {
@@ -81,11 +83,12 @@ export default {
   },
   methods: {
     // Loading stuff
-    async loadProducts() {
+    async loadProducts(criteria) {
       // Load the products
       const scrapedProducts = await this.$store.dispatch("dataGate", {
         tableName: "stagedProducts",
         operation: "read",
+        whereCriteria: criteria ? criteria : {deleted: 0},
         page: this.page,
         numberPerPage: this.numberPerPage,
       });
@@ -118,6 +121,28 @@ export default {
     async deleteProductCallBack() {
       await this.loadProducts();
     },
+    async filterChangeCallBack(filter) {
+      // Build the where clause
+      if (filter) {
+        const criteria = {
+          deleted: 0
+        }
+        if (filter.name) {
+          criteria.name = { like: filter.name }
+        }
+        if (filter.categoryId) {
+          criteria.categoryId = filter.categoryId;
+        }
+        if (filter.subCategoryId) {
+          criteria.subCategoryId = filter.subCategoryId;
+        }
+        if (filter.brandId) {
+          criteria.brandId = filter.brandId;
+        }
+        await this.loadProducts(criteria);
+      }
+
+    }
   },
 };
 </script>

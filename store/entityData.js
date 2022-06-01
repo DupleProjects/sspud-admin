@@ -7,14 +7,14 @@ export const entityDataStore = {
   actions: {
     async dataGate({ commit }, data) {
       const body = data;
-      console.log("dataGate store function data", data);
+      console.log("dataGate " + data.tableName + " request data", data);
       const response = await axios({
         method: "post",
         url: process.env.apiURL + "/dataGate",
         headers: {},
         data: body,
       });
-      console.log("response", response);
+      console.log(data.tableName + " response", response);
       // We know what will be returned so can do all this stuff here
       if (data.operation === "read") {
         if (response.data) {
@@ -31,7 +31,7 @@ export const entityDataStore = {
       return response.data;
     },
     async callMiddlewareRoute({ commit }, data) {
-      console.log("callMiddlewareRoute store function data", data);
+      console.log("data.route", data);
       if (data.hasOwnProperty("route")) {
         const response = await axios({
           method: "post",
