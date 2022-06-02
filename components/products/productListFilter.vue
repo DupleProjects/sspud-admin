@@ -2,7 +2,7 @@
   <div>
     <div class="d-flex" v-if="filter">
       <v-text-field
-          v-model="filter.name"
+          v-model="search"
           label="Search"
           @change="onSearchChange"
           class="mb-n4"
@@ -16,6 +16,7 @@
           :item-text="'name'"
           label="Category"
           prepend-icon="mdi-shape"
+          clearable
       ></v-autocomplete>
       <v-autocomplete
           v-if="type === 'staged'"
@@ -26,6 +27,7 @@
           :item-text="'name'"
           label="Sub Category"
           prepend-icon="mdi-shape"
+          clearable
       ></v-autocomplete>
       <v-autocomplete
           v-if="type === 'staged'"
@@ -36,7 +38,30 @@
           :item-text="'name'"
           label="Brand"
           prepend-icon="mdi-watermark"
+          clearable
       ></v-autocomplete>
+    </div>
+    <div class="d-flex" v-if="filter">
+      <!--Published-->
+      <v-select
+          v-model="publish"
+          :items="[{name: 'Published', val: 1}, {name: 'Not Published', val: 0}]"
+          label="Publish"
+          :item-value="'val'"
+          :item-text="'name'"
+          prepend-icon="mdi-shape"
+          clearable
+      ></v-select>
+      <!--Review Required-->
+      <v-select
+          v-model="reviewRequired"
+          :items="[{name: 'Required', val: 1}, {name: 'Not Required', val: 0}]"
+          label="Review Required"
+          :item-value="'val'"
+          :item-text="'name'"
+          prepend-icon="mdi-shape"
+          clearable
+      ></v-select>
     </div>
   </div>
 </template>
@@ -53,9 +78,42 @@ export default {
   data() {
     return {
       loading: false,
+      search: '',
+      publish: null,
+      reviewRequired: null,
       brands: [],
       categories: [],
       subCategories: []
+    }
+  },
+  watch: {
+    search(val) {
+      this.filter.name = {
+        like: val
+      };
+      this.filterChangeCallBack(this.filter);
+    },
+    reviewRequired(val) {
+      if (val !== null) {
+        console.log('val', val)
+        this.filter.reviewRequired = val;
+        console.log('this.filter', this.filter)
+        this.filterChangeCallBack(this.filter);
+      } else {
+        delete this.filter.reviewRequired;
+        this.filterChangeCallBack(this.filter);
+      }
+    },
+    publish(val) {
+      if (val !== null) {
+        console.log('val', val)
+        this.filter.publish = val;
+        console.log('this.filter', this.filter)
+        this.filterChangeCallBack(this.filter);
+      } else {
+        delete this.filter.publish;
+        this.filterChangeCallBack(this.filter);
+      }
     }
   },
   mounted() {

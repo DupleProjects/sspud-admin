@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import cookie from 'cookie'
 export default {
   layout: 'fullscreen',
   data () {
@@ -41,8 +42,7 @@ export default {
         email: this.email,
         password: this.password
       }).then(result => {
-        this.loading = false
-        // this.$root.$refs.default.loggedInUser();
+        this.loading = false;
         this.$router.push("/");
       }).catch(error => {
         this.loading = false

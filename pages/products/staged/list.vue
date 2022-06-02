@@ -61,6 +61,8 @@ export default {
       products: [],
       allCategories: [],
       allBrands: [],
+      // Current criteria
+      criteria: {deleted: 0}
     };
   },
   watch: {
@@ -85,6 +87,9 @@ export default {
   methods: {
     // Loading stuff
     async loadProducts(criteria) {
+      if (!criteria) {
+        criteria = this.criteria;
+      }
       // Load the products
       const stagedProducts = await this.$store.dispatch("dataGate", {
         tableName: "stagedProducts",
@@ -93,6 +98,7 @@ export default {
         page: this.page,
         numberPerPage: this.numberPerPage,
       });
+      console.log('stagedProducts', stagedProducts)
       if (stagedProducts.count) {
         this.productCount = stagedProducts.count;
       }
@@ -131,16 +137,17 @@ export default {
         if (filter.name) {
           criteria.name = { like: filter.name }
         }
-        if (filter.categoryId) {
-          criteria.categoryId = filter.categoryId;
+        if (filter.categoryId === null) {
+          delete filter.categoryId;
         }
-        if (filter.subCategoryId) {
-          criteria.subCategoryId = filter.subCategoryId;
+        if (filter.subCategoryId === null) {
+          delete filter.subCategoryId;
         }
-        if (filter.brandId) {
-          criteria.brandId = filter.brandId;
+        if (filter.brandId === null) {
+          delete filter.brandId;
         }
-        await this.loadProducts(criteria);
+        this.criteria = criteria;
+        await this.loadProducts(filter);
       }
 
     }

@@ -49,7 +49,11 @@
                 mdi-publish-off
               </v-icon>
             </td>
-            <td>
+            <td class="d-flex">
+              <brands-edit-brand-dialog
+                  :brandCreateCallBackEdit="brandCreateCallBackEdit"
+                  :brand="brand"
+              />
               <v-icon
                 color="red"
                 class="icon-style hide-on-desktop"
@@ -58,10 +62,6 @@
               >
                 mdi-delete
               </v-icon>
-              <brands-edit-brand-dialog
-                :brandCreateCallBackEdit="brandCreateCallBackEdit"
-                :brand="brand"
-              />
             </td>
           </tr>
         </tbody>

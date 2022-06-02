@@ -6,7 +6,7 @@
       <v-text-field
           v-model="search"
           label="Search"
-          class="mb-4"
+          class="px-5"
       ></v-text-field>
       <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
