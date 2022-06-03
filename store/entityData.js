@@ -39,6 +39,7 @@ export const entityDataStore = {
           headers: {},
           data: data,
         });
+        console.log(response);
         return response.data;
       }
       return {
