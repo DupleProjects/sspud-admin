@@ -84,8 +84,9 @@ export default {
     async loadProducts() {
       // Load the products
       const scrapedProducts = await this.$store.dispatch('dataGate', {
-        tableName: 'publishedProducts',
+        tableName: 'stagedProducts',
         operation: 'read',
+        whereCriteria: {publish: 1},
         page: this.page,
         numberPerPage: this.numberPerPage
       });
