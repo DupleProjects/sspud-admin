@@ -184,6 +184,8 @@ export default {
         }
       );
 
+      console.log(responseProducts);
+
       const response = await this.$store.dispatch("dataGate", {
         primaryKey: "id",
         entity: brand,
