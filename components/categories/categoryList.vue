@@ -13,7 +13,6 @@
         </thead>
         <tbody>
         <tr
-            
             v-for="(category, index) of categories" :key="index">
           <td>{{category.name}}</td>
           <td>{{parentCategoryName(category.parentId)}}</td>
@@ -21,7 +20,7 @@
           <td>{{category.createdAt}}</td>
           <td>
             <!-- Edit button -->
-              <v-tooltip top>
+            <v-tooltip top>
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
                     small
@@ -53,81 +52,81 @@
                 </template>
                 <span>Delete</span>
               </v-tooltip>
-              <!--Delete Dialog-->
-              <v-dialog
-                style="z-index: 10000"
-                v-model="deleteDialog"
-                max-width="800"
-              >
-                <v-card>
-                  <v-card-title> Delete Category </v-card-title>
-                  <v-card-subtitle>
-                    Are you sure that you want to delete this category? This action
-                    cannot be undone.
-                  </v-card-subtitle>
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn
-                      color="primary"
-                      text
-                      v-on:click="deleteCategory(categoryToDelete)"
-                    >
-                      Confirm Delete
-                    </v-btn>
-                    <v-btn color="primary" text @click="closeTheDeleteDialog()"
-                      >Close</v-btn
-                    >
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
-              <!--Select New Main Category-->
-              <v-dialog
-                style="z-index: 10000"
-                v-model="linkCategoriesDialog"
-                max-width="800"
-              >
-                <v-card>
-                  <v-card-title> Select New Parent Category </v-card-title>
-                  <v-card-subtitle>
-                    Select a new parent category for the {{linkedSubcategoryCount}} subcategories that are currently linked to {{categoryToDelete.name}}
-                  </v-card-subtitle>
-                  <v-card-text>
-                    <v-text-field
-                        prepend-icon="mdi-card-account-details-outline"
-                        disabled
-                        :messages="['The current parent category']"
-                        :label="categoryToDelete.name"
-                    ></v-text-field>
-                    <v-autocomplete
-                        prepend-icon="mdi-clipboard-check-multiple"
-                        label="Parent"
-                        :item-text="'name'"
-                        :item-value="'id'"
-                        :items="availableCategories"
-                        v-model="newParentId"
-                        :messages="['Choose a new parent category']"
-                    ></v-autocomplete>
-                  </v-card-text>
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn
-                      color="primary"
-                      text
-                      v-on:click="setNewParentId()"
-                    >
-                      Confirm
-                    </v-btn>
-                    <v-btn color="primary" text @click="closeLinkCategoriesDialog()"
-                      >Close</v-btn
-                    >
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
           </td>
         </tr>
         </tbody>
       </table>
     </div>
+    <!--Delete Dialog-->
+    <v-dialog
+        style="z-index: 10000"
+        v-model="deleteDialog"
+        max-width="800"
+    >
+      <v-card>
+        <v-card-title> Delete Category </v-card-title>
+        <v-card-subtitle>
+          Are you sure that you want to delete this category? This action
+          cannot be undone.
+        </v-card-subtitle>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+              color="primary"
+              text
+              v-on:click="deleteCategory(categoryToDelete)"
+          >
+            Confirm Delete
+          </v-btn>
+          <v-btn color="primary" text @click="closeTheDeleteDialog()"
+          >Close</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!--Select New Main Category-->
+    <v-dialog
+        style="z-index: 10000"
+        v-model="linkCategoriesDialog"
+        max-width="800"
+    >
+      <v-card>
+        <v-card-title> Select New Parent Category </v-card-title>
+        <v-card-subtitle>
+          Select a new parent category for the {{linkedSubcategoryCount}} subcategories that are currently linked to {{categoryToDelete.name}}
+        </v-card-subtitle>
+        <v-card-text>
+          <v-text-field
+              prepend-icon="mdi-card-account-details-outline"
+              disabled
+              :messages="['The current parent category']"
+              :label="categoryToDelete.name"
+          ></v-text-field>
+          <v-autocomplete
+              prepend-icon="mdi-clipboard-check-multiple"
+              label="Parent"
+              :item-text="'name'"
+              :item-value="'id'"
+              :items="availableCategories"
+              v-model="newParentId"
+              :messages="['Choose a new parent category']"
+          ></v-autocomplete>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+              color="primary"
+              text
+              v-on:click="setNewParentId()"
+          >
+            Confirm
+          </v-btn>
+          <v-btn color="primary" text @click="closeLinkCategoriesDialog()"
+          >Close</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -174,20 +173,18 @@ export default {
       return 'No parent category'
     },
     checkForLinkedSubcategories(category){
-
       console.log("🙌🙌", this.allCategories);
       // console.log("1. CHECK LINKED SUBCATEGORIES");
       this.categoryToDelete = category;
-      
       var counter = 0;
       this.allCategories.forEach(element => {
         // console.log(element);
-        if(element.parentId == category.id){
+        if (element.parentId === category.id) {
           console.log(element.name);
           counter ++;
         }
-        if(element.id != category.id){
-          if(element.parentId == 0 || element.parentId == null){
+        if (element.id != category.id) {
+          if (element.parentId === 0 || element.parentId == null) {
             this.availableCategories.push(element);
           }
         }
@@ -207,7 +204,7 @@ export default {
     },
     openTheDeleteDialog(category) {
       console.log("3. OPEN DELETE DIALOG");
-      if(category){
+      if(category) {
         this.categoryToDelete = category;
       }
       // console.log("🔥🔥On Click", this.categoryToDelete);
