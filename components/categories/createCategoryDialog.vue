@@ -24,14 +24,20 @@
                 v-model="category.name"
                 :rules="[(v) => !!v || 'A Name is required']"
                 hint="The name of the category"
+                v-on:change="checkIfCategoryExists(category.name)"
                 label="Name"
             ></v-text-field>
+            <div
+             v-show="categoryExists"
+            >
+            <h5 style="color:red;">This category already exists! Please enter another category name.</h5>
+            </div>
             <v-select
                 prepend-icon="mdi-clipboard-check-multiple"
                 label="Parent"
                 :item-text="'name'"
                 :item-value="'id'"
-                :items="categories"
+                :items="availableCategories"
                 v-model="category.parentId"
                 :messages="['Choose a parent or leave blank']"
             ></v-select>
@@ -47,7 +53,7 @@
           ></v-progress-circular>
           <v-btn
               v-if="!loading"
-              :disabled="!validCategoryForm"
+              :disabled="categoryExists"
               color="primary"
               text
               v-on:click="saveCategory">
@@ -68,7 +74,8 @@
 export default {
   props: {
     categories: [],
-    saveCallBack: null
+    saveCallBack: null,
+    allCategories: []
   },
   data() {
     return {
@@ -76,6 +83,9 @@ export default {
       validCategoryForm: true,
       newCategoryDialog: false,
       category: null,
+      categoryExists: false,
+      subCategoryExists: false,
+      availableCategories: []
     }
   },
   mounted() {
@@ -84,6 +94,16 @@ export default {
   methods: {
     async openDialog() {
       this.newCategoryDialog = true;
+
+      this.allCategories.forEach(element => {
+        // console.log(element);
+
+        if (element.parentId === 0 || element.parentId == null) {
+            this.availableCategories.push(element);
+        }
+        
+      });
+
       // Create new  default category
       this.category = {
         name: '',
@@ -109,6 +129,23 @@ export default {
       this.newCategoryDialog = false;
       this.loading = false;
     },
+    async checkIfCategoryExists(categoryName){
+        const catResponse = await this.$store.dispatch('dataGate', {
+            whereCriteria: {name: categoryName},
+            tableName: 'mappedCategories',
+            operation: 'read',
+        })
+
+        console.log("👉👉", catResponse.data);
+
+        if(catResponse.data.length == 0){
+          this.categoryExists = false;
+        }else{
+          this.categoryExists = true;
+        }
+
+
+    }
   }
 }
 </script>
