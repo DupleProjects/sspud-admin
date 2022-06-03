@@ -19,7 +19,7 @@
           </td>
           <td>
             <h5>
-              <b>{{ new Date(history.date) }}</b>
+              <b>{{ history.date }}</b>
             </h5>
           </td>
         </tr>
@@ -47,11 +47,20 @@ export default {
       const historyResponce = await this.$store.dispatch("dataGate", {
         tableName: "auditLog",
         operation: "read",
-        whereCriteria: { "\`table\`": this.type },
+        whereCriteria: { "\`table\`": this.type, recordId: this.product },
       });
-      console.log("History", historyResponce.data);
+
       this.prodHistory = historyResponce.data;
-    
+      Date.prototype.addHours = function (h) {
+        this.setHours(this.getHours() + h);
+        return this;
+      };
+      this.prodHistory.forEach((element) => {
+        element.date = new Date(element.date);
+        element.date.addHours(2);
+        element.date = element.date.toString().substring(0, 24);
+      });
+
       this.loading = false;
     });
   },
