@@ -189,8 +189,6 @@ export default {
           }
         }
         
-        // var index = this.categories.find(c => c.parentId == element.id);
-        // // console.log(index);
       });
 
         if(counter >= 1){
@@ -223,26 +221,27 @@ export default {
       this.confirmedNewParentId = this.newParentId;
       this.linkCategoriesDialog = false;
       this.deleteDialog = true;
-    }
-    // async deleteCategory() {
-    //   console.log("🔥🔥🔥🔥On Confirm",this.categoryToDelete.id);
-      //delete the product from scrapedProducts
-      // const deleteResponse = await this.$store.dispatch("callMiddlewareRoute", {
-      //   category: this.categoryToDelete,
-      //   route: 'categories/deleteCategory',
-      //   newParentCategory: this.confirmedNewParentId
-      // });
+    },
+    async deleteCategory() {
+      console.log("🔥🔥🔥🔥CAT TO DELETE",this.categoryToDelete.id);
+      console.log("🔥🔥🔥🔥NEW PARENT ID",this.confirmedNewParentId);
+      // delete the product from scrapedProducts
+      const deleteResponse = await this.$store.dispatch("callMiddlewareRoute", {
+        category: this.categoryToDelete,
+        route: 'categories/deleteCategory',
+        newParentCategory: this.confirmedNewParentId
+      });
 
-    //   if (deleteResponse && deleteResponse.response) {
-    //     console.log("😁SUCCESSFULLY DELETED PRODUCT",this.categoryToDelete.id + "  " + this.categoryToDelete.name);
-    //       this.deleteProductCallBack()
-    //   } else {
-    //     console.log("🔥COULD NOT DELETE PRODUCT");
-    //   }
+      if (deleteResponse && deleteResponse.response) {
+        console.log("😁SUCCESSFULLY DELETED PRODUCT",this.categoryToDelete.id + "  " + this.categoryToDelete.name);
+          this.deleteProductCallBack()
+      } else {
+        console.log("🔥COULD NOT DELETE PRODUCT");
+      }
 
-    //   this.deleteDialog = false;
-    //   this.closeTheDeleteDialog();
-    // },
+      this.deleteDialog = false;
+      this.closeTheDeleteDialog();
+    },
   }
 }
 </script>
