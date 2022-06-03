@@ -30,8 +30,7 @@ export const authStore = {
   actions: {
     async fetch({ commit }, currCookie) {
 
-      console.log("Fetching from: ");
-      console.log(process.env.apiURL);
+      console.log("Fetching from: ", process.env.apiURL);
 
       var body = {
         cooki : currCookie
@@ -39,11 +38,10 @@ export const authStore = {
 
       let me = await axios({
         method: 'post',
-        url: process.env.baseURL + '/auth/me',
+        url: process.env.apiURL + '/users/me',
         headers: {},
         data: body
       })
-      console.log('me', me)
       try{
         await commit('set_user', me.data.result)
         return;
@@ -55,85 +53,28 @@ export const authStore = {
     },
     async login({ commit }, data) {
       console.log("Logging in....");
-      console.log(data);
+      console.log('process.env.apiURL', process.env.apiURL);
       var body = data;
-      console.log(process.env.baseURL);
       let logInUser = await axios({
         method: 'post',
-        url: process.env.api_uri + 'auth/login',
+        url: process.env.apiURL + '/users/login',
         headers: {},
         data: body
       })
-
-      console.log(logInUser.data);
+      console.log('logged in user: ', logInUser.data);
       await commit('set_user', logInUser.data.user)
-      await setAuthToken(logInUser.data.token)
+      // await setAuthToken(logInUser.data.token)
       cookies.set('sspud-access-token', logInUser.data.token, { expires: 7 })
       return logInUser
     },
-    async onboardClient({commit}, data)
-    {
-      var body = data
-
-      console.log(body);
-
-      let submitClient = await axios({
-        method: 'post',
-        url: process.env.baseURL + 'api/auth/onboard',
-        headers: {},
-        data: body
-      })
-
-      return submitClient;
-
-    },
     async setState({ commit }, data) {
       await commit('set_user', data)
-
     },
-    async resetpw({ commit }, data) {
-      console.log("Resetting password");
-
-      let body = data
-
-      let email = await axios({
-        method: 'post',
-        url: process.env.baseURL + 'api/sendmail',
-        headers: {},
-        data: body
-      })
-      return email.data;
-    },
-    async savenewpw({ commit }, data) {
-
-      var body = data;
-      console.log(process.env.baseURL);
-      let savePassword = await axios({
-        method: 'post',
-        url: process.env.baseURL + 'api/newpassword',
-        headers: {},
-        data: body
-      })
-
-      await commit('set_user', savePassword.data.user)
-      await setAuthToken(savePassword.data.token)
-      cookies.set('tmmgo-access-token', savePassword.data.token, { expires: 7 })
-      return savePassword.data;
-    },
-    // register({ commit }, data) {
-    //   return api.auth.register(data)
-    //     .then(response => {
-    //       commit('set_user', response.data.user)
-    //       setAuthToken(response.data.token)
-    //       cookies.set('tmmgo-access-token', response.data.token, { expires: 7 })
-    //       return response
-    //     })
-    // },
     async reset({ commit }) {
       await commit('reset_user')
-      cookies.set('tmmgo-access-token', { expires: Date.now() });
+      cookies.set('sspud-access-token', { expires: Date.now() });
       await resetAuthToken()
-      cookies.remove('tmmgo-access-token')
+      cookies.remove('sspud-access-token')
       return Promise.resolve()
     },
     async getQuickSightDetails(vuexContext){
