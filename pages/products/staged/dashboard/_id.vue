@@ -7,13 +7,16 @@
         :edit="true"
         :product="product"
     />
+    <product-linked-entities :product="product"/>
     <products-product-publish :product="product"/>
   </div>
 </template>
 
 <script>
 import baseMixin from "@/mixins/baseMixin.js";
+import productLinkedEntities from '../../../../components/products/productLinkedEntities.vue';
 export default {
+  components: { productLinkedEntities },
   mixins: [baseMixin],
   data() {
     return {

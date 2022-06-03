@@ -17,7 +17,7 @@
     </div>
     <!--Table-->
     <categories-category-list
-        :categories="displayedCategories"/>
+        :categories="displayedCategories" :allCategories="categories"/>
     <!--Pagination-->
     <template>
       <div class="text-end">
