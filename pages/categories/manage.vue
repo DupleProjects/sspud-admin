@@ -11,7 +11,7 @@
       <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
           <categories-create-category-dialog
-            :categories="displayedCategories" :saveCallBack="saveCallBack" />
+            :categories="displayedCategories" :saveCallBack="saveCallBack" :allCategories="categories" />
         </div>
       </div>
     </div>
