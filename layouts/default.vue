@@ -57,11 +57,12 @@
       </template>
     </v-navigation-drawer>
     <v-main>
-      <v-container fluid>
+      <v-container fluid style="padding: 0px">
         <Nuxt />
       </v-container>
     </v-main>
     <v-footer
+        v-if="this.isUserLoggedIn"
       :absolute="!fixed"
       app>
       <span>&copy; {{ new Date().getFullYear() }}</span>
