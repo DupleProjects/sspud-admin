@@ -1,12 +1,30 @@
 <template>
-  <div>
+  <div class="px-3">
     <div class="d-flex" v-if="filter">
       <v-text-field
           v-model="search"
           label="Search"
           @change="onSearchChange"
-          class="mb-n4"
+          dense
+          solo-inverted
+          class="px-3"
       ></v-text-field>
+    </div>
+    <div class="d-flex" v-if="filter">
+      <!--Review Required-->
+      <v-select
+          v-model="reviewRequired"
+          :items="[{name: 'Required', val: 1}, {name: 'Not Required', val: 0}]"
+          label="Review Required"
+          :item-value="'val'"
+          :item-text="'name'"
+          :hide-details="true"
+          class="px-3"
+          clearable
+          dense
+          solo-inverted
+      ></v-select>
+      <!--Category-->
       <v-autocomplete
           v-if="type === 'staged'"
           v-model="filter.categoryId"
@@ -14,10 +32,14 @@
           :items="categories"
           :item-value="'id'"
           :item-text="'name'"
+          :hide-details="true"
           label="Category"
-          prepend-icon="mdi-shape"
+          class="px-3"
           clearable
+          dense
+          solo-inverted
       ></v-autocomplete>
+      <!--Sub Category-->
       <v-autocomplete
           v-if="type === 'staged'"
           v-model="filter.subCategoryId"
@@ -26,9 +48,13 @@
           :item-value="'id'"
           :item-text="'name'"
           label="Sub Category"
-          prepend-icon="mdi-shape"
+          :hide-details="true"
+          class="px-3"
           clearable
+          dense
+          solo-inverted
       ></v-autocomplete>
+      <!--Brand-->
       <v-autocomplete
           v-if="type === 'staged'"
           v-model="filter.brandId"
@@ -36,32 +62,13 @@
           v-on:change="onBrandChange"
           :item-value="'id'"
           :item-text="'name'"
+          :hide-details="true"
+          class="px-3"
           label="Brand"
-          prepend-icon="mdi-watermark"
           clearable
+          dense
+          solo-inverted
       ></v-autocomplete>
-    </div>
-    <div class="d-flex" v-if="filter">
-      <!--Published-->
-      <v-select
-          v-model="publish"
-          :items="[{name: 'Published', val: 1}, {name: 'Not Published', val: 0}]"
-          label="Publish"
-          :item-value="'val'"
-          :item-text="'name'"
-          prepend-icon="mdi-shape"
-          clearable
-      ></v-select>
-      <!--Review Required-->
-      <v-select
-          v-model="reviewRequired"
-          :items="[{name: 'Required', val: 1}, {name: 'Not Required', val: 0}]"
-          label="Review Required"
-          :item-value="'val'"
-          :item-text="'name'"
-          prepend-icon="mdi-shape"
-          clearable
-      ></v-select>
     </div>
   </div>
 </template>

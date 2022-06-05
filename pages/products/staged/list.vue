@@ -22,7 +22,9 @@
     </client-only>
     <div v-if="!loading">
       <!--Table-->
-      <h2>Staged Products</h2>
+      <div class="px-3">
+        <h2 class="px-3">Staged Products</h2>
+      </div>
       <!--Filter-->
       <products-product-list-filter :filterChangeCallBack="filterChangeCallBack" :filter="filter" :type="'staged'" />
       <products-product-list
@@ -55,14 +57,14 @@ export default {
     return {
       loading: false,
       page: 1,
-      numberPerPage: 20,
+      numberPerPage: 15,
       filter: {},
       productCount: 0,
       products: [],
       allCategories: [],
       allBrands: [],
       // Current criteria
-      criteria: {deleted: 0}
+      criteria: {deleted: 0, publish: 0}
     };
   },
   watch: {
@@ -132,7 +134,7 @@ export default {
       // Build the where clause
       if (filter) {
         const criteria = {
-          deleted: 0
+          deleted: 0, publish: 0
         }
         if (filter.name) {
           criteria.name = { like: filter.name }
@@ -149,7 +151,6 @@ export default {
         this.criteria = criteria;
         await this.loadProducts(filter);
       }
-
     }
   },
 };

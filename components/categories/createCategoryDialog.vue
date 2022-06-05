@@ -127,9 +127,8 @@ export default {
         });
         // If valid response return value
         if (response && response.response) {
+          this.category.id = response.response.insertId;
           this.saveCallBack(this.category);
-
-          this.category.id = response.insertId;
           const responseInsertToWC = await this.$store.dispatch(
             "callMiddlewareRoute",
             {

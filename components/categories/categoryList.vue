@@ -232,13 +232,6 @@ export default {
         newParentCategory: this.confirmedNewParentId
       });
 
-      if (deleteResponse && deleteResponse.response) {
-        console.log("😁SUCCESSFULLY DELETED PRODUCT",this.categoryToDelete.id + "  " + this.categoryToDelete.name);
-          this.deleteProductCallBack()
-      } else {
-        console.log("🔥COULD NOT DELETE PRODUCT");
-      }
-
       this.deleteDialog = false;
       this.closeTheDeleteDialog();
     },

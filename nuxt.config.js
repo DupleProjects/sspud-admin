@@ -8,8 +8,8 @@ if (process.env.NODE_ENV === 'production') {
   api_uri = 'https://api.bambazonke.shop'
   site_title = 'SSPUUD'
 } else {
-  api_uri = 'https://api.bambazonke.shop'
-  // api_uri = 'http://localhost:4000'
+  // api_uri = 'https://api.bambazonke.shop'
+  api_uri = 'http://localhost:4000'
   site_title = 'SSPUUD'
 }
 
