@@ -2,28 +2,19 @@
 
   <div class="header">
     <div class="container">
-      <div class="inner-header d-flex flex-column justify-content-center">
-        <div>
-          <div class="row g-lg-5 py-5">
-            <div class="col-lg-6 text-lg-start">
-              <h1 class="display-4 fw-bold lh-1 mb-3">SSPUD</h1>
-              <p class="col-lg-10 fs-4">Bambazonke.</p>
+      <div class="inner-header d-flex flex-row justify-content-center">
+        <div class="d-flex flex-column justify-content-center">
+          <h1 class="display-4 fw-bold lh-1 mb-3">SSPUD</h1>
+          <v-form @submit.prevent="submit">
+            <v-alert v-if="alert" :type="alert.type" value="true">{{alert.message}}</v-alert>
+            <div class="card p-3 login-card">
+              <v-text-field label="Email" v-model="email"></v-text-field>
+              <v-text-field label="Password" v-model="password" type="password"></v-text-field>
+              <v-btn type="submit" color="primary" :loading="loading" :disabled="loading">Log in</v-btn>
             </div>
-            <div class="col-md-10 mx-auto col-lg-6">
-              <div class="card p-3">
-                <h3 class="lead black--text">Login</h3>
-                <v-form @submit.prevent="submit">
-                  <v-alert v-if="alert" :type="alert.type" value="true">{{alert.message}}</v-alert>
-                  <v-text-field label="Email" v-model="email"></v-text-field>
-                  <v-text-field label="Password" v-model="password" type="password"></v-text-field>
-                  <v-btn type="submit" color="primary" :loading="loading" :disabled="loading">Log in</v-btn>
-                  <br>
-                  <p><span><a href="/forgotPassword">Forgot password? </a></span></p>
-                </v-form>
-              </div>
-            </div>
-          </div>
-
+            <br>
+            <p><a  class="mt-5 white--text" href="/forgotPassword">Forgot password? </a></p>
+          </v-form>
         </div>
       </div>
     </div>
@@ -50,26 +41,7 @@
       </svg>
     </div>
     <!--Waves end-->
-
   </div>
-<!--  <v-layout justify-center align-center>-->
-<!--    <v-card class="elevation-10" style="flex: 0 1 400px">-->
-<!--      <v-card-title class="headline">Log In</v-card-title>-->
-<!--      <v-card-text>-->
-<!--        <v-form @submit.prevent="submit">-->
-<!--          <v-alert v-if="alert" :type="alert.type" value="true">{{alert.message}}</v-alert>-->
-<!--          <v-text-field label="Email" v-model="email"></v-text-field>-->
-<!--          <v-text-field label="Password" v-model="password" type="password"></v-text-field>-->
-<!--          <div style="text-align:right;">-->
-<!--              <p><span><a href="/forgotPassword">Forgot password? </a></span></p>-->
-<!--          </div>-->
-<!--          <v-btn type="submit" color="primary" :loading="loading" :disabled="loading">Log in</v-btn>-->
-<!--        </v-form>-->
-<!--        <br>-->
-<!--        <p>Don't have an account? <span><a href="https://tmm-go.com/#contact-us" target="_blank">Contact Us </a></span> to find out how you can sign up</p>-->
-<!--      </v-card-text>-->
-<!--    </v-card>-->
-<!--  </v-layout>-->
 </template>
 
 <script>
@@ -147,8 +119,7 @@ export default {
 
 .inner-header {
   height:77.5vh;
-  width:100%;
-  padding: 0;
+  width: 100%;
 }
 
 .waves {
@@ -200,6 +171,12 @@ export default {
   h1 {
     font-size:24px;
   }
+}
+
+.login-card {
+  width: 700px;
+  max-width: 700px;
+  color: black;
 }
 
 </style>
