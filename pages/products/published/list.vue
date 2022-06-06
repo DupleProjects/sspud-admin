@@ -21,7 +21,10 @@
     </client-only>
     <div v-if="!loading">
       <!--Table-->
-      <h2>Published Products</h2>
+      <div class="px-3">
+        <h2 class="px-3">Published Products</h2>
+      </div>
+      <products-product-list-filter :filterChangeCallBack="filterChangeCallBack" :filter="filter" :type="'staged'" />
       <products-product-list
           :type="'published'"
           :allCategories="allCategories"
@@ -48,6 +51,7 @@ export default {
   mixins: [baseMixin],
   data() {
     return {
+      filter: {},
       loading: false,
       page: 1,
       numberPerPage: 20,
@@ -81,11 +85,15 @@ export default {
   },
   methods: {
     // Loading stuff
-    async loadProducts() {
+    async loadProducts(criteria) {
+      if (!criteria) {
+        criteria = this.criteria;
+      }
       // Load the products
       const scrapedProducts = await this.$store.dispatch('dataGate', {
-        tableName: 'publishedProducts',
+        tableName: 'stagedProducts',
         operation: 'read',
+        whereCriteria: criteria ? criteria : {deleted: 0, publish: 1},
         page: this.page,
         numberPerPage: this.numberPerPage
       });
@@ -115,6 +123,28 @@ export default {
         this.allBrands = brands.data;
       }
     },
+    async filterChangeCallBack(filter) {
+      // Build the where clause
+      if (filter) {
+        const criteria = {
+          deleted: 0, publish: 0
+        }
+        if (filter.name) {
+          criteria.name = { like: filter.name }
+        }
+        if (filter.categoryId === null) {
+          delete filter.categoryId;
+        }
+        if (filter.subCategoryId === null) {
+          delete filter.subCategoryId;
+        }
+        if (filter.brandId === null) {
+          delete filter.brandId;
+        }
+        this.criteria = criteria;
+        await this.loadProducts(filter);
+      }
+    }
   },
 }
 </script>

@@ -6,18 +6,18 @@
       <v-text-field
           v-model="search"
           label="Search"
-          class="mb-4"
+          class="px-5"
       ></v-text-field>
       <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
           <categories-create-category-dialog
-            :categories="displayedCategories" :saveCallBack="saveCallBack" />
+            :categories="displayedCategories" :saveCallBack="saveCallBack" :allCategories="categories" />
         </div>
       </div>
     </div>
     <!--Table-->
     <categories-category-list
-        :categories="displayedCategories"/>
+        :categories="displayedCategories" :allCategories="categories"/>
     <!--Pagination-->
     <template>
       <div class="text-end">

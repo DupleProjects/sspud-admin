@@ -1,64 +1,82 @@
 <template>
-  <div class="table-responsive">
-    <table class="table table-striped table-sm">
-      <thead>
-        <tr>
-          <th class="name-column" scope="col">Name</th>
-          <th class="info-column2" scope="col">Price</th>
-          <th class="info-column" scope="col">Category</th>
-          <th class="info-column" scope="col">Subcategory</th>
-          <th class="info-column2" scope="col">Brand</th>
-          <th v-if="type === 'staged'" class="info-column2" scope="col">
-            Publish
-          </th>
-          <th v-if="type === 'staged'" class="info-column2" scope="col">
-            Review Required
-          </th>
-          <th class="actions-column" scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(product, index) of products" :key="index">
-          <td class="name-column">{{ product.name }}</td>
-          <td class="info-column2">R{{ product.price }}</td>
-          <td v-if="type === 'scraped'" class="info-column">
-            {{ product.categoryName }}
-          </td>
-          <td v-if="type === 'staged' || type === 'published'" class="info-column">
-            {{ getCategoryName(product.categoryId)}}
-          </td>
-          <td v-if="type === 'scraped'" class="info-column">
-            {{ product.subCategoryName }}
-          </td>
-          <td v-if="type === 'staged' || type === 'published'" class="info-column">
-            {{ getCategoryName(product.subCategoryId)}}
-          </td>
-          <td v-if="type === 'scraped'" class="info-column">
-            {{ product.brand }}
-          </td>
-          <td v-if="type === 'staged' || type === 'published'" class="info-column2">
-            {{getBrandName(product.brandId)}}
-          </td>
-          <td v-if="type === 'staged'">
-            {{ product.publish }}
-          </td>
-          <td v-if="type === 'staged' || type === 'published'">
-            {{ product.reviewRequired }}
-          </td>
-          <td class="actions-column">
-            <div>
+  <div class="p-3">
+    <div class="fancy-table">
+      <div class="fancy-heading-row">
+        <div  v-bind:class="{ 'inner-fancy-heading-row': type === 'scraped', 'inner-fancy-heading-row-staged': type === 'staged' || type === 'published'}">
+          <div>Name</div>
+          <div>Price</div>
+          <div>SubCategory</div>
+          <div>Brand</div>
+          <div v-if="type === 'staged' || type === 'published'">Published</div>
+          <div v-if="type === 'staged' || type === 'published'">Review Required</div>
+        </div>
+      </div>
+      <div class="product-list">
+        <div class="fancy-row" v-for="(product, index) of products" :key="index">
+          <div class="" v-bind:class="{ 'inner-fancy-row': type === 'scraped', 'inner-fancy-row-staged': type === 'staged' || type === 'published'}">
+            <div class="column-1">
+              <div class="name-column">
+                {{ product.name }}
+              </div>
+              <p class="mb-0" v-if="type === 'scraped'">
+                {{ product.categoryName }}
+              </p>
+              <p class="mb-0" v-if="type === 'staged' || type === 'published'">
+                {{ getCategoryName(product.categoryId)}}
+              </p>
+            </div>
+            <div class="column-1">
+              R{{ product.price }}
+            </div>
+            <div v-if="type === 'scraped'" class="column-1">
+              {{ product.subCategoryName }}
+            </div>
+            <div v-if="type === 'staged' || type === 'published'" class="column-1">
+              {{ getCategoryName(product.subCategoryId)}}
+            </div>
+            <div v-if="type === 'scraped'" class="column-1">
+              {{ product.brand }}
+            </div>
+            <div v-if="type === 'staged' || type === 'published'" class="column-1">
+              {{getBrandName(product.brandId)}}
+            </div>
+            <div v-if="type === 'staged' || type === 'published'" class="column-1">
+              <v-chip
+                  class="mb-0"
+                  v-if="product.publish"
+                  color="green"
+              >Published</v-chip>
+              <v-chip
+                  class="mb-0"
+                  v-if="!product.publish"
+                  color="yellow"
+              >UnPublished</v-chip>
+            </div>
+            <div v-if="type === 'staged' || type === 'published'" class="column-1">
+              <v-chip
+                  class="mb-0"
+                  v-if="!product.reviewRequired"
+                  color="green"
+              >Reviewed</v-chip>
+              <v-chip
+                  class="mb-0 white--text"
+                  v-if="product.reviewRequired"
+                  color="red"
+              >Review</v-chip>
+            </div>
+            <div class="actions-column">
               <!-- Edit button -->
               <v-tooltip top>
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
-                    v-if="type === 'staged'"
-                    small
-                    class="button-style"
-                    text
-                    @click="goToProductDashboard(product)"
-                    style="text-align: center"
-                    v-bind="attrs"
-                    v-on="on"
+                      v-if="type === 'staged'"
+                      small
+                      class="button-style"
+                      text
+                      @click="goToProductDashboard(product)"
+                      style="text-align: center"
+                      v-bind="attrs"
+                      v-on="on"
                   >
                     <v-icon small>mdi-lead-pencil</v-icon>
                   </v-btn>
@@ -69,14 +87,14 @@
               <v-tooltip top>
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
-                    v-if="type !== 'staged'"
-                    small
-                    class=""
-                    text
-                    @click="goToProductDashboard(product)"
-                    style="text-align: center"
-                    v-bind="attrs"
-                    v-on="on"
+                      v-if="type !== 'staged'"
+                      small
+                      class=""
+                      text
+                      @click="goToProductDashboard(product)"
+                      style="text-align: center"
+                      v-bind="attrs"
+                      v-on="on"
                   >
                     <v-icon small>mdi-eye</v-icon>
                   </v-btn>
@@ -85,8 +103,8 @@
               </v-tooltip>
               <!-- View Button -->
               <v-tooltip top>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
                       :disabled="type !== 'staged'"
                       small
                       class="button-style"
@@ -95,52 +113,53 @@
                       style="text-align: center"
                       v-bind="attrs"
                       v-on="on">
-                      <v-icon small>mdi-trash-can</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Delete</span>
-                </v-tooltip>
-              <!--Delete Dialog-->
-              <v-dialog
-                  style="z-index: 10000"
-                  v-model="deleteDialog"
-                  max-width="800"
-                >
-                  <v-card>
-                    <v-card-title> Delete Product </v-card-title>
-                    <v-card-subtitle>
-                      Are you sure that you want to delete this product from
-                      staged products? This action cannot be undone.
-                    </v-card-subtitle>
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <!-- <v-progress-circular
-                        v-if="loading"
-                        :size="20"
-                        indeterminate
-                        color="primary"
-                      ></v-progress-circular> -->
-                      <v-btn
-                        color="primary"
-                        text
-                        v-on:click="deleteThisProduct()"
-                      >
-                        Confirm Delete
-                      </v-btn>
-                      <v-btn
-                        color="primary"
-                        text
-                        @click="closeTheDeleteDialog()"
-                        >Close</v-btn
-                      >
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
+                    <v-icon small>mdi-trash-can</v-icon>
+                  </v-btn>
+                </template>
+                <span>Delete</span>
+              </v-tooltip>
             </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!--Delete Dialog-->
+    <v-dialog
+        style="z-index: 10000"
+        v-model="deleteDialog"
+        max-width="800"
+    >
+      <v-card>
+        <v-card-title> Delete Product </v-card-title>
+        <v-card-subtitle>
+          Are you sure that you want to delete this product from
+          staged products? This action cannot be undone.
+        </v-card-subtitle>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <!-- <v-progress-circular
+            v-if="loading"
+            :size="20"
+            indeterminate
+            color="primary"
+          ></v-progress-circular> -->
+          <v-btn
+              color="primary"
+              text
+              v-on:click="deleteThisProduct()"
+          >
+            Confirm Delete
+          </v-btn>
+          <v-btn
+              color="primary"
+              text
+              @click="closeTheDeleteDialog()"
+          >Close</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -235,21 +254,106 @@ export default {
 </script>
 
 <style scoped>
-.info-column {
-  width: 15%;
-}
 .actions-column {
-  width: 15%;
-  text-align: center;
-}
-.info-column2 {
-  width: 7%;
+  display: none;
 }
 
 .name-column {
   width: 28%;
 }
 
+.fancy-table {
+  font-size: small;
+  display: flex;
+  flex-direction: column;
+  min-width: 600px;
+}
+.fancy-heading-row {
+  position: relative;
+  background-color: #5268fa;
+  border-radius: 0px;
+  box-shadow: none;
+  --show-action: 0;
+  border-top: 1px solid rgb(223, 225, 230);
+  border-right: 1px solid rgb(223, 225, 230);
+  border-left: 1px solid rgb(223, 225, 230);
+  color: white;
+  border-image: initial;
+  border-bottom: none;
+}
+.fancy-row {
+  position: relative;
+  background-color: white;
+  border-radius: 0px;
+  box-shadow: none;
+  --show-action: 0;
+  border-top: 1px solid rgb(223, 225, 230);
+  border-right: 1px solid rgb(223, 225, 230);
+  border-left: 1px solid rgb(223, 225, 230);
+  border-image: initial;
+  border-bottom: none;
+  cursor: pointer;
+}
+.fancy-row:hover {
+  background-color: #F5F6F8;
+}
+.fancy-row:hover .actions-column {
+  display: flex;
+}
+.inner-fancy-heading-row {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 2fr 0.5fr 1fr 1fr 1fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.inner-fancy-heading-row-staged {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 1.5fr 0.5fr 1fr 1fr 0.5fr 0.5fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.inner-fancy-row {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 2fr 0.5fr 1fr 1fr 1fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.inner-fancy-row-staged {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 1.5fr 0.5fr 1fr 1fr 0.5fr 0.5fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.name-column {
+  color: #000000;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 500;
+  text-decoration: none;
+  outline: none;
+  display: contents;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.column-1 {
+  -webkit-box-align: center;
+  align-items: center;
+  min-width: 0px;
+}
+
+.product-list {
+  min-height: 68vh;
+  max-height: 68vh;
+  overflow: auto;
+}
 /* .button-style{
   float:right;
 } */

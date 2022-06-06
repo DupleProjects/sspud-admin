@@ -103,14 +103,16 @@ export default {
   },
   methods: {
     async publishProduct() {
-      console.log('this.product', this.product)
       if (productMixin.methods.canPublishProduct(this.product)) {
         this.product.publish = !this.product.publish;
         // Remove review required if we are publishing
         if (this.product.publish) {
           this.product.reviewRequired = false;
         }
-        await this.saveProduct();
+        const response = await this.$store.dispatch("callMiddlewareRoute", {
+          product: this.product,
+          route: 'products/publishStagedProduct'
+        });
       } else {
         alert('You can not publish this product. Stuff is still missing.')
       }

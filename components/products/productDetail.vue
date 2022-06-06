@@ -218,6 +218,7 @@ export default {
     product: null,
     edit: true,
     type: null,
+    allCategories: [],
   },
   data() {
     return {
@@ -244,10 +245,8 @@ export default {
           tableName: "mappedCategories",
           operation: "read",
         });
-        console.log('this.product', this.product)
         if (this.product) {
           this.allCategories = categories.data;
-          console.log('this.allCategories', this.allCategories)
           categories.data.forEach((category) => {
             if (!category.parentId) {
               this.categories.push(category);
@@ -274,7 +273,6 @@ export default {
     async saveProductInfo() {
       if (this.$refs.validProductForm.validate()) {
         if (this.type === "scraped") {
-          console.log(this.product);
           // Can't
           // const response = await this.$store.dispatch("dataGate", {
           //   primaryKey: "id",
@@ -309,7 +307,6 @@ export default {
       let SABSRequired = false;
       let subSABSRequired = false;
       // Check subcategory
-      console.log('this.allCategories', this.allCategories)
       const category = baseMixin.methods.getObjectsWhereKeysHaveValues(this.allCategories, {id: this.product.categoryId}, true);
       if (category) {
         BOBSRequired = category.BOBSRequired;
@@ -325,7 +322,6 @@ export default {
       this.product.SABSRequired = SABSRequired || subSABSRequired;
     },
     async getData(){
-      console.log("🤩🤩🤩PRODUCT ON DETAIL PAGE",this.product);
       if (this.type === 'scraped'){
 
       } else if (this.type === 'staged') {
@@ -333,7 +329,6 @@ export default {
           tableName: "mappedCategories",
           operation: "read",
         });
-        console.log("",this.product);
         if (this.product) {
           this.allCategories = categories.data;
           categories.data.forEach((category) => {
@@ -343,8 +338,6 @@ export default {
               this.categories.push(category);
             }
           });
-          console.log("ALL SUBCATEGORIES",this.subCategories);
-          console.log("ALL CATEGORIES",this.categories);
         }
         const brandsResponse = await this.$store.dispatch("dataGate", {
           tableName: "mappedBrands",

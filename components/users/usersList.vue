@@ -15,7 +15,7 @@
           <td class="info-column">{{ user.surname }}</td>
           <td class="info-column">{{ user.email }}</td>
           <td class="actions-column">
-            <div>
+            <div class="d-flex">
               <edit-user-dialog
                 :users="users"
                 :editedUser="user"
