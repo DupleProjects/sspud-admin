@@ -174,8 +174,6 @@ export default {
 }
 
 .login-card {
-  width: 700px;
-  max-width: 700px;
   color: black;
 }
 
