@@ -37,7 +37,7 @@ export const entityDataStore = {
       return response.data;
     },
     async callMiddlewareRoute({ commit }, data) {
-      console.log("data.route", data);
+      console.log(data.route, data);
       if (data.hasOwnProperty("route")) {
         const response = await axios({
           method: "post",

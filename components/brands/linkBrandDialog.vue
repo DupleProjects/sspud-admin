@@ -113,9 +113,13 @@ export default {
           operation: "update",
         });
         // If valid response return value
-        if (response && response.response) {
+        if (response && response.success) {
           this.brandCreateCallBackEdit(this.brand);
-          //this.brands.push(this.brand);
+          // Link staged products
+          const brandLinkResponse = await this.$store.dispatch("callMiddlewareRoute", {
+            brand: this.brand,
+            route: 'brands/linkBrand'
+          });
         }
       }
       this.newCategoryDialog = false;
