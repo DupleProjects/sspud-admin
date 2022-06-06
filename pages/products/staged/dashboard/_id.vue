@@ -8,13 +8,11 @@
       :product="product"
     />
     <products-product-publish :product="product" />
-
-    <products-product-Log
+    <product-linked-entities :product="product"/>
+    <products-product-log
       :product="this.$router.currentRoute.params.id"
       :type="'stagedProducts'"
     />
-    <product-linked-entities :product="product"/>
-    <products-product-publish :product="product"/>
   </div>
 </template>
 
