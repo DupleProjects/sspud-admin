@@ -91,10 +91,14 @@ export default {
           operation: 'update',
         });
         // If valid response return value
-        if (scrapedCategoriesResponse && scrapedCategoriesResponse.response) {
+        if (scrapedCategoriesResponse && scrapedCategoriesResponse.success) {
           // this.saveCallBack = scrapedCategoriesResponse.response;
           // console.log("this.saveCallBack",this.saveCallBack);
           // this.categories.push(this.category);
+          const categoryLinkResponse = await this.$store.dispatch("callMiddlewareRoute", {
+            linkedScrapedCategory: this.scrapedCategory,
+            route: 'categories/linkCategory'
+          });
         }
         this.loading = false;
         this.linkCategoryDialog = false;
