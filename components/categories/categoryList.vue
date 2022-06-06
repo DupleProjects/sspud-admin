@@ -320,7 +320,7 @@ export default {
       const deleteResponse = await this.$store.dispatch("callMiddlewareRoute", {
         category: this.categoryToDelete,
         route: 'categories/deleteCategory',
-        newParentCategory: this.confirmedNewParentId,
+        newParentCategoryId: this.confirmedNewParentId,
         newCategoryName: this.confirmedNewCategoryName
       });
 

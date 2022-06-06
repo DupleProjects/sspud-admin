@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="productId" class="fadeInUp animated animatedFadeInUp">
     <h1>History</h1>
     <hr />
 
@@ -31,7 +31,7 @@
 <script>
 export default {
   props: {
-    product: [],
+    productId: null,
     type: null,
   },
   data() {
@@ -42,12 +42,12 @@ export default {
   beforeMount() {
     this.$nextTick(async function () {
       this.loading = true;
-      console.log("History", this.product);
+      console.log("History", this.productId);
 
       const historyResponce = await this.$store.dispatch("dataGate", {
         tableName: "auditLog",
         operation: "read",
-        whereCriteria: { "\`table\`": this.type, recordId: this.product },
+        whereCriteria: { "\`table\`": this.type, recordId: this.productId },
       });
 
       this.prodHistory = historyResponce.data;

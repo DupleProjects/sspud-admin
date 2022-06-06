@@ -1,6 +1,6 @@
 <template>
-  <div class="product-publish-component card mt-10 mb-10">
-    <div class="" v-if="product">
+  <div class="product-publish-component card mt-10 mb-10 fadeInUp animated animatedFadeInUp" v-if="product">
+    <div class="">
       <!-- BZ Main Category -->
       <v-card class="info-message">
         <v-card-title> BambaZonke Category </v-card-title>

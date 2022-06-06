@@ -1,7 +1,7 @@
 <template>
-  <div class="product-publish-component card mt-4">
+  <div v-if="product" class="product-publish-component card mt-4 fadeInUp animated animatedFadeInUp">
     <h1>Product Publish Component</h1>
-    <div v-if="product">
+    <div>
       <v-alert
           v-if="!product.publish"
           border="right"

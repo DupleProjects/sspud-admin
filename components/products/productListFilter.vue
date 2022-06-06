@@ -4,7 +4,6 @@
       <v-text-field
           v-model="search"
           label="Search"
-          @change="onSearchChange"
           dense
           solo-inverted
           class="px-3"
@@ -95,31 +94,25 @@ export default {
   },
   watch: {
     search(val) {
-      this.filter.name = {
-        like: val
-      };
-      this.filterChangeCallBack(this.filter);
+      this.filter.name = val;
+      this.updateFilter()
     },
     reviewRequired(val) {
       if (val !== null) {
-        console.log('val', val)
         this.filter.reviewRequired = val;
-        console.log('this.filter', this.filter)
-        this.filterChangeCallBack(this.filter);
+        this.updateFilter()
       } else {
         delete this.filter.reviewRequired;
-        this.filterChangeCallBack(this.filter);
+        this.updateFilter()
       }
     },
     publish(val) {
       if (val !== null) {
-        console.log('val', val)
         this.filter.publish = val;
-        console.log('this.filter', this.filter)
-        this.filterChangeCallBack(this.filter);
+        this.updateFilter()
       } else {
         delete this.filter.publish;
-        this.filterChangeCallBack(this.filter);
+        this.updateFilter()
       }
     }
   },
@@ -164,14 +157,35 @@ export default {
         this.filter.subCategoryId = null;
         this.subCategories = baseMixin.methods.getObjectsWhereKeysHaveValues(this.allCategories, {parentId: this.filter.categoryId}, false)
       }
-      await this.filterChangeCallBack(this.filter);
-    },
-    async onSearchChange(val) {
-      this.filter.name = val;
-      await this.filterChangeCallBack(this.filter);
+      await this.updateFilter()
     },
     async onBrandChange() {
-      await this.filterChangeCallBack(this.filter);
+      await this.updateFilter()
+    },
+    updateFilter() {
+      const criteria = {
+        deleted: 0, publish: 0
+      }
+      if (this.filter.name) {
+        criteria.name = { like: this.filter.name }
+      }
+      if (this.filter.categoryId === null) {
+        delete this.filter.categoryId;
+      } else {
+        criteria.categoryId = this.filter.categoryId;
+      }
+      if (this.filter.subCategoryId === null) {
+        delete this.filter.subCategoryId;
+      } else {
+        criteria.subCategoryId = this.filter.subCategoryId;
+      }
+      if (this.filter.brandId === null) {
+        delete this.filter.brandId;
+      }
+      if (this.filter.reviewRequired) {
+        criteria.reviewRequired = this.filter.reviewRequired;
+      }
+      this.filterChangeCallBack(criteria);
     }
   }
 }
