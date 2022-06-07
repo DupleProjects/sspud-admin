@@ -396,13 +396,13 @@ export default {
       });
 
       this.rateSheets.push({
-        id: response.response.insertId,
+        id: response.response.id,
         name: this.newRatesheetName,
         type: "STANDARD TARIFF RATES",
         isActive: false,
       });
 
-      var sheetid = response.response.insertId;
+      var sheetid = response.response.id;
 
       var promises = await val.map(async (element) => {
         var entity;
@@ -466,7 +466,7 @@ export default {
         operation: "create",
       });
 
-      var sheetid = response.response.insertId;
+      var sheetid = response.response.id;
 
       this.rateSheets.push({
         id: sheetid,
@@ -514,7 +514,7 @@ export default {
         operation: "create",
       });
 
-      var sheetid = response.response.insertId;
+      var sheetid = response.response.id;
 
       this.rateSheets.push({
         id: sheetid,

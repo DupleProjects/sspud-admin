@@ -107,12 +107,11 @@ export default {
           this.availableCategories.push(element);
         }
       });
-
       // Create new  default category
       this.category = {
         name: "",
         parentId: null,
-        publish: false,
+        publish: true,
       };
     },
     async saveCategory() {
@@ -127,7 +126,7 @@ export default {
         });
         // If valid response return value
         if (response && response.response) {
-          this.category.id = response.response.insertId;
+          this.category.id = response.response.id;
           this.saveCallBack(this.category);
           const responseInsertToWC = await this.$store.dispatch(
             "callMiddlewareRoute",

@@ -151,8 +151,14 @@
             ></v-text-field>
           </div>
         </div>
+        <v-progress-circular
+            v-if="saving"
+            :size="20"
+            indeterminate
+            color="primary"
+        ></v-progress-circular>
         <v-btn
-            v-if="type === 'staged'"
+            v-if="type === 'staged' && !saving"
             color="green"
             @click="saveProductInfo()"
             :disabled="!edit">
@@ -176,6 +182,7 @@ export default {
   data() {
     return {
       loading: true,
+      saving: false,
       validProductForm: false,
       allCategories: [],
       categories: [],
@@ -225,6 +232,7 @@ export default {
   methods: {
     async saveProductInfo() {
       if (this.$refs.validProductForm.validate()) {
+        this.saving = true;
         if (this.type === "scraped") {
           // Can't
           // const response = await this.$store.dispatch("dataGate", {
@@ -248,6 +256,7 @@ export default {
             operation: "update",
           });
         }
+        this.saving = false;
       }
     },
     onCategoryChange(sub) {

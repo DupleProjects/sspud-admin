@@ -97,7 +97,7 @@ export default {
         });
         // If valid response return value
         if (response && response.response) {
-          this.brandCreateCallBack(this.brand);
+          this.brandCreateCallBack(response.response);
           //this.brands.push(this.brand);
         }
       }

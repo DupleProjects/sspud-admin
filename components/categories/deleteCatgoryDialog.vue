@@ -116,6 +116,7 @@ import baseMixin from "@/mixins/baseMixin";
 
 export default {
   props: {
+    deleteCallBack: null,
     category: [],
     allCategories: []
   },
@@ -162,6 +163,7 @@ export default {
       this.deleteDialog = true;
     },
     async deleteCategory() {
+      this.loading = true;
       console.log("👉Cat to delete",this.category);
       console.log("👉👉replacementCategory",this.replacementCategory);
       console.log("👉👉👉New category name",this.newCategoryName);
@@ -172,8 +174,9 @@ export default {
         replacementCategory: this.replacementCategory,
         newCategoryName: this.newCategoryName
       });
-
       this.closeTheDeleteDialog();
+      this.loading = false;
+      this.deleteCallBack();
     },
   },
 };

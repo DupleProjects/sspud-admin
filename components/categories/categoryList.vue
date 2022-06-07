@@ -18,7 +18,7 @@
           <td>{{parentCategoryName(category.parentId)}}</td>
           <td>{{category.publish}}</td>
           <td>{{category.createdAt}}</td>
-          <td>
+          <td class="d-flex">
             <!-- Edit button -->
             <v-tooltip top>
                 <template v-slot:activator="{ on, attrs }">
@@ -36,7 +36,7 @@
                 </template>
                 <span>Edit</span>
               </v-tooltip>
-            <categories-delete-catgory-dialog :category="category" :allCategories="allCategories" />
+            <categories-delete-catgory-dialog :category="category" :allCategories="allCategories" :deleteCallBack="deleteCallBack" />
           </td>
         </tr>
         </tbody>
@@ -50,6 +50,7 @@ import baseMixin from "@/mixins/baseMixin";
 
 export default {
   props: {
+    reloadCallBack: null,
     categories: [],
     allCategories: []
   },
@@ -80,6 +81,9 @@ export default {
       }
       return 'No parent category'
     },
+    deleteCallBack() {
+      this.reloadCallBack();
+    }
   }
 }
 </script>
