@@ -100,7 +100,6 @@ export default {
         page: this.page,
         numberPerPage: this.numberPerPage,
       });
-      console.log('stagedProducts', stagedProducts)
       if (stagedProducts.count) {
         this.productCount = stagedProducts.count;
       }
@@ -131,24 +130,9 @@ export default {
       await this.loadProducts();
     },
     async filterChangeCallBack(filter) {
+      console.log('filter', filter)
       // Build the where clause
       if (filter) {
-        const criteria = {
-          deleted: 0, publish: 0
-        }
-        if (filter.name) {
-          criteria.name = { like: filter.name }
-        }
-        if (filter.categoryId === null) {
-          delete filter.categoryId;
-        }
-        if (filter.subCategoryId === null) {
-          delete filter.subCategoryId;
-        }
-        if (filter.brandId === null) {
-          delete filter.brandId;
-        }
-        this.criteria = criteria;
         await this.loadProducts(filter);
       }
     }

@@ -66,4 +66,8 @@
   -webkit-animation-name: fadeInDown;
 }
 
+.card-shadow {
+  box-shadow: 0px 0px 6px 2px #cbcbcb;
+}
+
 /* Other */
