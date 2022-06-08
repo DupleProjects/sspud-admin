@@ -67,7 +67,7 @@
           </v-form>
           <v-row>
             <v-col cols="12" style="text-align: center">
-              <button style="margin-top:20px; margin-bottom:20px" @click="saveCategory()" class="btn btn-success">
+              <button style="margin-top:20px; margin-bottom:20px;background-color:#52bdfa;color:white;" @click="saveCategory()" class="btn">
                 Save
               </button>
             </v-col>
@@ -210,7 +210,7 @@ export default {
 }
 
 .card-title-style{
-  background-color:#3650ff;
+  background-color:#52bdfa;
   color:white;
 }
 </style>
