@@ -1,6 +1,6 @@
 <template>
-  <div class="p-3" style="border-radius:20px !important;">
-    <div  class="fancy-table">
+  <div class="p-3" style="border-radius: 20px !important">
+    <div class="fancy-table">
       <table>
         <thead class="py-10">
           <tr class="fancy-heading-row">
@@ -12,35 +12,39 @@
           </tr>
         </thead>
         <tbody class="product-list">
-        <tr
-            v-for="(category, index) of categories" :key="index"
-            class="fancy-row">
-          <td style="font-weight:bold; font-size: 15px;">{{category.name}}</td>
-          <td>{{parentCategoryName(category.parentId)}}</td>
-          <td>
-            <v-tooltip v-if="category.publish" top>
+          <tr
+            v-for="(category, index) of categories"
+            :key="index"
+            class="fancy-row"
+          >
+            <td style="font-weight: bold; font-size: 15px">
+              {{ category.name }}
+            </td>
+            <td>{{ parentCategoryName(category.parentId) }}</td>
+            <td>
+              <v-tooltip v-if="category.publish" top>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-icon
-                      v-bind="attrs"
-                      v-on="on" color="green" medium>mdi-check-circle</v-icon>
+                  <v-icon v-bind="attrs" v-on="on" color="green" medium
+                    >mdi-check-circle</v-icon
+                  >
                 </template>
                 <span>Published</span>
               </v-tooltip>
               <v-tooltip v-if="!category.publish" top>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-icon
-                      v-bind="attrs"
-                      v-on="on" color="orange" medium>mdi-close-circle</v-icon>
+                  <v-icon v-bind="attrs" v-on="on" color="orange" medium
+                    >mdi-close-circle</v-icon
+                  >
                 </template>
                 <span>Published</span>
               </v-tooltip>
-          </td>
-          <td>
-              {{formatDate(category.createdAt)}}
-          </td>
-          <td class="d-flex">
-            <!-- Edit button -->
-            <v-tooltip top>
+            </td>
+            <td>
+              {{ formatDate(category.createdAt) }}
+            </td>
+            <td class="d-flex">
+              <!-- Edit button -->
+              <v-tooltip top>
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
                     small
@@ -56,9 +60,13 @@
                 </template>
                 <span>Edit</span>
               </v-tooltip>
-            <categories-delete-catgory-dialog :category="category" :allCategories="allCategories" :deleteCallBack="deleteCallBack" />
-          </td>
-        </tr>
+              <categories-delete-catgory-dialog
+                :category="category"
+                :allCategories="allCategories"
+                :deleteCallBack="deleteCallBack"
+              />
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -72,53 +80,57 @@ export default {
   props: {
     reloadCallBack: null,
     categories: [],
-    allCategories: []
+    allCategories: [],
   },
   data() {
-    return {
-
-    }
+    return {};
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     goToCategoryDashboard(category) {
-      this.$router.push(
-          {
-            name: 'categories-dashboard-id',
-            params: {id: category.id}
-          }
-      )
+      this.$router.push({
+        name: "categories-dashboard-id",
+        params: { id: category.id },
+      });
     },
-    parentCategoryName: function (parentId) {
-      const parentCategory = baseMixin.methods.getObjectsWhereKeysHaveValues(
-          this.categories,
-          {id: parentId},
-          true
-      )
-      if (parentCategory) {
-        return parentCategory.name;
+    parentCategoryName(parentId) {
+      
+      if (parentId) {
+        console.log("😎😎😎", this.allCategories);
+        var testArr = [];
+        if (this.allCategories) {
+          testArr = this.allCategories;
+        }
+        let parentCategory = testArr.find((c) => c.id == parentId);
+        console.log("PARENT CATEGORY:::::::", parentCategory.name);
+        if (parentCategory) {
+          return parentCategory.name;
+        }
+        return "No parent category";
       }
-      return 'No parent category'
+        return "No parent category";
+
+      //
     },
     deleteCallBack() {
       this.reloadCallBack();
     },
-    formatDate(datetime){
-      var date = new Date(datetime).toISOString().substring(0, 10)
-      var time = new Date(datetime).toLocaleTimeString('en',
-                 { timeStyle: 'short', hour12: false, timeZone: 'UTC' });
+    formatDate(datetime) {
+      var date = new Date(datetime).toISOString().substring(0, 10);
+      var time = new Date(datetime).toLocaleTimeString("en", {
+        timeStyle: "short",
+        hour12: false,
+        timeZone: "UTC",
+      });
 
       return date + " " + time;
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>
-
-
-.section-heading{
+.section-heading {
   margin-top: 30px;
 }
 
@@ -145,10 +157,10 @@ export default {
   font-weight: normal !important;
 }
 
-.fancy-heading-row th{
+.fancy-heading-row th {
   font-weight: normal;
   padding: 8px;
-  padding-left:15px;
+  padding-left: 15px;
 }
 
 .fancy-row {
@@ -165,9 +177,8 @@ export default {
   cursor: pointer;
 }
 
-
 .fancy-row:hover {
-  background-color: #F5F6F8;
+  background-color: #f5f6f8;
 }
 .fancy-row:hover .actions-column {
   display: flex;
@@ -205,18 +216,15 @@ export default {
   align-items: center;
 }
 
-.fancy-row td{
+.fancy-row td {
   padding: 8px;
-   font-size: 15px;
-   padding-left:15px;
+  font-size: 15px;
+  padding-left: 15px;
 }
-
 
 .product-list {
   min-height: 68vh;
   max-height: 68vh;
   overflow: auto;
 }
-
-
 </style>

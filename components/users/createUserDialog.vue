@@ -105,12 +105,8 @@ export default {
           user: this.user,
           route: 'users/createUser'
         })
-        console.log('response', response)
         // If valid response return value
-        if (response && response.response) {
-            console.log("1. createUserDialog Response Received!");
-          await this.saveCallBack(this.user)
-        }
+        await this.saveCallBack()
       }
       this.newUserDialog = false;
       this.loading = false;

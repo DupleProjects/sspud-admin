@@ -1,7 +1,19 @@
 <template>
-  <div>
+  <div class="pa-3">
+    <div
+      class="
+        d-flex
+        justify-content-between
+        flex-wrap flex-md-nowrap
+        align-items-center
+        pt-3
+        pb-2
+        mb-3
+        border-bottom
+      "
+    >
     <h2>Category Dashboard</h2>
-    <hr />
+    </div>
     <!--Detail Section-->
     <div v-if="category">
       <v-card class="linked-components">
@@ -84,6 +96,7 @@
           :type="'mapped'"
           :categories="linkedCategories"
           :title="'Linked Categories'"
+          :allCategories="categories"
         />
       </v-card-text>
     </v-card>
@@ -136,7 +149,6 @@ export default {
             if (this.categories[i].id === Number(this.$route.params.id)) {
               // console.log('this.category', this.category)
               this.category = this.categories[i];
-              console.log("🔥👉👇THIS CATEGORY", this.category);
             } else if (
               this.categories[i].parentId === Number(this.$route.params.id)
             ) {
@@ -180,7 +192,6 @@ export default {
           }
         );
       }
-      console.log("categoryResponse", categoryResponse);
     },
   },
 };
