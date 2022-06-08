@@ -17,7 +17,7 @@
     </div>
     <!--Table-->
     <categories-category-list
-        :categories="displayedCategories" :allCategories="categories"/>
+        :categories="displayedCategories" :allCategories="categories" :reloadCallBack="saveCallBack"/>
     <!--Pagination-->
     <template>
       <div class="text-end">

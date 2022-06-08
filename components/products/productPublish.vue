@@ -74,15 +74,35 @@
             v-model="SABSCertificate"
         ></v-file-input>
       </div>
+      <v-progress-circular
+          v-if="saving"
+          :size="20"
+          indeterminate
+          color="primary"
+      ></v-progress-circular>
       <v-btn
-          v-if="!product.publish"
+          v-if="!product.publish && !saving"
           @click="publishProduct()"
           color="primary">Publish Product</v-btn>
       <v-btn
-          v-if="product.publish"
-          @click="publishProduct()"
+          v-if="product.publish && !saving"
+          @click="unpublishProduct()"
           color="warning">Un Publish Product</v-btn>
     </div>
+    <v-snackbar
+        v-model="snackbar"
+        :timeout="timeout">
+      {{ snackBarText }}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="blue"
+            text
+            v-bind="attrs"
+            @click="snackbar = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -94,6 +114,11 @@ export default {
   },
   data() {
     return {
+      snackbar: false,
+      snackBarText: 'My timeout is set to 2000.',
+      timeout: 2000,
+      loading: false,
+      saving: false,
       BOBSCertificate: null,
       SABSCertificate: null
     }
@@ -104,18 +129,43 @@ export default {
   methods: {
     async publishProduct() {
       if (productMixin.methods.canPublishProduct(this.product)) {
-        this.product.publish = !this.product.publish;
-        // Remove review required if we are publishing
-        if (this.product.publish) {
-          this.product.reviewRequired = false;
-        }
+        this.saving = true;
         const response = await this.$store.dispatch("callMiddlewareRoute", {
           product: this.product,
           route: 'products/publishStagedProduct'
         });
+        if (response.success) {
+          // Remove review required if we are publishing
+          this.product.reviewRequired = false;
+          this.product.publish = !this.product.publish;
+          this.snackBarText = 'Product Successfully Published!';
+          this.snackbar = true;
+        } else {
+          this.snackBarText = 'Product Not Successfully Published :(';
+          this.snackbar = true;
+        }
+        this.saving = false;
       } else {
         alert('You can not publish this product. Stuff is still missing.')
       }
+    },
+    async unpublishProduct() {
+      this.saving = true;
+      const response = await this.$store.dispatch("callMiddlewareRoute", {
+        product: this.product,
+        route: 'products/unpublishStagedProduct'
+      });
+      if (response.success) {
+        // Remove review required if we are publishing
+        this.product.reviewRequired = false;
+        this.product.publish = !this.product.publish;
+        this.snackBarText = 'Product Successfully Published!';
+        this.snackbar = true;
+      } else {
+        this.snackBarText = 'Product Not Successfully Published :(';
+        this.snackbar = true;
+      }
+      this.saving = false;
     },
     async saveProduct() {
       const response = await this.$store.dispatch("dataGate", {

@@ -32,7 +32,7 @@
               {{ product.subCategoryName }}
             </div>
             <div v-if="type === 'staged' || type === 'published'" class="column-1">
-              {{ getCategoryName(product.subCategoryId)}}
+              {{ getCategoryName(product.subCategoryId) }}
             </div>
             <div v-if="type === 'scraped'" class="column-1">
               {{ product.brand }}
@@ -40,29 +40,41 @@
             <div v-if="type === 'staged' || type === 'published'" class="column-1">
               {{getBrandName(product.brandId)}}
             </div>
-            <div v-if="type === 'staged' || type === 'published'" class="column-1">
-              <v-chip
-                  class="mb-0"
-                  v-if="product.publish"
-                  color="green"
-              >Published</v-chip>
-              <v-chip
-                  class="mb-0"
-                  v-if="!product.publish"
-                  color="yellow"
-              >UnPublished</v-chip>
+            <div v-if="type === 'staged' || type === 'published'" class="column-1 text-center">
+              <v-tooltip v-if="product.publish" top>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon
+                      v-bind="attrs"
+                      v-on="on" color="green" medium>mdi-check-circle</v-icon>
+                </template>
+                <span>Published</span>
+              </v-tooltip>
+              <v-tooltip v-if="!product.publish" top>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon
+                      v-bind="attrs"
+                      v-on="on" color="orange" medium>mdi-close-circle</v-icon>
+                </template>
+                <span>UnPublished</span>
+              </v-tooltip>
             </div>
-            <div v-if="type === 'staged' || type === 'published'" class="column-1">
-              <v-chip
-                  class="mb-0"
-                  v-if="!product.reviewRequired"
-                  color="green"
-              >Reviewed</v-chip>
-              <v-chip
-                  class="mb-0 white--text"
-                  v-if="product.reviewRequired"
-                  color="red"
-              >Review</v-chip>
+            <div v-if="type === 'staged' || type === 'published'" class="column-1 text-center">
+              <v-tooltip v-if="!product.reviewRequired" top>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon
+                      v-bind="attrs"
+                      v-on="on" color="green" medium>mdi-file-document</v-icon>
+                </template>
+                <span>Reviewed</span>
+              </v-tooltip>
+              <v-tooltip v-if="product.reviewRequired" top>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon
+                      v-bind="attrs"
+                      v-on="on" color="red" medium>mdi-text-box-search</v-icon>
+                </template>
+                <span>Review Required</span>
+              </v-tooltip>
             </div>
             <div class="actions-column">
               <!-- Edit button -->
