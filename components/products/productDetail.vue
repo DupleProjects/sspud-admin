@@ -177,7 +177,6 @@ export default {
     product: null,
     edit: true,
     type: null,
-    allCategories: [],
   },
   data() {
     return {

@@ -1,13 +1,21 @@
 <template>
   <div>
-    <v-icon
+    <!-- <v-icon
       color="primary"
       class="icon-style hide-on-desktop"
       dark
       @click="openDialog()"
     >
       mdi-arrow-right-thick
-    </v-icon>
+    </v-icon> -->
+    <v-tooltip top>
+      <template v-slot:activator="{ on, attrs }">
+        <v-icon v-bind="attrs" v-on="on" color="blue" medium @click="openDialog()"
+          >mdi-link-variant</v-icon
+        >
+      </template>
+      <span>Link</span>
+    </v-tooltip>
 
     <!--New Category Dialog-->
     <v-dialog

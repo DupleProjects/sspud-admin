@@ -1,22 +1,34 @@
 <template>
-  <div>
-    <h2>Link Brands</h2>
-    <hr />
+  <div class="pa-3">
+    <div
+      class="
+        d-flex
+        justify-content-between
+        flex-wrap flex-md-nowrap
+        align-items-center
+        pt-3
+        pb-2
+        mb-3
+        border-bottom
+      "
+    >
+      <h2>Link Brands</h2>
+    </div>
     <div class="row">
       <div class="col">
         <div class="row">
-          <div class="col">
+          <div class="col-5">
             <h3>Scraped Brands</h3>
           </div>
-          <div class="col">
+          <div class="col-3">
             <v-text-field
               label="Search"
               v-model="scrapedSearch"
-              style="margin-top: 0px"
+              style="padding-top: 0px"
               @change="filterScraped()"
             ></v-text-field>
           </div>
-          <div class="col">
+          <div class="col-3">
             <v-select
               style="padding-top: 0px"
               label="Shop"
@@ -25,15 +37,14 @@
               :items="shops"
               width="100%"
               v-model="shop"
-              class="mt-3"
             ></v-select>
           </div>
         </div>
 
-        <div class="table-responsive">
-          <table class="table table-striped table-sm">
+        <div class="fancy-table">
+          <table>
             <thead>
-              <tr>
+              <tr class="fancy-heading-row">
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
                 <th scope="col">Link</th>
@@ -41,16 +52,20 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(brand, index) of scarapedBrands" :key="index">
+              <tr
+                v-for="(brand, index) of scarapedBrands"
+                :key="index"
+                class="fancy-row"
+              >
                 <td>{{ index + 1 }}</td>
                 <td>{{ brand.name }}</td>
                 <td>
-                  <p v-if="brand.mappedBrandId != null">
+                  <span v-if="brand.mappedBrandId != null">
                     {{ brands.find((x) => x.id === brand.mappedBrandId).name }}
-                  </p>
-                  <p v-if="brand.mappedBrandId == null" style="color: red">
+                  </span>
+                  <span v-if="brand.mappedBrandId == null" style="color: red">
                     Not Linked
-                  </p>
+                  </span>
                 </td>
                 <td>
                   <brands-link-brand-dialog
@@ -79,47 +94,52 @@
 
       <div class="col">
         <div class="row">
-          <div class="col">
+          <div class="col-6">
             <h3>Bambazonke Brands</h3>
           </div>
-          <div class="col">
+          <div class="col-4">
             <v-text-field
+              style="padding-top: 0px"
               label="Search"
               v-model="searchBrands"
               @change="filterBrands()"
             ></v-text-field>
           </div>
         </div>
-        <div class="table-responsive">
-          <table class="table table-striped table-sm">
+        <div class="fancy-table">
+          <table>
             <thead>
-              <tr>
+              <tr class="fancy-heading-row">
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
                 <th scope="col">Published</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(brand, index) of brands" :key="index">
+              <tr
+                v-for="(brand, index) of brands"
+                :key="index"
+                class="fancy-row"
+              >
                 <td>{{ index + 1 }}</td>
                 <td>{{ brand.name }}</td>
                 <td>
-                  <v-icon
-                    color="primary"
-                    class="icon-style hide-on-desktop"
-                    dark
-                    v-if="brand.publish == 1"
-                  >
-                    mdi-publish
-                  </v-icon>
-                  <v-icon
-                    color="blue"
-                    class="icon-style hide-on-desktop"
-                    dark
-                    v-if="brand.publish == 0"
-                  >
-                    mdi-publish-off
-                  </v-icon>
+                  <v-tooltip v-if="brand.publish" top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-icon v-bind="attrs" v-on="on" color="green" medium
+                        >mdi-check-circle</v-icon
+                      >
+                    </template>
+                    <span>Published</span>
+                  </v-tooltip>
+                  <v-tooltip v-if="!brand.publish" top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-icon v-bind="attrs" v-on="on" color="orange" medium
+                        >mdi-close-circle</v-icon
+                      >
+                    </template>
+                    <span>Published</span>
+                  </v-tooltip>
                 </td>
               </tr>
             </tbody>
@@ -384,4 +404,98 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.fancy-table {
+  font-size: small;
+  display: flex;
+  flex-direction: column;
+  min-width: 600px;
+  border-radius: 10px !important;
+}
+
+.fancy-heading-row {
+  position: relative;
+  background-color: #5268fa;
+  border-radius: 0px;
+  box-shadow: none;
+  --show-action: 0;
+  border-top: 1px solid rgb(223, 225, 230);
+  border-right: 1px solid rgb(223, 225, 230);
+  border-left: 1px solid rgb(223, 225, 230);
+  color: white;
+  border-image: initial;
+  border-bottom: none;
+  font-weight: normal !important;
+}
+
+.fancy-heading-row th {
+  font-weight: normal;
+  padding: 8px;
+  padding-left: 15px;
+}
+
+.fancy-row {
+  position: relative;
+  background-color: white;
+  border-radius: 0px;
+  box-shadow: none;
+  --show-action: 0;
+  border-top: 1px solid rgb(223, 225, 230);
+  border-right: 1px solid rgb(223, 225, 230);
+  border-left: 1px solid rgb(223, 225, 230);
+  border-image: initial;
+  border-bottom: none;
+  cursor: pointer;
+}
+
+.fancy-row:hover {
+  background-color: #f5f6f8;
+}
+.fancy-row:hover .actions-column {
+  display: flex;
+}
+.inner-fancy-heading-row {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 2fr 0.5fr 1fr 1fr 1fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.inner-fancy-heading-row-staged {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 1.5fr 0.5fr 1fr 1fr 0.5fr 0.5fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.inner-fancy-row {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 2fr 0.5fr 1fr 1fr 1fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.inner-fancy-row-staged {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 1.5fr 0.5fr 1fr 1fr 0.5fr 0.5fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+
+.fancy-row td {
+  padding: 8px;
+  font-size: 15px;
+  padding-left: 15px;
+}
+
+.product-list {
+  min-height: 68vh;
+  max-height: 68vh;
+  overflow: auto;
+}
+</style>
