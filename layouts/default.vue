@@ -42,6 +42,18 @@
       <template v-slot:append>
         <v-list>
           <v-list-item
+              :to="'/analytics/processLogs'"
+              router
+              exact
+              class="v-list-item--link">
+            <v-list-item-action>
+              <v-icon :color="'orange'" >mdi-sine-wave</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title v-text="'Process Logs'" />
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item
               class="v-list-item--link">
             <v-list-item-action>
               <v-icon :color="'yellow'" >mdi-alert</v-icon>
