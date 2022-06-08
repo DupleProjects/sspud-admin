@@ -106,17 +106,9 @@ export default {
       console.log("3. MANAGE loadUsers");
       this.setPage();
     },
-    async saveCallBack(user) {
+    async saveCallBack() {
       console.log("2. MANAGE saveCallBack");
       await this.loadUsers()
-    },
-    goToCategoryDashboard(category) {
-      this.$router.push(
-          {
-            name: 'users-dashboard-id',
-            params: {id: category.id}
-          }
-      )
     },
     // Pagination
     setPage() {
@@ -140,32 +132,6 @@ export default {
           this.displayedUsers.push(this.filteredusers[i])
         }
       }
-    },
-    async deleteUser(brand) {
-      console.log(brand);
-      const response = await this.$store.dispatch("dataGate", {
-        primaryKey: "id",
-        entity: brand,
-        tableName: "mappedBrands",
-        operation: "delete",
-      });
-
-      this.loading = true;
-
-      const brandsResponse = await this.$store.dispatch("dataGate", {
-        tableName: "mappedBrands",
-        operation: "read",
-      });
-      if (brandsResponse.count) {
-        this.brandCount = brandsResponse.count;
-      }
-      if (brandsResponse.data) {
-        console.log("brandsResponse.data", brandsResponse.data);
-        this.brands = brandsResponse.data;
-        this.filteredBrands = this.brands;
-        this.setPage();
-      }
-      this.loading = false;
     },
   },
 }
