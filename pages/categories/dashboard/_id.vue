@@ -4,51 +4,101 @@
     <hr />
     <!--Detail Section-->
     <div v-if="category">
-      <v-form ref="newCategoryForm" v-model="validCategoryForm" lazy-validation>
-        <v-text-field
-          prepend-icon="mdi-card-account-details-outline"
-          v-model="category.name"
-          :rules="[(v) => !!v || 'A Name is required']"
-          hint="The name of the category"
-          label="Name"
-        ></v-text-field>
-        <v-select
-          prepend-icon="mdi-clipboard-check-multiple"
-          label="Parent"
-          :item-text="'name'"
-          :item-value="'id'"
-          :items="categories"
-          v-model="category.parentId"
-          :messages="['Choose a parent or leave blank']"
-        ></v-select>
-        <v-switch v-model="category.publish" :label="`Publish`"></v-switch>
-        <v-switch
-          v-model="category.BOBSRequired"
-          :label="`BOBS Required`"
-        ></v-switch>
-        <v-switch
-          v-model="category.SABSRequired"
-          :label="`SABS Required`"
-        ></v-switch>
-      </v-form>
-      <button @click="saveCategory()" class="btn btn-success">Save</button>
+      <v-card class="linked-components">
+          <v-card-title class="card-title-style py-1">
+            Category Details
+          </v-card-title>
+        <v-card-text>
+          <v-form
+            ref="newCategoryForm"
+            v-model="validCategoryForm"
+            lazy-validation
+          >
+                <!-- <v-card class="category-subcards"> -->
+            <v-row  style="margin-left:auto; margin-right:auto; margin-top:20px;" >
+              <v-col cols="6">
+                <v-card class="category-subcards">
+                  <v-card-text class="category-subcard-text">
+                    <v-text-field
+                      class="category-fields"
+                      prepend-icon="mdi-card-account-details-outline"
+                      v-model="category.name"
+                      :rules="[(v) => !!v || 'A Name is required']"
+                      hint="The name of the category"
+                      label="Name"
+                    ></v-text-field>
+                    <v-autocomplete
+                      class="category-fields"
+                      prepend-icon="mdi-clipboard-check-multiple"
+                      label="Parent Category"
+                      :item-text="'name'"
+                      :item-value="'id'"
+                      :items="categories"
+                      v-model="category.parentId"
+                      :messages="['Choose a parent or leave blank']"
+                    ></v-autocomplete>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+              <v-col cols="6">
+                <v-card class="category-subcards">
+                  <v-card-text class="category-subcard-text">
+                    <v-switch
+                      v-model="category.publish"
+                      :label="`Publish`"
+                    ></v-switch>
+                    <v-switch
+                      v-model="category.BOBSRequired"
+                      v-on:change="
+                        category.SABSRequired = category.BOBSRequired
+                      "
+                      :label="`BOBS Required`"
+                    ></v-switch>
+                    <v-switch
+                      v-model="category.SABSRequired"
+                      v-show="false"
+                      :label="`SABS Required`"
+                    ></v-switch>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+            </v-row>
+                <!-- </v-card> -->
+          </v-form>
+          <v-row>
+            <v-col cols="12" style="text-align: center">
+              <button style="margin-top:20px; margin-bottom:20px" @click="saveCategory()" class="btn btn-success">
+                Save
+              </button>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
     </div>
     <!--Linked Section-->
-    <div>
-      <h3>Linked Categories</h3>
-      <categories-category-list
-        :type="'mapped'"
-        :categories="linkedCategories"
-        :title="'Linked Categories'"
-      />
-    </div>
-    <!--Linked Scraped Categories Section-->
-    <h4 class="section-heading">Linked Scraped Categories</h4>
-    <categories-category-list
-      :type="'scraped'"
-      :categories="linkedScrapedCategories"
-      :title="'Linked Scraped Categories'"
-    />
+    <!-- <div class="linked-components"> -->
+    <v-card class="linked-components">
+      <v-card-title class="card-title-style py-1">Linked Categories</v-card-title>
+      <v-card-text>
+        <categories-category-list
+          :type="'mapped'"
+          :categories="linkedCategories"
+          :title="'Linked Categories'"
+        />
+      </v-card-text>
+    </v-card>
+    <!-- </div> -->
+    <v-card class="linked-components">
+      <!--Linked Scraped Categories Section-->
+      <v-card-title class=" card-title-style py-1">Linked Scraped Categories</v-card-title>
+      <v-card-text>
+        <categories-category-list
+          :type="'scraped'"
+          :categories="linkedScrapedCategories"
+          :title="'Linked Scraped Categories'"
+        />
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 
@@ -137,4 +187,30 @@ export default {
 </script>
 
 <style scoped>
+.linked-components {
+  margin-top: 30px;
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.category-fields {
+  max-width: 600px;
+}
+
+.category-subcards {
+  height: 185px;
+  width:100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.category-subcard-text {
+  text-align: center;
+}
+
+.card-title-style{
+  background-color:#3650ff;
+  color:white;
+}
 </style>
