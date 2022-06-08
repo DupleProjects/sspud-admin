@@ -1,68 +1,90 @@
 <template>
-  <div>
-    <div>
+  <div class="pa-3">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
       <h2>Link Categories</h2>
 
-      <v-text-field
-          v-model="search"
-          label="Search"
-          class="mb-4"
-      ></v-text-field>
+      <v-text-field v-model="search" label="Search" class="px-5"></v-text-field>
     </div>
-    <div class="table-responsive">
-      <table class="table table-striped table-sm">
+    <div class="fancy-table">
+      <table>
         <thead>
-          <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Shop</th>
-            <th scope="col">Linked Category</th>
-            <th scope="col">Publish</th>
-            <th scope="col">Created At</th>
-            <th scope="col">Action</th>
+          <tr class="fancy-heading-row">
+            <th>Name</th>
+            <th>Shop</th>
+            <th>Linked Category</th>
+            <th>Publish</th>
+            <th>Created At</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
-        <tr
-            v-for="(scrapedCategory, index) of scrapedCategories" :key="index">
-          <td>{{scrapedCategory.name}}</td>
-          <td>{{scrapedCategory.shopId}}</td>
-          <td>{{linkMappedCategoryName(scrapedCategory.mappedCategoryId)}}</td>
-          <td>{{scrapedCategory.publish}}</td>
-          <td>{{scrapedCategory.createdAt}}</td>
-          <td>
-            <!--Opens link dialog-->
-            <categories-link-scraped-category-dialog
+          <tr
+            v-for="(scrapedCategory, index) of scrapedCategories"
+            :key="index"
+            class="fancy-row"
+          >
+            <td style="font-weight: bold; font-size: 15px">
+              {{ scrapedCategory.name }}
+            </td>
+            <td>{{ scrapedCategory.shopId }}</td>
+            <td>
+              {{ linkMappedCategoryName(scrapedCategory.mappedCategoryId) }}
+            </td>
+            <td>
+              <v-tooltip v-if="scrapedCategory.publish" top>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon v-bind="attrs" v-on="on" color="green" medium
+                    >mdi-check-circle</v-icon
+                  >
+                </template>
+                <span>Published</span>
+              </v-tooltip>
+              <v-tooltip v-if="!scrapedCategory.publish" top>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon v-bind="attrs" v-on="on" color="orange" medium
+                    >mdi-close-circle</v-icon
+                  >
+                </template>
+                <span>Published</span>
+              </v-tooltip>
+            </td>
+            <td>
+              {{ formatDate(scrapedCategory.createdAt) }}
+            </td>
+            <td>
+              <!--Opens link dialog-->
+              <categories-link-scraped-category-dialog
                 :categories="categories"
                 :scrapedCategory="scrapedCategory"
-            />
-          </td>
-        </tr>
+              />
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
-      <!--Pagination-->
-      <template>
-        <div class="text-end">
-          <v-pagination
-              color="primary"
-              v-model="page"
-              :length="Math.ceil(this.scrapedCategoryCount / this.numberPerPage)"
-              :total-visible="7"
-          ></v-pagination>
-        </div>
-      </template>
+    <!--Pagination-->
+    <template>
+      <div class="text-end">
+        <v-pagination
+          color="primary"
+          v-model="page"
+          :length="Math.ceil(this.scrapedCategoryCount / this.numberPerPage)"
+          :total-visible="7"
+        ></v-pagination>
+      </div>
+    </template>
   </div>
 </template>
 
 <script>
-import baseMixin from '@/mixins/baseMixin.js'
+import baseMixin from "@/mixins/baseMixin.js";
 export default {
   mixins: [baseMixin],
   data() {
     return {
       loading: false,
       page: 1,
-      search: '',
+      search: "",
       numberPerPage: 20,
       categoryCount: 0,
       scrapedCategoryCount: 0,
@@ -71,24 +93,22 @@ export default {
       filteredCategories: [],
       filteredScrapedCategories: [],
       displayedCategories: [],
-      displayedScrapedCategories: []
-    }
+      displayedScrapedCategories: [],
+    };
   },
   watch: {
     page(val) {
-      this.loadScrapedCategories()
+      this.loadScrapedCategories();
     },
     search(val) {
-      if (val && val !== '') {
-        this.loadScrapedCategories(
-            {
-              name: {
-                like: val
-              }
-            }
-        )
+      if (val && val !== "") {
+        this.loadScrapedCategories({
+          name: {
+            like: val,
+          },
+        });
       } else {
-        this.loadScrapedCategories()
+        this.loadScrapedCategories();
       }
     },
   },
@@ -99,33 +119,31 @@ export default {
       await this.loadMappedCategories();
       // Load the scraped categories
       await this.loadScrapedCategories();
-    })
+    });
   },
   unmounted() {
-    this.$nextTick(async function () {
-
-    })
+    this.$nextTick(async function () {});
   },
-  computed: {
-  },
+  computed: {},
   methods: {
     // used to display the name of the linked category
     linkMappedCategoryName: function (mappedCategoryId) {
-      const linkedMappedCategory = baseMixin.methods.getObjectsWhereKeysHaveValues(
+      const linkedMappedCategory =
+        baseMixin.methods.getObjectsWhereKeysHaveValues(
           this.categories,
-          {id: mappedCategoryId},
+          { id: mappedCategoryId },
           true
-      )
+        );
       if (linkedMappedCategory) {
         return linkedMappedCategory.name;
       }
-      return 'No linked category'
+      return "No linked category";
     },
     async loadMappedCategories() {
       //main categories
-      const categoriesResponse = await this.$store.dispatch('dataGate', {
-        tableName: 'mappedCategories',
-        operation: 'read'
+      const categoriesResponse = await this.$store.dispatch("dataGate", {
+        tableName: "mappedCategories",
+        operation: "read",
       });
       //main category count
       if (categoriesResponse.count) {
@@ -135,16 +153,15 @@ export default {
       if (categoriesResponse.data) {
         this.categories = categoriesResponse.data;
       }
-
     },
     async loadScrapedCategories(filter) {
       //scraped categories
-      const scrapedCategoriesResponse = await this.$store.dispatch('dataGate', {
-        tableName: 'scrapedCategories',
-        operation: 'read',
+      const scrapedCategoriesResponse = await this.$store.dispatch("dataGate", {
+        tableName: "scrapedCategories",
+        operation: "read",
         whereCriteria: filter,
         page: this.page,
-        numberPerPage: this.numberPerPage
+        numberPerPage: this.numberPerPage,
       });
       //scraped category count
       if (scrapedCategoriesResponse.count) {
@@ -154,12 +171,114 @@ export default {
       if (scrapedCategoriesResponse.data) {
         this.scrapedCategories = scrapedCategoriesResponse.data;
       }
-      this.loading = false
+      this.loading = false;
+    },
+    formatDate(datetime) {
+      var date = new Date(datetime).toISOString().substring(0, 10);
+      var time = new Date(datetime).toLocaleTimeString("en", {
+        timeStyle: "short",
+        hour12: false,
+        timeZone: "UTC",
+      });
+
+      return date + " " + time;
     },
   },
-}
+};
 </script>
 
 <style scoped>
+.fancy-table {
+  font-size: small;
+  display: flex;
+  flex-direction: column;
+  min-width: 600px;
+  border-radius: 10px !important;
+}
 
+.fancy-heading-row {
+  position: relative;
+  background-color: #5268fa;
+  border-radius: 0px;
+  box-shadow: none;
+  --show-action: 0;
+  border-top: 1px solid rgb(223, 225, 230);
+  border-right: 1px solid rgb(223, 225, 230);
+  border-left: 1px solid rgb(223, 225, 230);
+  color: white;
+  border-image: initial;
+  border-bottom: none;
+  font-weight: normal !important;
+}
+
+.fancy-heading-row th {
+  font-weight: normal;
+  padding: 8px;
+  padding-left: 15px;
+}
+
+.fancy-row {
+  position: relative;
+  background-color: white;
+  border-radius: 0px;
+  box-shadow: none;
+  --show-action: 0;
+  border-top: 1px solid rgb(223, 225, 230);
+  border-right: 1px solid rgb(223, 225, 230);
+  border-left: 1px solid rgb(223, 225, 230);
+  border-image: initial;
+  border-bottom: none;
+  cursor: pointer;
+}
+
+.fancy-row:hover {
+  background-color: #f5f6f8;
+}
+.fancy-row:hover .actions-column {
+  display: flex;
+}
+.inner-fancy-heading-row {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 2fr 0.5fr 1fr 1fr 1fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.inner-fancy-heading-row-staged {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 1.5fr 0.5fr 1fr 1fr 0.5fr 0.5fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.inner-fancy-row {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 2fr 0.5fr 1fr 1fr 1fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.inner-fancy-row-staged {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 1.5fr 0.5fr 1fr 1fr 0.5fr 0.5fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+
+.fancy-row td {
+  padding: 8px;
+  font-size: 15px;
+  padding-left: 15px;
+}
+
+.product-list {
+  min-height: 68vh;
+  max-height: 68vh;
+  overflow: auto;
+}
 </style>

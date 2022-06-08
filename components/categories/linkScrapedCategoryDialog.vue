@@ -1,10 +1,13 @@
 <template>
   <div>
-    <button
-        @click="openDialog()"
-        type="button" class="btn btn-sm btn-outline-secondary">
-      Link
-    </button>
+    <v-tooltip top>
+      <template v-slot:activator="{ on, attrs }">
+        <v-icon v-bind="attrs" v-on="on" color="blue" medium @click="openDialog()"
+          >mdi-link-variant</v-icon
+        >
+      </template>
+      <span>Link</span>
+    </v-tooltip>
     <!--New Category Dialog-->
     <v-dialog style="z-index: 10000" v-model="linkCategoryDialog" max-width="800">
       <v-card v-if="scrapedCategory">
