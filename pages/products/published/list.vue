@@ -24,6 +24,7 @@
       <div class="px-3">
         <h2 class="px-3">Published Products</h2>
       </div>
+      <export-modal :products="products" :exportTableName="'stagedProducts'" :exportSheetName="'Published Products'" :exportCriteria="{publish:1,deleted:0}" />
       <products-product-list-filter :filterChangeCallBack="filterChangeCallBack" :filter="filter" :type="'staged'" />
       <products-product-list
           :type="'published'"
@@ -47,7 +48,9 @@
 
 <script>
 import baseMixin from '@/mixins/baseMixin.js'
+import exportModal from "../../../components/dialogs/exportModal.vue";
 export default {
+  components: { exportModal },
   mixins: [baseMixin],
   data() {
     return {

@@ -16,7 +16,7 @@
             indeterminate
             color="primary"
           ></v-progress-circular>
-          <h1>Loading Scraped Products</h1>
+          <h1>Loading Staged Products</h1>
         </div>
       </v-overlay>
     </client-only>
@@ -25,8 +25,13 @@
       <div class="px-3">
         <h2 class="px-3">Staged Products</h2>
       </div>
+      <export-modal :products="products" :exportTableName="'stagedProducts'" :exportSheetName="'Staged Products'" :exportCriteria="null" />
       <!--Filter-->
-      <products-product-list-filter :filterChangeCallBack="filterChangeCallBack" :filter="filter" :type="'staged'" />
+      <products-product-list-filter
+        :filterChangeCallBack="filterChangeCallBack"
+        :filter="filter"
+        :type="'staged'"
+      />
       <products-product-list
         :type="'staged'"
         :products="products"
@@ -51,7 +56,9 @@
 
 <script>
 import baseMixin from "@/mixins/baseMixin.js";
+import exportModal from "../../../components/dialogs/exportModal.vue";
 export default {
+  components: { exportModal },
   mixins: [baseMixin],
   data() {
     return {
@@ -64,7 +71,8 @@ export default {
       allCategories: [],
       allBrands: [],
       // Current criteria
-      criteria: {deleted: 0, publish: 0}
+      criteria: { deleted: 0, publish: 0 },
+      href: "",
     };
   },
   watch: {
@@ -75,8 +83,8 @@ export default {
   beforeMount() {
     this.$nextTick(async function () {
       this.loading = true;
-      var loggedInUser = this.$store.state.auth.user
-      console.log('loggedInUser', loggedInUser)
+      var loggedInUser = this.$store.state.auth.user;
+      console.log("loggedInUser", loggedInUser);
       // Load Products
       await this.loadProducts();
       await this.loadCategoriesAndBrands();
@@ -96,7 +104,7 @@ export default {
       const stagedProducts = await this.$store.dispatch("dataGate", {
         tableName: "stagedProducts",
         operation: "read",
-        whereCriteria: criteria ? criteria : {deleted: 0},
+        whereCriteria: criteria ? criteria : { deleted: 0 },
         page: this.page,
         numberPerPage: this.numberPerPage,
       });
@@ -130,12 +138,12 @@ export default {
       await this.loadProducts();
     },
     async filterChangeCallBack(filter) {
-      console.log('filter', filter)
+      console.log("filter", filter);
       // Build the where clause
       if (filter) {
         await this.loadProducts(filter);
       }
-    }
+    },
   },
 };
 </script>

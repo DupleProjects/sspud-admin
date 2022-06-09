@@ -26,7 +26,7 @@ export default {
       console.log('this.$router.currentRoute.params.id', this.$router.currentRoute.params.id)
       if (this.$router.currentRoute.params.id) {
         const productResponse = await this.$store.dispatch('dataGate', {
-          tableName: 'publishedProducts',
+          tableName: 'stagedProducts',
           operation: 'read',
           whereCriteria: {id: this.$router.currentRoute.params.id}
         });
