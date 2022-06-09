@@ -250,9 +250,6 @@ export default {
       } else {
         console.log("🔥COULD NOT DELETE PRODUCT");
       }
-
-
-
       this.deleteDialog = false;
       this.closeTheDeleteDialog();
     },
