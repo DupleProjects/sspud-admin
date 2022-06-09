@@ -15,6 +15,7 @@
         </div>
       </div>
     </div>
+    <export-modal :exportTableName="'mappedCategories'" :exportSheetName="'BambaZonke Categories'" :products="displayedCategories" />
     <!--Table-->
     <categories-category-list
         :categories="displayedCategories" :allCategories="categories" :reloadCallBack="saveCallBack"/>
@@ -34,7 +35,9 @@
 
 <script>
 import baseMixin from '@/mixins/baseMixin.js'
+import exportModal from '../../components/dialogs/exportModal.vue';
 export default {
+  components: { exportModal },
   mixins: [baseMixin],
   data() {
     return {

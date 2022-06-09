@@ -5,6 +5,7 @@
 
       <v-text-field v-model="search" label="Search" class="px-5"></v-text-field>
     </div>
+      <export-modal :exportTableName="'scrapedCategories'" :exportSheetName="'Scraped Categories'" :products="scrapedCategories" />
     <div class="fancy-table">
       <table>
         <thead>
@@ -78,7 +79,9 @@
 
 <script>
 import baseMixin from "@/mixins/baseMixin.js";
+import exportModal from '../../components/dialogs/exportModal.vue';
 export default {
+  components: { exportModal },
   mixins: [baseMixin],
   data() {
     return {

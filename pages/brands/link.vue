@@ -40,6 +40,7 @@
             ></v-select>
           </div>
         </div>
+        <export-modal :exportTableName="'scrapedBrands'" :exportSheetName="'Scraped Brands'" :products="scarapedBrands" />
 
         <div class="fancy-table">
           <table>
@@ -106,6 +107,7 @@
             ></v-text-field>
           </div>
         </div>
+        <export-modal :exportTableName="'mappedBrands'" :exportSheetName="'BambaZonke Brands'" :products="brands" />
         <div class="fancy-table">
           <table>
             <thead>
@@ -164,7 +166,9 @@
 
 <script>
 import baseMixin from "@/mixins/baseMixin.js";
+import exportModal from '../../components/dialogs/exportModal.vue';
 export default {
+  components: { exportModal },
   mixins: [baseMixin],
   data() {
     return {
