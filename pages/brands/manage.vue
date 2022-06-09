@@ -25,6 +25,7 @@
         </div>
       </div>
     </div>
+    <export-modal :exportTableName="'mappedBrands'" :exportSheetName="'BambaZonke Categories'" :products="brands" />
     <!--Table-->
     <div class="fancy-table">
       <table>
@@ -93,7 +94,9 @@
 
 <script>
 import baseMixin from "@/mixins/baseMixin.js";
+import exportModal from '../../components/dialogs/exportModal.vue';
 export default {
+  components: { exportModal },
   mixins: [baseMixin],
   data() {
     return {
