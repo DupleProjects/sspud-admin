@@ -22,6 +22,7 @@
     <div v-if="!loading">
       <!--Table-->
       <h2>Scraped Products</h2>
+      <export-modal :products="products" :exportTableName="'scrapedProducts'" :exportSheetName="'Scraped Products'" />
       <products-product-list :type="'scraped'" :products="products" :canDelete="false" />
       <!--Pagination-->
       <template>
@@ -40,7 +41,9 @@
 
 <script>
 import baseMixin from '@/mixins/baseMixin.js'
+import exportModal from "../../../components/dialogs/exportModal.vue";
 export default {
+  components: { exportModal },
   mixins: [baseMixin],
   data() {
     return {
