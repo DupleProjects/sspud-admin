@@ -38,7 +38,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(brand, index) of brands" :key="index" class="fancy-row">
+          <tr v-for="(brand, index) of displayedBrands" :key="index" class="fancy-row">
             <td>{{ index + 1 }}</td>
             <td>{{ brand.name }}</td>
             <td>
@@ -110,8 +110,12 @@ export default {
     };
   },
   watch: {
-    page(val) {},
-    search(val) {},
+    page(val) {
+      this.setPage();
+    },
+    search(val) {
+
+    },
   },
   beforeMount() {
     this.$nextTick(async function () {
@@ -125,7 +129,6 @@ export default {
         this.brandCount = brandsResponse.count;
       }
       if (brandsResponse.data) {
-        console.log("brandsResponse.data", brandsResponse.data);
         this.brands = brandsResponse.data;
         this.filteredBrands = this.brands;
         this.setPage();

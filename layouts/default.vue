@@ -158,6 +158,12 @@ export default {
           to: "/users/manage",
           colour: "blue",
         },
+        {
+          icon: "mdi-dropbox",
+          title: "Orders",
+          to: "/orders/list",
+          colour: "blue",
+        },
       ],
       miniVariant: true,
       right: true,
