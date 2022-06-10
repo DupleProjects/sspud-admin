@@ -19,10 +19,10 @@
               Billing
             </p>
             <p>{{order.wooCommerceOrder.billing.address_1}}</p>
-            <p>{{order.wooCommerceOrder.billing.address_2}}</p>
+            <p v-if="order.wooCommerceOrder.billing.address_2 !== ''">{{order.wooCommerceOrder.billing.address_2}}</p>
             <p>{{order.wooCommerceOrder.billing.city}}</p>
-            <p>{{order.wooCommerceOrder.billing.country}}</p>
             <p>{{order.wooCommerceOrder.billing.state}}</p>
+            <p>{{order.wooCommerceOrder.billing.country}}</p>
             <p>{{order.wooCommerceOrder.billing.postcode}}</p>
           </div>
         </div>
@@ -32,31 +32,53 @@
               Shipping
             </p>
             <p>{{order.wooCommerceOrder.shipping.address_1}}</p>
-            <p>{{order.wooCommerceOrder.shipping.address_2}}</p>
+            <p v-if="order.wooCommerceOrder.shipping.address_2 !== ''">{{order.wooCommerceOrder.shipping.address_2}}</p>
             <p>{{order.wooCommerceOrder.shipping.city}}</p>
-            <p>{{order.wooCommerceOrder.shipping.country}}</p>
             <p>{{order.wooCommerceOrder.shipping.state}}</p>
+            <p>{{order.wooCommerceOrder.shipping.country}}</p>
             <p>{{order.wooCommerceOrder.shipping.postcode}}</p>
           </div>
         </div>
       </div>
       <div class="card card-shadow m-3 p-3">
-        <p>Order ID: {{order.wooCommerceOrder.id}}</p>
-        <p>cart_tax: {{order.wooCommerceOrder.cart_tax}}</p>
-        <p>customer_note: {{order.wooCommerceOrder.customer_note}}</p>
-        <p>date_paid: {{order.wooCommerceOrder.date_paid}}</p>
-        <p>payment_method: {{order.wooCommerceOrder.payment_method}}</p>
-        <p>shipping_tax: {{order.wooCommerceOrder.shipping_tax}}</p>
-        <p>shipping_total: {{order.wooCommerceOrder.shipping_total}}</p>
-        <p>shipping_total: {{order.wooCommerceOrder.shipping_total}}</p>
-        <p>status: {{order.sspudOrder.status}}</p>
+        <p class="lead"><strong>Order</strong> #{{order.wooCommerceOrder.id}}</p>
+        <hr class="mt-0">
+        <v-select
+            v-model="order.sspudOrder.status"
+            :items="['Order Placed', 'Shop Orders Placed', 'Order Received At Warehouse']"
+            label="Order Status"
+            class="mb-2"
+            :hide-details="true"
+            dense
+        ></v-select>
+        <p><strong>Customer Note</strong> {{order.wooCommerceOrder.customer_note}}</p>
       </div>
       <div v-for="(shop, index) of order.sspudOrderReferences" :key="index" class="card card-shadow m-3 p-3">
         <h3>Shop {{shop.shopId}}</h3>
-        <p>Shop Reference Number: {{shop.reference}}</p>
-        <p>Status: {{shop.status}}</p>
+        <div class="d-flex">
+          <v-text-field
+              style="flex: 1"
+              class="category-fields px-2"
+              prepend-icon="mdi-card-account-details-outline"
+              v-model="shop.reference"
+              hint="The order reference of the shop"
+              label="Shop Reference Number"
+          ></v-text-field>
+          <v-select
+              style="flex: 1"
+              class="px-2"
+              v-model="shop.status"
+              :items="['Order Placed', 'Order Received At Warehouse']"
+              prepend-icon="mdi-card-account-details-outline"
+              label="Order Status"
+              hint="The status of the order at the shop"
+          ></v-select>
+          <div>
+            <button class="btn btn-primary">Save</button>
+          </div>
+        </div>
         <div class="table-responsive">
-          <table class="table table-hover">
+          <table class="table">
             <thead>
             <tr>
               <th scope="col">Product</th>
@@ -78,6 +100,57 @@
               <td></td>
               <td></td>
               <td>P {{shop.total}}</td>
+            </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+      <div class="card card-shadow m-3 p-3">
+        <p class="lead">Payment Breakdown</p>
+        <div class="d-flex">
+          <div class="px-3">
+            <p><strong>Date Paid</strong></p>
+            <p><base-date :date="order.wooCommerceOrder.date_paid" /></p>
+          </div>
+          <div class="px-3">
+            <p><strong>Payment Method</strong></p>
+            <p>{{order.wooCommerceOrder.payment_method}}</p>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+            <tr>
+              <th scope="col">Payment</th>
+              <th scope="col">Amount</th>
+            </tr>
+            </thead>
+            <tbody class="table-group-divider">
+            <tr v-for="(shop, index) of order.sspudOrderReferences" :key="index">
+              <th scope="row">Shop {{shop.shopId}}</th>
+              <td>P {{shop.total}}</td>
+            </tr>
+            <tr v-for="(fee_line, index) of order.wooCommerceOrder.fee_lines" :key="fee_line.id">
+              <th scope="row">{{fee_line.name}}</th>
+              <td>P {{fee_line.amount}}</td>
+            </tr>
+            <tr class="order-list-item">
+              <th scope="row">Cart Tax</th>
+              <td>P {{order.wooCommerceOrder.cart_tax}}</td>
+            </tr>
+            <tr class="order-list-item">
+              <th scope="row">Shipping Tax</th>
+              <td>P {{order.wooCommerceOrder.shipping_tax}}</td>
+            </tr>
+            <tr class="order-list-item">
+              <th scope="row">Shipping Total</th>
+              <td>P {{order.wooCommerceOrder.shipping_total}}</td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+              <td>Total</td>
+              <td>P {{getPaymentSum()}}</td>
             </tr>
             </tfoot>
           </table>
@@ -117,7 +190,27 @@ export default {
   unmounted() {
     this.$nextTick(async function () {});
   },
-  methods: {},
+  methods: {
+    getPaymentSum() {
+      console.log('this.order', this.order)
+      let sum = 0;
+      // Add shop totals
+      for (let i = 0; i < this.order.sspudOrderReferences.length; i++) {
+        sum += Number(this.order.sspudOrderReferences[i].total);
+      }
+      // Add fee lines
+      for (let j = 0; j < this.order.wooCommerceOrder.fee_lines.length; j++) {
+        sum += Number(this.order.wooCommerceOrder.fee_lines[j].amount);
+      }
+      sum += Number(this.order.wooCommerceOrder.cart_tax);
+      sum += Number(this.order.wooCommerceOrder.shipping_tax);
+      sum += Number(this.order.wooCommerceOrder.shipping_total);
+      return sum;
+    },
+    saveShopReference() {
+
+    }
+  },
 };
 </script>
 
