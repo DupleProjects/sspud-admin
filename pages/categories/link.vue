@@ -58,6 +58,8 @@
                 :categories="categories"
                 :scrapedCategory="scrapedCategory"
               />
+              <!-- Opens Linked Categories Dialog -->
+              <linked-categories-modal :category="scrapedCategory" :subCategories="allScrapedCategories" />
             </td>
           </tr>
         </tbody>
@@ -80,11 +82,13 @@
 <script>
 import baseMixin from "@/mixins/baseMixin.js";
 import exportModal from '../../components/dialogs/exportModal.vue';
+import LinkedCategoriesModal from '../../components/dialogs/linkedCategoriesModal.vue';
 export default {
-  components: { exportModal },
+  components: { exportModal,LinkedCategoriesModal },
   mixins: [baseMixin],
   data() {
-    return {
+
+      return {
       loading: false,
       page: 1,
       search: "",
@@ -97,6 +101,7 @@ export default {
       filteredScrapedCategories: [],
       displayedCategories: [],
       displayedScrapedCategories: [],
+      allScrapedCategories:[]
     };
   },
   watch: {
@@ -174,6 +179,14 @@ export default {
       if (scrapedCategoriesResponse.data) {
         this.scrapedCategories = scrapedCategoriesResponse.data;
       }
+      const allScrapedCategoriesResponse = await this.$store.dispatch("dataGate", {
+        tableName: "scrapedCategories",
+        operation: "read",
+      });
+      if (allScrapedCategoriesResponse.data) {
+        this.allScrapedCategories = allScrapedCategoriesResponse.data;
+      }
+      console.log("ALL SCRAPED CATEGORIES!!", this.allScrapedCategories);
       this.loading = false;
     },
     formatDate(datetime) {
