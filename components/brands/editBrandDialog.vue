@@ -86,7 +86,6 @@ export default {
       // Remove quotes
       this.brand.name = this.brand.name.replaceAll("'", "");
       this.brand.name = this.brand.name.replaceAll('"', "");
-      console.log('this.brand.name', this.brand.name)
       this.loading = true;
       // Save the  category if the form is valid
       if (this.$refs.newCategoryForm.validate()) {
