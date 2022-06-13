@@ -22,12 +22,46 @@
             <v-list-item-title v-text="'SSPUD'" />
           </v-list-item-content>
         </v-list-item>
+
+        <!-- Navigation List -->
+        <v-list-group
+        v-for="item in items"
+        :key="item.title"
+        v-model="item.active"
+        :color="item.colour ? item.colour : 'blue'"
+        :prepend-icon="item.action"
+        no-action
+        v-if="item.items"
+      >
+        <template v-slot:activator>
+          <v-list-item-action>
+            <v-icon :color="item.colour ? item.colour : 'blue'">{{
+              item.icon
+            }}</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title v-text="item.title"></v-list-item-title>
+          </v-list-item-content>
+        </template>
+
         <v-list-item
+          v-for="child in item.items"
+          :key="child.title"
+          link
+          :to="child.to"
+        >
+          <v-list-item-content>
+            <v-list-item-title v-text="child.title"></v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list-group>
+      <v-list-item
           v-for="(item, i) in items"
           :key="i"
           :to="item.to"
           router
           exact
+          v-if="!item.items"
         >
           <v-list-item-action>
             <v-icon :color="item.colour ? item.colour : 'blue'">{{
@@ -99,52 +133,70 @@ export default {
       fixed: false,
       items: [
         {
+          title: 'Categories',
           icon: "mdi-shape",
-          title: "Manage Categories",
-          to: "/categories/manage",
-          colour: "purple",
+          items: [
+            {
+              icon: "mdi-shape",
+              title: "Manage Categories",
+              to: "/categories/manage",
+              colour: "purple",
+            },
+            {
+              icon: "mdi-shape",
+              title: "Link Categories",
+              to: "/categories/link",
+              colour: "purple",
+            },
+          ]
         },
         {
-          icon: "mdi-shape",
-          title: "Link Categories",
-          to: "/categories/link",
-          colour: "purple",
-        },
-        {
+          title: 'Brands',
           icon: "mdi-watermark",
-          title: "Manage Brands",
-          to: "/brands/manage",
-          colour: "green",
+          items:[
+            {
+              icon: "mdi-watermark",
+              title: "Manage Brands",
+              to: "/brands/manage",
+              colour: "green",
+            },
+            {
+              icon: "mdi-watermark",
+              title: "Link Brands",
+              to: "/brands/link",
+              colour: "green",
+            },
+          ]
         },
         {
-          icon: "mdi-watermark",
-          title: "Link Brands",
-          to: "/brands/link",
-          colour: "green",
-        },
-        {
-          icon: "mdi-cart-variant",
-          title: "Scraped Products",
-          to: "/products/scraped/list",
-          colour: "red",
-        },
-        {
-          icon: "mdi-cart-variant",
-          title: "Staged Products",
-          to: "/products/staged/list",
-          colour: "red",
-        },
-        {
-          icon: "mdi-cart-variant",
-          title: "Published Products",
-          to: "/products/published/list",
-          colour: "red",
-        },
-        {
-          icon: "mdi-cart-variant",
-          title: "Deleted Products",
-          to: "/products/deleted/list",
-          colour: "red",
+            title: 'products',
+            icon: "mdi-cart-variant",
+            items:[
+              {
+                icon: "mdi-cart-variant",
+                title: "Scraped Products",
+                to: "/products/scraped/list",
+                colour: "red",
+              },
+              {
+                icon: "mdi-cart-variant",
+                title: "Staged Products",
+                to: "/products/staged/list",
+                colour: "red",
+              },
+              {
+                icon: "mdi-cart-variant",
+                title: "Published Products",
+                to: "/products/published/list",
+                colour: "red",
+              },
+              {
+                icon: "mdi-cart-variant",
+                title: "Deleted Products",
+                to: "/products/deleted/list",
+                colour: "red",
+              },
+            ]
         },
         {
           icon: "mdi-train-car",
