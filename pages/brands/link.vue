@@ -25,7 +25,6 @@
               label="Search"
               v-model="scrapedSearch"
               style="padding-top: 0px"
-              @change="filterScraped()"
             ></v-text-field>
           </div>
           <div class="col-3">
@@ -46,7 +45,6 @@
           <table>
             <thead>
               <tr class="fancy-heading-row">
-                <th scope="col">#</th>
                 <th scope="col">Name</th>
                 <th scope="col">Link</th>
                 <th scope="col"></th>
@@ -54,12 +52,12 @@
             </thead>
             <tbody>
               <tr
-                v-for="(brand, index) of scarapedBrands"
+                v-for="(brand, index) of displayedScrapedBrands"
                 :key="index"
                 class="fancy-row"
               >
-                <td v-if="pageScraped == 1">{{ index + 1 }}</td>
-                <td v-if="pageScraped > 1">{{ (pageScraped * 10) + index + 1 }}</td>
+                <!-- <td v-if="pageScraped == 1">{{ index + 1 }}</td>
+                <td v-if="pageScraped > 1">{{ (pageScraped * 10) + index + 1 }}</td> -->
                 <td>{{ brand.name }}</td>
                 <td>
                   <span v-if="brand.mappedBrandId != null">
@@ -74,6 +72,7 @@
                     :brandCreateCallBackEdit="brandCreateCallBackEdit"
                     :brand="brand"
                     :bamBazonkeBrands="brands"
+                    :allMappedBrands="allMappedBrands"
                   />
                 </td>
               </tr>
@@ -104,7 +103,6 @@
               style="padding-top: 0px"
               label="Search"
               v-model="searchBrands"
-              @change="filterBrands()"
             ></v-text-field>
           </div>
         </div>
@@ -113,19 +111,18 @@
           <table>
             <thead>
               <tr class="fancy-heading-row">
-                <th scope="col">#</th>
                 <th scope="col">Name</th>
                 <th scope="col">Published</th>
               </tr>
             </thead>
             <tbody>
               <tr
-                v-for="(brand, index) of brands"
+                v-for="(brand, index) of displayedMappedBrands"
                 :key="index"
                 class="fancy-row"
               >
-                <td v-if="page == 1">{{ index + 1 }}</td>
-                <td v-if="page > 1">{{ (page * 10) + index + 1 }}</td>
+                <!-- <td v-if="page == 1">{{ index + 1 }}</td>
+                <td v-if="page > 1">{{ (page * 10) + index + 1 }}</td> -->
                 <td>{{ brand.name }}</td>
                 <td>
                   <v-tooltip v-if="brand.publish" top>
@@ -186,48 +183,71 @@ export default {
       shop: null,
       scrapedSearch: "",
       searchBrands: "",
-      allMappedBrands: []
+      allMappedBrands: [],
+      filteredScrapedBrands: [],
+      filteredMappedBrands: [],
+      displayedMappedBrands: [],
+      displayedScrapedBrands: []
     };
   },
   watch: {
-    async page(val) {
+    page(val) {
       // Load the products
-      const brandResponse = await this.$store.dispatch("dataGate", {
-        tableName: "mappedBrands",
-        operation: "read",
-        page: val,
-        numberPerPage: this.numberPerPage,
-      });
-      if (brandResponse.count) {
-        this.brandCount = brandResponse.count;
-      }
-      if (brandResponse.data) {
-        this.brands = brandResponse.data;
-      }
+      // const brandResponse = await this.$store.dispatch("dataGate", {
+      //   tableName: "mappedBrands",
+      //   operation: "read",
+      //   page: val,
+      //   numberPerPage: this.numberPerPage,
+      // });
+      // if (brandResponse.count) {
+      //   this.brandCount = brandResponse.count;
+      // }
+      // if (brandResponse.data) {
+      //   this.brands = brandResponse.data;
+      // }
+      this.setPageMapped();
     },
-    async pageScraped(val) {
-      this.loading = true;
-      const brandScrapedResponse = await this.$store.dispatch("dataGate", {
-        tableName: "scrapedBrands",
-        operation: "read",
-        page: val,
-        numberPerPage: this.numberPerPage,
-      });
+    pageScraped(val) {
+      // console.log("PAGE ", val);
+      // this.loading = true;
+      // const brandScrapedResponse = await this.$store.dispatch("dataGate", {
+      //   tableName: "scrapedBrands",
+      //   operation: "read",
+      //   page: val,
+      //   numberPerPage: this.numberPerPage,
+      // });
 
-      if (brandScrapedResponse.data) {
-        this.scarapedBrands = brandScrapedResponse.data;
-      }
+      // if (brandScrapedResponse.data) {
+      //   this.scarapedBrands = brandScrapedResponse.data;
+      // }
 
-      if (brandScrapedResponse.count) {
-        this.brandScrapedCount = brandScrapedResponse.count;
-      }
+      // if (brandScrapedResponse.count) {
+      //   this.brandScrapedCount = brandScrapedResponse.count;
+      // }
 
-      this.loading = false;
+
+      // this.loading = false;
+      this.setPageScraped()
     },
     async shop() {
       this.filterScraped();
     },
-    search(val) {},
+    searchBrands(val) {
+      this.filteredMappedBrands = this.brands.filter((brand) => {
+        return (
+            brand.name.toLowerCase().includes(val.toLowerCase())
+        )
+      })
+      this.setPageMapped()
+    },
+    scrapedSearch(val) {
+      this.filteredScrapedBrands = this.scarapedBrands.filter((brand) => {
+        return (
+            brand.name.toLowerCase().includes(val.toLowerCase())
+        )
+      })
+      this.setPageScraped()
+    },
   },
   beforeMount() {
     this.$nextTick(async function () {
@@ -236,16 +256,17 @@ export default {
       const brandResponse = await this.$store.dispatch("dataGate", {
         tableName: "mappedBrands",
         operation: "read",
-        page: 1,
-        numberPerPage: this.numberPerPage,
       });
       if (brandResponse.count) {
         this.brandCount = brandResponse.count;
       }
       if (brandResponse.data) {
         this.brands = brandResponse.data;
+        this.filteredMappedBrands = brandResponse.data;
+        this.setPageMapped();
       }
 
+      //get all BZ brands
       const allMappedBrandResponse = await this.$store.dispatch("dataGate", {
         tableName: "mappedBrands",
         operation: "read",
@@ -254,21 +275,21 @@ export default {
         this.allMappedBrands = allMappedBrandResponse.data;
       }
 
+      //get all scraped brands
       const brandScrapedResponse = await this.$store.dispatch("dataGate", {
         tableName: "scrapedBrands",
         operation: "read",
-        page: 1,
-        numberPerPage: this.numberPerPage,
       });
-
-      if (brandScrapedResponse.data) {
-        this.scarapedBrands = brandScrapedResponse.data;
-      }
-
       if (brandScrapedResponse.count) {
         this.brandScrapedCount = brandScrapedResponse.count;
       }
-
+      if (brandScrapedResponse.data) {
+        this.scarapedBrands = brandScrapedResponse.data;
+        this.filteredScrapedBrands = brandScrapedResponse.data;
+        console.log("FILTERED SCRAPED BRANDS", this.filteredScrapedBrands);
+        this.setPageScraped();
+      }
+      
       const shopsResponse = await this.$store.dispatch("dataGate", {
         tableName: "shops",
         operation: "read",
@@ -287,72 +308,111 @@ export default {
     this.$nextTick(async function () {});
   },
   methods: {
-    setPage() {
-      this.displayedBrands = [];
+    setPageMapped() {
+      this.displayedMappedBrands = [];
       function numPages(total, numPerPage) {
         return Math.ceil(total / numPerPage);
       }
       // Validate page
       if (this.page < 1) this.page = 1;
-      if (this.page > numPages(this.filteredBrands.length, this.numberPerPage))
-        this.page = numPages(this.filteredBrands.length, this.numberPerPage);
+      if (this.page > numPages(this.filteredMappedBrands.length, this.numberPerPage))
+        this.page = numPages(this.filteredMappedBrands.length, this.numberPerPage);
       for (
         let i = (this.page - 1) * this.numberPerPage;
-        i < this.page * this.numberPerPage && i < this.filteredBrands.length;
+        i < this.page * this.numberPerPage && i < this.filteredMappedBrands.length;
         i++
       ) {
-        if (this.filteredBrands[i]) {
-          this.displayedBrands.push(this.filteredBrands[i]);
+        if (this.filteredMappedBrands[i]) {
+          this.displayedMappedBrands.push(this.filteredMappedBrands[i]);
         }
       }
     },
-    async filterScraped() {
-      if (this.scrapedSearch == "" && this.shop != null) {
-        const brandScrapedResponse = await this.$store.dispatch("dataGate", {
-          tableName: "scrapedBrands",
-          operation: "read",
-          numberPerPage: this.numberPerPage,
-          whereCriteria: { shopId: this.shop },
-        });
-
-        if (brandScrapedResponse.data) {
-          this.scarapedBrands = brandScrapedResponse.data;
-        }
-
-        if (brandScrapedResponse.count) {
-          this.brandScrapedCount = brandScrapedResponse.count;
-        }
-      } else if (this.shop == null && this.scrapedSearch != "") {
-        const brandScrapedResponse = await this.$store.dispatch("dataGate", {
-          tableName: "scrapedBrands",
-          operation: "read",
-          numberPerPage: this.numberPerPage,
-          whereCriteria: { name: this.scrapedSearch },
-        });
-
-        if (brandScrapedResponse.data) {
-          this.scarapedBrands = brandScrapedResponse.data;
-        }
-
-        if (brandScrapedResponse.count) {
-          this.brandScrapedCount = brandScrapedResponse.count;
-        }
-      } else if (this.shop == null && this.scrapedSearch == "") {
-        const brandScrapedResponse = await this.$store.dispatch("dataGate", {
-          tableName: "scrapedBrands",
-          operation: "read",
-          page: 1,
-          numberPerPage: this.numberPerPage,
-        });
-
-        if (brandScrapedResponse.data) {
-          this.scarapedBrands = brandScrapedResponse.data;
-        }
-
-        if (brandScrapedResponse.count) {
-          this.brandScrapedCount = brandScrapedResponse.count;
+    setPageScraped() {
+      this.displayedScrapedBrands = [];
+      function numPages(total, numPerPage) {
+        return Math.ceil(total / numPerPage);
+      }
+      // Validate page
+      if (this.page < 1) this.page = 1;
+      if (this.page > numPages(this.filteredScrapedBrands.length, this.numberPerPage))
+        this.page = numPages(this.filteredScrapedBrands.length, this.numberPerPage);
+      for (
+        let i = (this.page - 1) * this.numberPerPage;
+        i < this.page * this.numberPerPage && i < this.filteredScrapedBrands.length;
+        i++
+      ) {
+        if (this.filteredScrapedBrands[i]) {
+          this.displayedScrapedBrands.push(this.filteredScrapedBrands[i]);
         }
       }
+    },
+    // setPageScraped() {
+    //   this.displayedScrapedBrands = [];
+    //   function numPages(total, numPerPage) {
+    //     return Math.ceil(total / numPerPage);
+    //   }
+    //   // Validate page
+    //   if (this.page < 1) this.page = 1;
+    //   if (this.page > numPages(this.filteredScrapedBrands.length, this.numberPerPage))
+    //     this.page = numPages(this.filteredScrapedBrands.length, this.numberPerPage);
+    //   for (
+    //     let i = (this.page - 1) * this.numberPerPage;
+    //     i < this.page * this.numberPerPage && i < this.filteredScrapedBrands.length;
+    //     i++
+    //   ) {
+    //     if (this.filteredScrapedBrands[i]) {
+    //       this.displayedScrapedBrands.push(this.filteredScrapedBrands[i]);
+    //     }
+    //   }
+    // },
+    async filterScraped() {
+      console.log(Filete);
+      // if (this.scrapedSearch == "" && this.shop != null) {
+      //   const brandScrapedResponse = await this.$store.dispatch("dataGate", {
+      //     tableName: "scrapedBrands",
+      //     operation: "read",
+      //     numberPerPage: this.numberPerPage,
+      //     whereCriteria: { shopId: this.shop },
+      //   });
+
+      //   if (brandScrapedResponse.data) {
+      //     this.scarapedBrands = brandScrapedResponse.data;
+      //   }
+
+      //   if (brandScrapedResponse.count) {
+      //     this.brandScrapedCount = brandScrapedResponse.count;
+      //   }
+      // } else if (this.shop == null && this.scrapedSearch != "") {
+      //   const brandScrapedResponse = await this.$store.dispatch("dataGate", {
+      //     tableName: "scrapedBrands",
+      //     operation: "read",
+      //     numberPerPage: this.numberPerPage,
+      //     whereCriteria: { name: this.scrapedSearch },
+      //   });
+
+      //   if (brandScrapedResponse.data) {
+      //     this.scarapedBrands = brandScrapedResponse.data;
+      //   }
+
+      //   if (brandScrapedResponse.count) {
+      //     this.brandScrapedCount = brandScrapedResponse.count;
+      //   }
+      // } else if (this.shop == null && this.scrapedSearch == "") {
+      //   const brandScrapedResponse = await this.$store.dispatch("dataGate", {
+      //     tableName: "scrapedBrands",
+      //     operation: "read",
+      //     page: 1,
+      //     numberPerPage: this.numberPerPage,
+      //   });
+
+      //   if (brandScrapedResponse.data) {
+      //     this.scarapedBrands = brandScrapedResponse.data;
+      //   }
+
+      //   if (brandScrapedResponse.count) {
+      //     this.brandScrapedCount = brandScrapedResponse.count;
+      //   }
+      // }
     },
     async filterBrands() {
       if (this.searchBrands == "") {

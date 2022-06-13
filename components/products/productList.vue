@@ -359,8 +359,7 @@ export default {
 }
 
 .product-list {
-  min-height: 68vh;
-  max-height: 68vh;
+  height: 65vh;
   overflow: auto;
 }
 /* .button-style{

@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <h2>Product Dashboard</h2>
+  <div class="p-2">
     <div class="row" v-if="!loading">
       <div class="col-3" v-if="product">
         <div class="card m-2 card-shadow fadeInUp animated animatedFadeInUp">
@@ -47,7 +46,7 @@
           </v-tab>
         </v-tabs>
         <v-tabs-items v-model="tab">
-          <v-tab-item :key="'details'" class="p-3">
+          <v-tab-item class="p-3">
             <products-product-detail
                 v-if="product"
                 :type="'staged'"
@@ -56,11 +55,11 @@
                 :product="product"
             />
           </v-tab-item>
-          <v-tab-item :key="'details'" class="p-3">
+          <v-tab-item  class="p-3">
             <product-linked-entities :product="product" class="fadeInUp animated animatedFadeInUp"/>
             <products-product-publish :product="product" />
           </v-tab-item>
-          <v-tab-item :key="'details'" class="p-3">
+          <v-tab-item class="p-3">
             <products-product-log
                 :productId="this.$router.currentRoute.params.id"
                 :type="'stagedProducts'"
