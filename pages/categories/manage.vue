@@ -1,7 +1,7 @@
 <template>
-  <div class="pa-3">
+  <div class="">
     <!--Header-->
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mx-3">
       <h1 class="h2">Manage Categories</h1>
       <v-text-field
           v-model="search"
@@ -12,10 +12,11 @@
         <div class="btn-group me-2">
           <categories-create-category-dialog
             :categories="displayedCategories" :saveCallBack="saveCallBack" :allCategories="categories" />
+          <export-modal :exportTableName="'mappedCategories'" :exportSheetName="'BambaZonke Categories'" :products="displayedCategories" />
         </div>
       </div>
     </div>
-    <export-modal :exportTableName="'mappedCategories'" :exportSheetName="'BambaZonke Categories'" :products="displayedCategories" />
+    <hr class="my-0 mx-3">
     <!--Table-->
     <categories-category-list
         :categories="displayedCategories" :allCategories="categories" :reloadCallBack="saveCallBack"/>

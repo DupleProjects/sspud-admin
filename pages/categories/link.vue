@@ -1,14 +1,20 @@
 <template>
-  <div class="pa-3">
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <div class="">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mx-3">
       <h2>Link Categories</h2>
 
       <v-text-field v-model="search" label="Search" class="px-5"></v-text-field>
+      <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+          <export-modal :exportTableName="'scrapedCategories'" :exportSheetName="'Scraped Categories'" :products="scrapedCategories" />
+        </div>
+      </div>
     </div>
-      <export-modal :exportTableName="'scrapedCategories'" :exportSheetName="'Scraped Categories'" :products="scrapedCategories" />
-    <div class="fancy-table">
-      <table>
-        <thead>
+    <hr class="my-0 mx-3">
+    <div class="p-3" style="border-radius: 20px !important">
+      <div class="fancy-table">
+        <table>
+          <thead>
           <tr class="fancy-heading-row">
             <th>Name</th>
             <th>Shop</th>
@@ -17,12 +23,12 @@
             <th>Created At</th>
             <th>Action</th>
           </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
           <tr
-            v-for="(scrapedCategory, index) of scrapedCategories"
-            :key="index"
-            class="fancy-row"
+              v-for="(scrapedCategory, index) of scrapedCategories"
+              :key="index"
+              class="fancy-row"
           >
             <td style="font-weight: bold; font-size: 15px">
               {{ scrapedCategory.name }}
@@ -35,7 +41,7 @@
               <v-tooltip v-if="scrapedCategory.publish" top>
                 <template v-slot:activator="{ on, attrs }">
                   <v-icon v-bind="attrs" v-on="on" color="green" medium
-                    >mdi-check-circle</v-icon
+                  >mdi-check-circle</v-icon
                   >
                 </template>
                 <span>Published</span>
@@ -43,7 +49,7 @@
               <v-tooltip v-if="!scrapedCategory.publish" top>
                 <template v-slot:activator="{ on, attrs }">
                   <v-icon v-bind="attrs" v-on="on" color="orange" medium
-                    >mdi-close-circle</v-icon
+                  >mdi-close-circle</v-icon
                   >
                 </template>
                 <span>Published</span>
@@ -52,18 +58,20 @@
             <td>
               {{ formatDate(scrapedCategory.createdAt) }}
             </td>
-            <td>
+            <td class="d-flex">
               <!--Opens link dialog-->
               <categories-link-scraped-category-dialog
-                :categories="categories"
-                :scrapedCategory="scrapedCategory"
+                  :categories="categories"
+                  :scrapedCategory="scrapedCategory"
               />
               <!-- Opens Linked Categories Dialog -->
               <linked-categories-modal :category="scrapedCategory" :subCategories="allScrapedCategories" />
             </td>
           </tr>
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
+
     </div>
     <!--Pagination-->
     <template>
@@ -87,26 +95,27 @@ export default {
   components: { exportModal,LinkedCategoriesModal },
   mixins: [baseMixin],
   data() {
-
       return {
-      loading: false,
-      page: 1,
-      search: "",
-      numberPerPage: 20,
-      categoryCount: 0,
-      scrapedCategoryCount: 0,
-      categories: [],
-      scrapedCategories: [],
-      filteredCategories: [],
-      filteredScrapedCategories: [],
-      displayedCategories: [],
-      displayedScrapedCategories: [],
-      allScrapedCategories:[]
+        loading: false,
+        page: 1,
+        search: "",
+        numberPerPage: 20,
+        categoryCount: 0,
+        scrapedCategoryCount: 0,
+        categories: [],
+        scrapedCategories: [],
+        filteredCategories: [],
+        filteredScrapedCategories: [],
+        displayedCategories: [],
+        displayedScrapedCategories: [],
+        allScrapedCategories:[],
+        // Filtering
+        lastUsedFilter: null,
     };
   },
   watch: {
     page(val) {
-      this.loadScrapedCategories();
+      this.loadScrapedCategories(this.lastUsedFilter);
     },
     search(val) {
       if (val && val !== "") {
@@ -127,6 +136,15 @@ export default {
       await this.loadMappedCategories();
       // Load the scraped categories
       await this.loadScrapedCategories();
+      // Load here because we only need to load this once
+      const allScrapedCategoriesResponse = await this.$store.dispatch("dataGate", {
+        tableName: "scrapedCategories",
+        operation: "read",
+      });
+      if (allScrapedCategoriesResponse.data) {
+        this.allScrapedCategories = allScrapedCategoriesResponse.data;
+      }
+      console.log("ALL SCRAPED CATEGORIES!!", this.allScrapedCategories);
     });
   },
   unmounted() {
@@ -163,6 +181,9 @@ export default {
       }
     },
     async loadScrapedCategories(filter) {
+      if (filter) {
+        this.lastUsedFilter = filter;
+      }
       //scraped categories
       const scrapedCategoriesResponse = await this.$store.dispatch("dataGate", {
         tableName: "scrapedCategories",
@@ -179,14 +200,6 @@ export default {
       if (scrapedCategoriesResponse.data) {
         this.scrapedCategories = scrapedCategoriesResponse.data;
       }
-      const allScrapedCategoriesResponse = await this.$store.dispatch("dataGate", {
-        tableName: "scrapedCategories",
-        operation: "read",
-      });
-      if (allScrapedCategoriesResponse.data) {
-        this.allScrapedCategories = allScrapedCategoriesResponse.data;
-      }
-      console.log("ALL SCRAPED CATEGORIES!!", this.allScrapedCategories);
       this.loading = false;
     },
     formatDate(datetime) {
@@ -208,8 +221,9 @@ export default {
   font-size: small;
   display: flex;
   flex-direction: column;
-  min-width: 600px;
+  max-height: 79vh;
   border-radius: 10px !important;
+  overflow: auto;
 }
 
 .fancy-heading-row {

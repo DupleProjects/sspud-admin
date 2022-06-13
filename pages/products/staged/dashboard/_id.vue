@@ -40,20 +40,33 @@
         </div>
       </div>
       <div class="col-9">
-        <products-product-detail
-            v-if="product"
-            :type="'staged'"
-            :edit="true"
-            class="m-2 fadeInUp animated animatedFadeInUp"
-            :product="product"
-        />
-        <product-linked-entities :product="product" class="fadeInUp animated animatedFadeInUp"/>
-        <products-product-publish :product="product" />
-        <products-product-log
-            :productId="this.$router.currentRoute.params.id"
-            :type="'stagedProducts'"
-        />
-
+        <v-tabs v-model="tab" align-with-title>
+          <v-tabs-slider color="yellow"></v-tabs-slider>
+          <v-tab v-for="item in items" :key="item">
+            {{ item }}
+          </v-tab>
+        </v-tabs>
+        <v-tabs-items v-model="tab">
+          <v-tab-item :key="'details'" class="p-3">
+            <products-product-detail
+                v-if="product"
+                :type="'staged'"
+                :edit="true"
+                class="m-2 fadeInUp animated animatedFadeInUp"
+                :product="product"
+            />
+          </v-tab-item>
+          <v-tab-item :key="'details'" class="p-3">
+            <product-linked-entities :product="product" class="fadeInUp animated animatedFadeInUp"/>
+            <products-product-publish :product="product" />
+          </v-tab-item>
+          <v-tab-item :key="'details'" class="p-3">
+            <products-product-log
+                :productId="this.$router.currentRoute.params.id"
+                :type="'stagedProducts'"
+            />
+          </v-tab-item>
+        </v-tabs-items>
       </div>
     </div>
   </div>
@@ -67,6 +80,10 @@ export default {
   mixins: [baseMixin],
   data() {
     return {
+      tab: null,
+      items: [
+        'details', 'publish', 'log'
+      ],
       product: null,
       loading: false,
     };

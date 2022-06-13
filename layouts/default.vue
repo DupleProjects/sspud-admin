@@ -75,7 +75,7 @@
         </v-list>
       </template>
     </v-navigation-drawer>
-    <v-main style="background-color: #FAFBFC !important;">
+    <v-main style="background-color: #FAFBFE !important;">
       <v-container fluid style="padding: 0px">
         <Nuxt />
       </v-container>

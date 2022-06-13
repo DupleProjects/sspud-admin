@@ -10,9 +10,7 @@
     </v-icon> -->
     <v-tooltip top>
       <template v-slot:activator="{ on, attrs }">
-        <v-icon v-bind="attrs" v-on="on" color="blue" medium @click="openDialog()"
-          >mdi-link-variant</v-icon
-        >
+        <v-icon v-bind="attrs" v-on="on" color="blue" medium @click="openDialog()">mdi-link-variant</v-icon>
       </template>
       <span>Link</span>
     </v-tooltip>
@@ -21,8 +19,7 @@
     <v-dialog
       style="z-index: 10000"
       v-model="newCategoryDialog"
-      max-width="800"
-    >
+      max-width="800">
       <v-card v-if="brand">
         <v-card-title> Link Brand </v-card-title>
         <v-card-subtitle>
@@ -32,8 +29,7 @@
           <v-form
             ref="newCategoryForm"
             v-model="validBrandForm"
-            lazy-validation
-          >
+            lazy-validation>
             <v-text-field
               disabled
               prepend-icon="mdi-card-account-details-outline"
@@ -42,20 +38,16 @@
               hint="The name of the brand"
               label="Name"
             ></v-text-field>
-            <v-switch
-              v-model="brand.publish"
-              label="Published"
-              disabled
-            ></v-switch>
-            <v-select
-              label="Bambazonke Brand Link"
-              item-text="name"
-              item-value="id"
-              :items="bamBazonkeBrands"
-              width="100%"
-              v-model="brand.mappedBrandId"
-              class="mt-3"
-            ></v-select>
+            <v-autocomplete
+                prepend-icon="mdi-link-variant"
+                v-model="brand.mappedBrandId"
+                item-text="name"
+                item-value="id"
+                :items="bamBazonkeBrands"
+                :hide-details="true"
+                label="Bambazonke Brand Link"
+                dense
+            ></v-autocomplete>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -109,8 +101,6 @@ export default {
       this.newCategoryDialog = true;
     },
     async saveBrand() {
-      console.log(this.brand);
-
       this.loading = true;
       // Save the  category if the form is valid
       if (this.$refs.newCategoryForm.validate()) {
