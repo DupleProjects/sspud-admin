@@ -56,7 +56,7 @@
       <div class="d-flex mb-3">
         <v-btn
             :disabled="!product.SABSCertificate"
-            @click="downloadBOBSCertificate()"
+            @click="downloadSABSCertificate()"
             class="mt-3">Download SABS</v-btn>
         <v-file-input
             label="SABS Certificate"
@@ -202,8 +202,19 @@ export default {
     },
     downloadBOBSCertificate() {
       const link = document.createElement('a');
-      link.href = 'https://tsazonkeimages.s3.af-south-1.amazonaws.com/BOBSCertificates/test.pdf';
-      link.download = 'test.pdf';
+      link.href = this.product.BOBSCertificate;
+      link.download = 'BOBSCertificate.pdf';
+      // some browser needs the anchor to be in the doc
+      document.body.append(link);
+      link.click();
+      link.remove();
+      // in case the Blob uses a lot of memory
+      setTimeout(() => URL.revokeObjectURL(link.href), 7000);
+    },
+    downloadSABSCertificate() {
+      const link = document.createElement('a');
+      link.href = this.product.SABSCertificate;
+      link.download = 'SABSCertificate.pdf';
       // some browser needs the anchor to be in the doc
       document.body.append(link);
       link.click();
