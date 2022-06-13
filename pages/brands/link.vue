@@ -63,7 +63,7 @@
                 <td>{{ brand.name }}</td>
                 <td>
                   <span v-if="brand.mappedBrandId != null">
-                    {{ brands.find((x) => x.id === brand.mappedBrandId).name }}
+                    {{ allMappedBrands.find((x) => x.id === brand.mappedBrandId).name }}
                   </span>
                   <span v-if="brand.mappedBrandId == null" style="color: red">
                     Not Linked
@@ -186,6 +186,7 @@ export default {
       shop: null,
       scrapedSearch: "",
       searchBrands: "",
+      allMappedBrands: []
     };
   },
   watch: {
@@ -243,6 +244,14 @@ export default {
       }
       if (brandResponse.data) {
         this.brands = brandResponse.data;
+      }
+
+      const allMappedBrandResponse = await this.$store.dispatch("dataGate", {
+        tableName: "mappedBrands",
+        operation: "read",
+      });
+      if (allMappedBrandResponse.data) {
+        this.allMappedBrands = allMappedBrandResponse.data;
       }
 
       const brandScrapedResponse = await this.$store.dispatch("dataGate", {

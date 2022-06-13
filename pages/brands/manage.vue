@@ -11,9 +11,13 @@
         pb-2
         mb-3
         border-bottom
-      "
-    >
+      ">
       <h1 class="h2">Manage Brands</h1>
+      <v-text-field
+          v-model="search"
+          label="Search"
+          class="px-5"
+      ></v-text-field>
       <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
           <brands-create-brand-dialog
@@ -99,6 +103,7 @@ export default {
   data() {
     return {
       loading: false,
+      search: '',
       page: 1,
       numberPerPage: 20,
       brandCount: 0,
@@ -112,7 +117,12 @@ export default {
       this.setPage();
     },
     search(val) {
-
+      this.filteredBrands = this.brands.filter((brand) => {
+        return (
+            brand.name.toLowerCase().includes(val.toLowerCase())
+        )
+      })
+      this.setPage()
     },
   },
   beforeMount() {
@@ -232,7 +242,7 @@ export default {
   font-size: small;
   display: flex;
   flex-direction: column;
-  max-height: 80vh;
+  height: 78vh;
   border-radius: 10px !important;
   overflow: auto;
 }

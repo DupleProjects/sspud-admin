@@ -95,26 +95,27 @@ export default {
   components: { exportModal,LinkedCategoriesModal },
   mixins: [baseMixin],
   data() {
-
       return {
-      loading: false,
-      page: 1,
-      search: "",
-      numberPerPage: 20,
-      categoryCount: 0,
-      scrapedCategoryCount: 0,
-      categories: [],
-      scrapedCategories: [],
-      filteredCategories: [],
-      filteredScrapedCategories: [],
-      displayedCategories: [],
-      displayedScrapedCategories: [],
-      allScrapedCategories:[]
+        loading: false,
+        page: 1,
+        search: "",
+        numberPerPage: 20,
+        categoryCount: 0,
+        scrapedCategoryCount: 0,
+        categories: [],
+        scrapedCategories: [],
+        filteredCategories: [],
+        filteredScrapedCategories: [],
+        displayedCategories: [],
+        displayedScrapedCategories: [],
+        allScrapedCategories:[],
+        // Filtering
+        lastUsedFilter: null,
     };
   },
   watch: {
     page(val) {
-      this.loadScrapedCategories();
+      this.loadScrapedCategories(this.lastUsedFilter);
     },
     search(val) {
       if (val && val !== "") {
@@ -135,6 +136,15 @@ export default {
       await this.loadMappedCategories();
       // Load the scraped categories
       await this.loadScrapedCategories();
+      // Load here because we only need to load this once
+      const allScrapedCategoriesResponse = await this.$store.dispatch("dataGate", {
+        tableName: "scrapedCategories",
+        operation: "read",
+      });
+      if (allScrapedCategoriesResponse.data) {
+        this.allScrapedCategories = allScrapedCategoriesResponse.data;
+      }
+      console.log("ALL SCRAPED CATEGORIES!!", this.allScrapedCategories);
     });
   },
   unmounted() {
@@ -171,6 +181,9 @@ export default {
       }
     },
     async loadScrapedCategories(filter) {
+      if (filter) {
+        this.lastUsedFilter = filter;
+      }
       //scraped categories
       const scrapedCategoriesResponse = await this.$store.dispatch("dataGate", {
         tableName: "scrapedCategories",
@@ -187,14 +200,6 @@ export default {
       if (scrapedCategoriesResponse.data) {
         this.scrapedCategories = scrapedCategoriesResponse.data;
       }
-      const allScrapedCategoriesResponse = await this.$store.dispatch("dataGate", {
-        tableName: "scrapedCategories",
-        operation: "read",
-      });
-      if (allScrapedCategoriesResponse.data) {
-        this.allScrapedCategories = allScrapedCategoriesResponse.data;
-      }
-      console.log("ALL SCRAPED CATEGORIES!!", this.allScrapedCategories);
       this.loading = false;
     },
     formatDate(datetime) {

@@ -62,7 +62,7 @@
                 label="Brand"
                 prepend-icon="mdi-watermark"
                 :rules="[(v) => !!v || 'A brand is required']"
-                :messages="['Choose a BambaZonke sub category for this product']"
+                :messages="['Choose a BambaZonke Brand for this product']"
             ></v-autocomplete>
           </div>
           <div class="col-6">
@@ -72,7 +72,6 @@
             </p>
             <v-autocomplete
                 v-if="type === 'staged'"
-                style="padding-top: 0px"
                 v-model="product.categoryId"
                 v-on:change="onCategoryChange()"
                 :items="categories"
@@ -90,7 +89,6 @@
             </p>
             <v-autocomplete
                 v-if="type === 'staged'"
-                style="padding-top: 0px"
                 v-model="product.subCategoryId"
                 v-on:change="onCategoryChange(true)"
                 :items="subCategories"
@@ -103,51 +101,51 @@
                 :messages="['Choose a BambaZonke sub category for this product']"
             ></v-autocomplete>
           </div>
-          <div class="col-6 picka-picka">
-            <div class="p-5 mt-4">
-              <div class="box">
-                <div class="face bottom"></div>
-                <div class="face back"></div>
-                <div class="face right"></div>
-                <div class="face left">
-                  <div class="icons">
-                    <div class="umbrella"></div>
-                    <div class="orientation">
-                      <div class="base"></div>
-                    </div>
-                    <div class="glass"></div>
-                  </div>
-                </div>
-                <div class="face front">
-                  <div class="recycled">
-                    <div class="arrow"></div>
-                    <div class="arrow"></div>
-                    <div class="arrow"></div>
-                  </div>
-                  <div class="label"></div>
-                  <div class="ball"></div>
-                </div>
-                <div class="face top">
-                  <div class="cover-back"></div>
-                  <div class="cover-right"></div>
-                  <div class="cover-left"></div>
-                  <div class="cover-front"></div>
-                </div>
-                <div class="content">
-                  <div class="pikachu">
-                    <div class="ear left"></div>
-                    <div class="ear"></div>
-                    <div class="head">
-                      <div class="eye"></div>
-                      <div class="eye"></div>
-                      <div class="nouse"></div>
-                      <div class="mouth"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+<!--          <div class="col-6 picka-picka">-->
+<!--            <div class="p-5 mt-4">-->
+<!--              <div class="box">-->
+<!--                <div class="face bottom"></div>-->
+<!--                <div class="face back"></div>-->
+<!--                <div class="face right"></div>-->
+<!--                <div class="face left">-->
+<!--                  <div class="icons">-->
+<!--                    <div class="umbrella"></div>-->
+<!--                    <div class="orientation">-->
+<!--                      <div class="base"></div>-->
+<!--                    </div>-->
+<!--                    <div class="glass"></div>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--                <div class="face front">-->
+<!--                  <div class="recycled">-->
+<!--                    <div class="arrow"></div>-->
+<!--                    <div class="arrow"></div>-->
+<!--                    <div class="arrow"></div>-->
+<!--                  </div>-->
+<!--                  <div class="label"></div>-->
+<!--                  <div class="ball"></div>-->
+<!--                </div>-->
+<!--                <div class="face top">-->
+<!--                  <div class="cover-back"></div>-->
+<!--                  <div class="cover-right"></div>-->
+<!--                  <div class="cover-left"></div>-->
+<!--                  <div class="cover-front"></div>-->
+<!--                </div>-->
+<!--                <div class="content">-->
+<!--                  <div class="pikachu">-->
+<!--                    <div class="ear left"></div>-->
+<!--                    <div class="ear"></div>-->
+<!--                    <div class="head">-->
+<!--                      <div class="eye"></div>-->
+<!--                      <div class="eye"></div>-->
+<!--                      <div class="nouse"></div>-->
+<!--                      <div class="mouth"></div>-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
           <div class="col-6">
             <v-text-field
                 label="Shipping Width"
@@ -196,6 +194,13 @@
         </div>
       </v-form>
     </div>
+    <v-snackbar
+        v-model="snackbar"
+        outlined
+        color="success"
+        :timeout="timeout">
+      {{ snackBarText }}
+    </v-snackbar>
   </div>
 </template>
 
@@ -219,6 +224,10 @@ export default {
       brands: [],
       category: null,
       subCategory: null,
+      // Snackbar
+      snackbar: false,
+      snackBarText: 'My timeout is set to 2000.',
+      timeout: 2000,
     };
   },
   mounted() {},
@@ -285,6 +294,8 @@ export default {
             operation: "update",
           });
         }
+        this.snackBarText = 'Product Successfully Saved';
+        this.snackbar = true;
         this.saving = false;
       }
     },

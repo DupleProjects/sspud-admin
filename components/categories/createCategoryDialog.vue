@@ -36,15 +36,29 @@
                 name.
               </h5>
             </div>
-            <v-select
-              prepend-icon="mdi-clipboard-check-multiple"
-              label="Parent"
-              :item-text="'name'"
-              :item-value="'id'"
-              :items="availableCategories"
-              v-model="category.parentId"
-              :messages="['Choose a parent or leave blank']"
-            ></v-select>
+            <p>Does the new category have a parent?</p>
+            <v-radio-group v-model="hasParent">
+              <v-radio
+                  :label="`Yes`"
+                  :value="true"
+              ></v-radio>
+              <v-radio
+                  :label="`No`"
+                  :value="false"
+              ></v-radio>
+            </v-radio-group>
+            <v-autocomplete
+                v-if="hasParent"
+                :item-text="'name'"
+                :item-value="'id'"
+                :items="availableCategories"
+                v-model="category.parentId"
+                dense
+                label="Parent Category"
+                prepend-icon="mdi-clipboard-check-multiple"
+                :rules="[(v) => !!v || 'A parent category is required']"
+                :messages="['Choose a parent']"
+            ></v-autocomplete>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -93,6 +107,7 @@ export default {
       categoryExists: false,
       subCategoryExists: false,
       availableCategories: [],
+      hasParent: false
     };
   },
   mounted() {},
