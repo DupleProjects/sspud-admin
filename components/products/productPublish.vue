@@ -170,7 +170,12 @@ export default {
       const fileReader = new FileReader();
       const self = this;
       // Determine the name
-      let fileName = this.BOBSCertificate.name.split('.')[0];
+      let fileName = '';
+      if (folder === 'BOBSCertificates') {
+        fileName = this.BOBSCertificate.name.split('.')[0];
+      } else if (folder === 'SABSCertificates') {
+        fileName = this.SABSCertificate.name.split('.')[0];
+      }
       fileName = fileName.replaceAll(' ', '');
       fileReader.onload = async function() {
         const response = await self.$store.dispatch("callMiddlewareRoute", {
@@ -189,7 +194,11 @@ export default {
           await self.saveProduct();
         }
       }
-      fileReader.readAsDataURL(this.BOBSCertificate)
+      if (folder === 'BOBSCertificates') {
+        fileReader.readAsDataURL(this.BOBSCertificate)
+      } else if (folder === 'SABSCertificates') {
+        fileReader.readAsDataURL(this.SABSCertificate)
+      }
     },
     downloadBOBSCertificate() {
       const link = document.createElement('a');
