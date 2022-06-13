@@ -59,6 +59,17 @@
                 :rules="[(v) => !!v || 'A parent category is required']"
                 :messages="['Choose a parent']"
             ></v-autocomplete>
+            <p>Does the products in the new category require Right of Authority Certificates?</p>
+            <v-radio-group v-model="category.certificateRequired">
+              <v-radio
+                  :label="`Yes`"
+                  :value="true"
+              ></v-radio>
+              <v-radio
+                  :label="`No`"
+                  :value="false"
+              ></v-radio>
+            </v-radio-group>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -116,7 +127,6 @@ export default {
       this.newCategoryDialog = true;
 
       this.allCategories.forEach((element) => {
-        // console.log(element);
 
         if (element.parentId === 0 || element.parentId == null) {
           this.availableCategories.push(element);
@@ -127,6 +137,7 @@ export default {
         name: "",
         parentId: null,
         publish: true,
+        certificateRequired: false
       };
     },
     async saveCategory() {
@@ -161,8 +172,6 @@ export default {
         tableName: "mappedCategories",
         operation: "read",
       });
-
-      console.log("👉👉", catResponse.data);
 
       if (catResponse.data.length == 0) {
         this.categoryExists = false;

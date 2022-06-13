@@ -96,13 +96,11 @@ export default {
     parentCategoryName(parentId) {
       
       if (parentId) {
-        console.log("😎😎😎", this.allCategories);
         var testArr = [];
         if (this.allCategories) {
           testArr = this.allCategories;
         }
         let parentCategory = testArr.find((c) => c.id == parentId);
-        console.log("PARENT CATEGORY:::::::", parentCategory.name);
         if (parentCategory) {
           return parentCategory.name;
         }

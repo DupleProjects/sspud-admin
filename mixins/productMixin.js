@@ -50,31 +50,22 @@ export default {
                 validBrand;
 
         },
-        canPublishProduct(product) {
+        canPublishProduct(product, certificates) {
             // First check if fields are valid
             const validProduct = this.evaluateProduct(product);
             // Check if all necessary certificates are present
-            let validBOBS = false;
-            if (product.BOBSRequired) {
-                if (product.BOBSCertificate) {
-                    validBOBS = true;
+            let validCertificates = false;
+            if (product.certificateRequired) {
+                if (certificates.length > 0) {
+                    validCertificates = true;
                 }
             } else {
-                validBOBS = true;
+                validCertificates = true;
             }
-            let validSABS = false;
-            if (product.SABSRequired) {
-                if (product.SABSCertificate) {
-                    validSABS = true;
-                }
-            } else {
-                validSABS = true;
-            }
-            console.log('validSABS', validSABS)
-            console.log('validBOBS', validBOBS)
+            console.log('validCertificates', validCertificates)
             console.log('validProduct', validProduct)
             // If everything checks out we can publish
-            return validProduct && validBOBS && validSABS;
+            return validProduct && validCertificates;
         }
     }
 }
