@@ -19,13 +19,19 @@
         </div>
       </v-overlay>
     </client-only>
-    <div v-if="!loading">
-      <!--Table-->
-      <div class="px-3">
-        <h2 class="px-3">Published Products</h2>
+    <!--Header-->
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mx-3">
+      <h1 class="h2">Published Products</h1>
+      <!--Search would be here-->
+
+      <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+          <export-modal :products="products" :exportTableName="'stagedProducts'" :exportSheetName="'Published Products'" :exportCriteria="{publish:1,deleted:0}" />
+        </div>
       </div>
-      <export-modal :products="products" :exportTableName="'stagedProducts'" :exportSheetName="'Published Products'" :exportCriteria="{publish:1,deleted:0}" />
-      <products-product-list-filter :filterChangeCallBack="filterChangeCallBack" :filter="filter" :type="'staged'" />
+    </div>
+    <hr class="my-0 mx-3">
+    <div v-if="!loading">
       <products-product-list
           :type="'published'"
           :allCategories="allCategories"

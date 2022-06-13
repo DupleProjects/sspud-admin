@@ -1,22 +1,13 @@
 <template>
   <div v-if="product" class="product-publish-component card mt-4 fadeInUp animated animatedFadeInUp">
-    <h1>Product Publish Component</h1>
     <div>
       <v-alert
           v-if="!product.publish"
           border="right"
           colored-border
-          type="error"
+          :type="product.publish ? 'success' : 'error'"
           elevation="2">
-        This Product is not published
-      </v-alert>
-      <v-alert
-          v-if="product.publish"
-          border="right"
-          colored-border
-          type="success"
-          elevation="2">
-        This Product is  published
+        {{product.publish ? 'This Product is published' : 'This Product is not published'}}
       </v-alert>
       <v-alert
           v-if="product.BOBSRequired && !product.BOBSCertificate"

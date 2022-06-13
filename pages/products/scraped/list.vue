@@ -19,10 +19,20 @@
         </div>
       </v-overlay>
     </client-only>
+    <!--Header-->
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mx-3">
+      <h1 class="h2">Scraped Products</h1>
+      <!--Search would be here-->
+
+      <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+          <export-modal :products="products" :exportTableName="'scrapedProducts'" :exportSheetName="'Scraped Products'" />
+        </div>
+      </div>
+    </div>
+    <hr class="my-0 mx-3">
     <div v-if="!loading">
       <!--Table-->
-      <h2>Scraped Products</h2>
-      <export-modal :products="products" :exportTableName="'scrapedProducts'" :exportSheetName="'Scraped Products'" />
       <products-product-list :type="'scraped'" :products="products" :canDelete="false" />
       <!--Pagination-->
       <template>
