@@ -43,7 +43,7 @@
                 v-model="brand.mappedBrandId"
                 item-text="name"
                 item-value="id"
-                :items="bamBazonkeBrands"
+                :items="allMappedBrands"
                 :hide-details="true"
                 label="Bambazonke Brand Link"
                 dense
@@ -86,6 +86,7 @@ export default {
     brand: null,
     brandCreateCallBackEdit: null,
     bamBazonkeBrands: [],
+    allMappedBrands: []
   },
   data() {
     return {
