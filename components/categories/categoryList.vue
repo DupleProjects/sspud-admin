@@ -138,7 +138,7 @@ export default {
   font-size: small;
   display: flex;
   flex-direction: column;
-  min-width: 600px;
+  min-height: 75vh;
   border-radius: 10px !important;
 }
 

@@ -58,7 +58,8 @@
                 :key="index"
                 class="fancy-row"
               >
-                <td>{{ index + 1 }}</td>
+                <td v-if="pageScraped == 1">{{ index + 1 }}</td>
+                <td v-if="pageScraped > 1">{{ (pageScraped * 10) + index + 1 }}</td>
                 <td>{{ brand.name }}</td>
                 <td>
                   <span v-if="brand.mappedBrandId != null">
@@ -123,7 +124,8 @@
                 :key="index"
                 class="fancy-row"
               >
-                <td>{{ index + 1 }}</td>
+                <td v-if="page == 1">{{ index + 1 }}</td>
+                <td v-if="page > 1">{{ (page * 10) + index + 1 }}</td>
                 <td>{{ brand.name }}</td>
                 <td>
                   <v-tooltip v-if="brand.publish" top>
@@ -362,6 +364,7 @@ export default {
           tableName: "mappedBrands",
           operation: "read",
           numberPerPage: this.numberPerPage,
+          whereCriteria: { name: this.searchBrands },
         });
         if (brandResponse.count) {
           this.brandCount = brandResponse.count;

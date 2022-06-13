@@ -16,16 +16,14 @@
       <h1 class="h2">Manage Brands</h1>
       <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
-          <div class="btn-group me-2">
-            <brands-create-brand-dialog
+          <brands-create-brand-dialog
               :brandCreateCallBack="brandCreateCallBack"
               :brands="brands"
-            />
-          </div>
+          />
+          <export-modal :exportTableName="'mappedBrands'" :exportSheetName="'BambaZonke Categories'" :products="brands" />
         </div>
       </div>
     </div>
-    <export-modal :exportTableName="'mappedBrands'" :exportSheetName="'BambaZonke Categories'" :products="brands" />
     <!--Table-->
     <div class="fancy-table">
       <table>
@@ -234,8 +232,9 @@ export default {
   font-size: small;
   display: flex;
   flex-direction: column;
-  min-width: 600px;
+  max-height: 80vh;
   border-radius: 10px !important;
+  overflow: auto;
 }
 
 .fancy-heading-row {
