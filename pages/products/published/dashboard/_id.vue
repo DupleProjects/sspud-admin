@@ -45,6 +45,7 @@
             :edit="false"
             :product="product"
         />
+        <products-product-publish :product="product" />
       </div>
     </div>
   </div>
