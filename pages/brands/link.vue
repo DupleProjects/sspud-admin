@@ -192,41 +192,9 @@ export default {
   },
   watch: {
     page(val) {
-      // Load the products
-      // const brandResponse = await this.$store.dispatch("dataGate", {
-      //   tableName: "mappedBrands",
-      //   operation: "read",
-      //   page: val,
-      //   numberPerPage: this.numberPerPage,
-      // });
-      // if (brandResponse.count) {
-      //   this.brandCount = brandResponse.count;
-      // }
-      // if (brandResponse.data) {
-      //   this.brands = brandResponse.data;
-      // }
       this.setPageMapped();
     },
     pageScraped(val) {
-      // console.log("PAGE ", val);
-      // this.loading = true;
-      // const brandScrapedResponse = await this.$store.dispatch("dataGate", {
-      //   tableName: "scrapedBrands",
-      //   operation: "read",
-      //   page: val,
-      //   numberPerPage: this.numberPerPage,
-      // });
-
-      // if (brandScrapedResponse.data) {
-      //   this.scarapedBrands = brandScrapedResponse.data;
-      // }
-
-      // if (brandScrapedResponse.count) {
-      //   this.brandScrapedCount = brandScrapedResponse.count;
-      // }
-
-
-      // this.loading = false;
       this.setPageScraped()
     },
     async shop() {
@@ -286,7 +254,6 @@ export default {
       if (brandScrapedResponse.data) {
         this.scarapedBrands = brandScrapedResponse.data;
         this.filteredScrapedBrands = brandScrapedResponse.data;
-        console.log("FILTERED SCRAPED BRANDS", this.filteredScrapedBrands);
         this.setPageScraped();
       }
       
@@ -326,47 +293,30 @@ export default {
           this.displayedMappedBrands.push(this.filteredMappedBrands[i]);
         }
       }
+      this.brandCount = this.filteredMappedBrands.length
     },
     setPageScraped() {
       this.displayedScrapedBrands = [];
       function numPages(total, numPerPage) {
         return Math.ceil(total / numPerPage);
       }
+
       // Validate page
-      if (this.page < 1) this.page = 1;
-      if (this.page > numPages(this.filteredScrapedBrands.length, this.numberPerPage))
-        this.page = numPages(this.filteredScrapedBrands.length, this.numberPerPage);
+      if (this.pageScraped < 1) this.pageScraped = 1;
+      if (this.pageScraped > numPages(this.filteredScrapedBrands.length, this.numberPerPage))
+        this.pageScraped = numPages(this.filteredScrapedBrands.length, this.numberPerPage);
       for (
-        let i = (this.page - 1) * this.numberPerPage;
-        i < this.page * this.numberPerPage && i < this.filteredScrapedBrands.length;
+        let i = (this.pageScraped - 1) * this.numberPerPage;
+        i < this.pageScraped * this.numberPerPage && i < this.filteredScrapedBrands.length;
         i++
       ) {
         if (this.filteredScrapedBrands[i]) {
           this.displayedScrapedBrands.push(this.filteredScrapedBrands[i]);
         }
       }
+      this.brandScrapedCount = this.filteredScrapedBrands.length
     },
-    // setPageScraped() {
-    //   this.displayedScrapedBrands = [];
-    //   function numPages(total, numPerPage) {
-    //     return Math.ceil(total / numPerPage);
-    //   }
-    //   // Validate page
-    //   if (this.page < 1) this.page = 1;
-    //   if (this.page > numPages(this.filteredScrapedBrands.length, this.numberPerPage))
-    //     this.page = numPages(this.filteredScrapedBrands.length, this.numberPerPage);
-    //   for (
-    //     let i = (this.page - 1) * this.numberPerPage;
-    //     i < this.page * this.numberPerPage && i < this.filteredScrapedBrands.length;
-    //     i++
-    //   ) {
-    //     if (this.filteredScrapedBrands[i]) {
-    //       this.displayedScrapedBrands.push(this.filteredScrapedBrands[i]);
-    //     }
-    //   }
-    // },
-    async filterScraped() {
-      console.log(Filete);
+    // async filterScraped() {
       // if (this.scrapedSearch == "" && this.shop != null) {
       //   const brandScrapedResponse = await this.$store.dispatch("dataGate", {
       //     tableName: "scrapedBrands",
@@ -413,7 +363,7 @@ export default {
       //     this.brandScrapedCount = brandScrapedResponse.count;
       //   }
       // }
-    },
+    // },
     async filterBrands() {
       if (this.searchBrands == "") {
         const brandResponse = await this.$store.dispatch("dataGate", {
@@ -441,7 +391,6 @@ export default {
         if (brandResponse.data) {
           this.brands = brandResponse.data;
         }
-        console.log(this.brands);
       }
     },
     async brandCreateCallBackEdit() {

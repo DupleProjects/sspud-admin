@@ -127,7 +127,6 @@ export default {
       this.newCategoryDialog = true;
 
       this.allCategories.forEach((element) => {
-        // console.log(element);
 
         if (element.parentId === 0 || element.parentId == null) {
           this.availableCategories.push(element);
@@ -173,8 +172,6 @@ export default {
         tableName: "mappedCategories",
         operation: "read",
       });
-
-      console.log("👉👉", catResponse.data);
 
       if (catResponse.data.length == 0) {
         this.categoryExists = false;

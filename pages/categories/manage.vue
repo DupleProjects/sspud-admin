@@ -81,9 +81,7 @@ export default {
       }
 
       if (categoriesResponse.data) {
-        console.log('categoriesResponse.data', categoriesResponse.data)
         this.categories = categoriesResponse.data;
-        console.log('this.categories',this.categories)
         this.filteredCategories = this.categories;
         this.setPage();
       }
@@ -101,6 +99,7 @@ export default {
         tableName: 'mappedCategories',
         operation: 'read',
       });
+      this.categories = categoriesResponse.data
       this.filteredCategories = categoriesResponse.data;
       this.setPage();
     },
