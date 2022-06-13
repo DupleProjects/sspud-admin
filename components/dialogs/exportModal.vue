@@ -2,17 +2,12 @@
   <div class="">
     <v-tooltip top>
       <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          small
-          class="button-style"
-          text
-          @click="showModal()"
-          style="text-align: center"
-          v-bind="attrs"
-          v-on="on"
-        >
-          <v-icon large>mdi-export</v-icon>
-        </v-btn>
+        <button
+            @click="showModal()"
+            type="button"
+            class="btn btn-sm btn-outline-secondary">
+          Export
+        </button>
       </template>
       <span>Export</span>
     </v-tooltip>

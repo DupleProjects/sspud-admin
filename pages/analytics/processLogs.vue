@@ -40,7 +40,7 @@
             <tbody>
             <tr v-for="(processLog, index) of processLogs" :key="index">
               <td>{{ processLog.name }}</td>
-              <td>{{ processLog.duration }} seconds</td>
+              <td>{{ (processLog.duration / 1000 / 60).toFixed(2) }} minutes</td>
               <td> <base-date :date="processLog.dateTime"/></td>
               <td>
                 <v-icon
