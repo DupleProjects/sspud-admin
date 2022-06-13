@@ -59,22 +59,22 @@
                     <v-radio-group v-model="category.publish">
                       <v-radio
                           :label="`Yes`"
-                          :value="true"
+                          :value="1"
                       ></v-radio>
                       <v-radio
                           :label="`No`"
-                          :value="false"
+                          :value="0"
                       ></v-radio>
                     </v-radio-group>
                     <p>Does the products in this category require Right of Authority Certificates?</p>
                     <v-radio-group v-model="category.certificateRequired">
                       <v-radio
                           :label="`Yes`"
-                          :value="true"
+                          :value="1"
                       ></v-radio>
                       <v-radio
                           :label="`No`"
-                          :value="false"
+                          :value="0"
                       ></v-radio>
                     </v-radio-group>
                   </v-card-text>
@@ -86,6 +86,12 @@
           <v-row>
             <v-col cols="12" style="text-align: center">
               <button style="margin-top:20px; margin-bottom:20px;background-color:#52bdfa;color:white;" @click="saveCategory()" class="btn">
+                <v-progress-circular
+                    v-if="loading"
+                    :size="20"
+                    indeterminate
+                    color="primary"
+                ></v-progress-circular>
                 Save
               </button>
             </v-col>
@@ -182,6 +188,7 @@ export default {
   },
   methods: {
     async saveCategory() {
+      this.loading = true;
       const categoryResponse = await this.$store.dispatch("dataGate", {
         primaryKey: "id",
         tableName: "mappedCategories",
@@ -198,6 +205,7 @@ export default {
           }
         );
       }
+      this.loading = false;
     },
   },
 };

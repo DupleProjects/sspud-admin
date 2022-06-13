@@ -10,7 +10,10 @@
         This Product requires a certificates
       </v-alert>
       <div class="d-flex justify-content-between">
-        <h2>Product Certificates</h2>
+        <div>
+          <h2>Product Certificates</h2>
+          <p v-if="product.certificateRequired" class="text-muted">This product requires a certificate</p>
+        </div>
         <v-btn
             color="primary"
             rounded
