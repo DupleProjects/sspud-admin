@@ -32,6 +32,7 @@
           <div class="col-12">
             <v-textarea
                 rows="3"
+                class="pt-0 mt-0"
                 label="Description"
                 v-model="product.description"
                 :rules="[(v) => !!v || 'A description is required']"
