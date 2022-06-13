@@ -53,24 +53,30 @@
                 </v-card>
               </v-col>
               <v-col cols="6">
-                <v-card class="category-subcards">
-                  <v-card-text class="category-subcard-text">
-                    <v-switch
-                      v-model="category.publish"
-                      :label="`Publish`"
-                    ></v-switch>
-                    <v-switch
-                      v-model="category.BOBSRequired"
-                      v-on:change="
-                        category.SABSRequired = category.BOBSRequired
-                      "
-                      :label="`BOBS Required`"
-                    ></v-switch>
-                    <v-switch
-                      v-model="category.SABSRequired"
-                      v-show="false"
-                      :label="`SABS Required`"
-                    ></v-switch>
+                <v-card class="">
+                  <v-card-text class="">
+                    <p>Should products from this category be published automatically?</p>
+                    <v-radio-group v-model="category.publish">
+                      <v-radio
+                          :label="`Yes`"
+                          :value="true"
+                      ></v-radio>
+                      <v-radio
+                          :label="`No`"
+                          :value="false"
+                      ></v-radio>
+                    </v-radio-group>
+                    <p>Does the products in this category require Right of Authority Certificates?</p>
+                    <v-radio-group v-model="category.certificateRequired">
+                      <v-radio
+                          :label="`Yes`"
+                          :value="true"
+                      ></v-radio>
+                      <v-radio
+                          :label="`No`"
+                          :value="false"
+                      ></v-radio>
+                    </v-radio-group>
                   </v-card-text>
                 </v-card>
               </v-col>
