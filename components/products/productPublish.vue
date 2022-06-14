@@ -202,6 +202,8 @@ export default {
           this.product, this.certificates
         );
 
+        console.log("details---",returnedDetails);
+
         this.invalidItems = [];
 
         if (!returnedDetails.productDetails.validBrand) {
@@ -236,6 +238,9 @@ export default {
         }
         if (!returnedDetails.productDetails.validWidth) {
           this.invalidItems.push("Invalid Width");
+        }
+        if (!returnedDetails.productDetails.validCertificates) {
+          this.invalidItems.push("Required certificates not uploaded");
         }
       }
     },

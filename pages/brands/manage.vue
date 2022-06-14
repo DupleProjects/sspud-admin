@@ -97,9 +97,10 @@
 <script>
 import baseMixin from "@/mixins/baseMixin.js";
 import exportModal from '../../components/dialogs/exportModal.vue';
+import breadcrumbMixin from "@/mixins/breadcrumbMixin.js";
 export default {
   components: { exportModal },
-  mixins: [baseMixin],
+  mixins: [baseMixin,breadcrumbMixin],
   data() {
     return {
       loading: false,
@@ -139,6 +140,8 @@ export default {
       if (brandsResponse.data) {
         this.brands = brandsResponse.data;
         this.filteredBrands = this.brands;
+        const pageInfo = breadcrumbMixin.methods.getPage('mappedBrandsList')
+      this.page = pageInfo.page
         this.setPage();
       }
       this.loading = false;
@@ -183,6 +186,7 @@ export default {
       }
       // Validate page
       if (this.page < 1) this.page = 1;
+      breadcrumbMixin.methods.savePage('mappedBrandsList', this.page)
       if (this.page > numPages(this.filteredBrands.length, this.numberPerPage))
         this.page = numPages(this.filteredBrands.length, this.numberPerPage);
       for (

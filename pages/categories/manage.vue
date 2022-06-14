@@ -36,10 +36,11 @@
 
 <script>
 import baseMixin from '@/mixins/baseMixin.js'
+import breadcrumbMixin from "@/mixins/breadcrumbMixin.js";
 import exportModal from '../../components/dialogs/exportModal.vue';
 export default {
   components: { exportModal },
-  mixins: [baseMixin],
+  mixins: [baseMixin,breadcrumbMixin],
   data() {
     return {
       loading: false,
@@ -101,6 +102,8 @@ export default {
       });
       this.categories = categoriesResponse.data
       this.filteredCategories = categoriesResponse.data;
+      const pageInfo = breadcrumbMixin.methods.getPage('mappedCategoryList')
+      this.page = pageInfo.page
       this.setPage();
     },
     async saveCallBack() {
@@ -122,6 +125,7 @@ export default {
       }
       // Validate page
       if (this.page < 1) this.page = 1
+      breadcrumbMixin.methods.savePage('mappedCategoryList', this.page)
       if (this.page > numPages(this.filteredCategories.length, this.numberPerPage))
         this.page = numPages(this.filteredCategories.length, this.numberPerPage)
       for (
