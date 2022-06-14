@@ -179,6 +179,7 @@ export default {
   mounted() {},
   methods: {
     async publishProduct() {
+      console.log("1. 👉",this.certificates);
       if (productMixin.methods.canPublishProduct(this.product, this.certificates).isValidProduct == true ) {
         this.saving = true;
         const response = await this.$store.dispatch("callMiddlewareRoute", {
@@ -200,7 +201,7 @@ export default {
         // alert("You can not publish this product. Stuff is still missing.");
         this.couldNotPublishdialog = true;
         var returnedDetails = productMixin.methods.canPublishProduct(
-          this.product
+          this.product, this.certificates
         );
 
         this.invalidItems = [];

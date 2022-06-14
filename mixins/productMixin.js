@@ -41,16 +41,16 @@ export default {
                 validBrand: validBrand,
                 validPrice: validPrice
             }
-            console.log('validName', validName)
-            console.log('validDescription', validDescription)
-            console.log('validWeight', validWeight)
-            console.log('validHeight', validHeight)
-            console.log('validLength', validLength)
-            console.log('validWidth', validWidth)
-            console.log('validStock', validStock)
-            console.log('validCategory', validCategory)
-            console.log('validSubCategory', validSubCategory)
-            console.log('validBrand', validBrand)
+            // console.log('validName', validName)
+            // console.log('validDescription', validDescription)
+            // console.log('validWeight', validWeight)
+            // console.log('validHeight', validHeight)
+            // console.log('validLength', validLength)
+            // console.log('validWidth', validWidth)
+            // console.log('validStock', validStock)
+            // console.log('validCategory', validCategory)
+            // console.log('validSubCategory', validSubCategory)
+            // console.log('validBrand', validBrand)
 
             if(validName && validDescription && validPrice && validWeight && validHeight && validLength && validWidth && validStock && validCategory && validSubCategory && validBrand){
                 var isValidCheck = true
