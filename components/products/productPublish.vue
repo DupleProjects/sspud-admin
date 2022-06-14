@@ -56,7 +56,7 @@
       <div v-for="(certificate, index) of certificates" :key="index" class="d-flex justify-content-between border-bottom py-2 align-baseline">
         <a class="link mb-0">{{getCertificateFileName(certificate)}}</a>
         <v-btn
-            @click="downloadCertificate(certificate.certificateLink)"
+            @click="downloadCertificate(certificate)"
             class="">Download</v-btn>
       </div>
       <div class="text-center no-certificates" v-if="certificates.length === 0">
@@ -326,6 +326,7 @@ export default {
       this.$refs.uploader.click();
     },
     getCertificateFileName(certificate) {
+      console.log('certificate', certificate)
       return certificate.certificateLink.split('/')[certificate.certificateLink.split('/').length - 1]
     }
   }
