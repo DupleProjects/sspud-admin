@@ -76,6 +76,7 @@ export default {
             } else {
                 validCertificates = true;
             }
+            validProduct.productValidDetails.validCertificates = validCertificates
             if(validProduct.isValidProduct && validCertificates){
                 var finalValidCheck = true
             }else{
