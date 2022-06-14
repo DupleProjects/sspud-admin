@@ -14,7 +14,7 @@ export default {
             // Shipping weight
             const validWeight = this.evaluateProperty(product, product.shippingWeight, ['', null]);
             // Shipping height
-            const validHeight =  this.evaluateProperty(product, product.shippingHeight, ['', null]);
+            const validHeight = this.evaluateProperty(product, product.shippingHeight, ['', null]);
             // Shipping length
             const validLength = this.evaluateProperty(product, product.shippingLength, ['', null]);
             // Shipping width
@@ -27,32 +27,46 @@ export default {
             const validSubCategory = this.evaluateProperty(product, product.subCategoryId, [0, false, null]);
             // Has brand
             const validBrand = this.evaluateProperty(product, product.brandId, [0, false, null]);
-            console.log('validName', validName)
-            console.log('validDescription', validDescription)
-            console.log('validWeight', validWeight)
-            console.log('validHeight', validHeight)
-            console.log('validLength', validLength)
-            console.log('validWidth', validWidth)
-            console.log('validStock', validStock)
-            console.log('validCategory', validCategory)
-            console.log('validSubCategory', validSubCategory)
-            console.log('validBrand', validBrand)
-            return validName &&
-                validDescription &&
-                validPrice &&
-                validWeight &&
-                validHeight &&
-                validLength &&
-                validWidth &&
-                validStock &&
-                validCategory &&
-                validSubCategory &&
-                validBrand;
+
+            const productDetails = {
+                validName: validName,
+                validWeight: validWeight,
+                validDescription: validDescription,
+                validHeight: validHeight,
+                validLength: validLength,
+                validWidth: validWidth,
+                validStock: validStock,
+                validCategory: validCategory,
+                validSubCategory: validSubCategory,
+                validBrand: validBrand,
+                validPrice: validPrice
+            }
+            // console.log('validName', validName)
+            // console.log('validDescription', validDescription)
+            // console.log('validWeight', validWeight)
+            // console.log('validHeight', validHeight)
+            // console.log('validLength', validLength)
+            // console.log('validWidth', validWidth)
+            // console.log('validStock', validStock)
+            // console.log('validCategory', validCategory)
+            // console.log('validSubCategory', validSubCategory)
+            // console.log('validBrand', validBrand)
+
+            if(validName && validDescription && validPrice && validWeight && validHeight && validLength && validWidth && validStock && validCategory && validSubCategory && validBrand){
+                var isValidCheck = true
+            }else{
+                var isValidCheck = false
+            }
+            return {
+                isValidProduct: isValidCheck,
+                productValidDetails: productDetails,
+            }
 
         },
         canPublishProduct(product, certificates) {
             // First check if fields are valid
             const validProduct = this.evaluateProduct(product);
+
             // Check if all necessary certificates are present
             let validCertificates = false;
             if (product.certificateRequired) {
@@ -62,10 +76,16 @@ export default {
             } else {
                 validCertificates = true;
             }
-            console.log('validCertificates', validCertificates)
-            console.log('validProduct', validProduct)
+            if(validProduct.isValidProduct && validCertificates){
+                var finalValidCheck = true
+            }else{
+                var finalValidCheck = false
+            }
             // If everything checks out we can publish
-            return validProduct && validCertificates;
+            return {
+                   isValidProduct: finalValidCheck,
+                   productDetails: validProduct.productValidDetails,
+            };
         }
     }
 }
