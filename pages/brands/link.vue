@@ -166,9 +166,10 @@
 <script>
 import baseMixin from "@/mixins/baseMixin.js";
 import exportModal from '../../components/dialogs/exportModal.vue';
+import breadcrumbMixin from "@/mixins/breadcrumbMixin.js";
 export default {
   components: { exportModal },
-  mixins: [baseMixin],
+  mixins: [baseMixin,breadcrumbMixin],
   data() {
     return {
       loading: false,
@@ -231,6 +232,8 @@ export default {
       if (brandResponse.data) {
         this.brands = brandResponse.data;
         this.filteredMappedBrands = brandResponse.data;
+        const pageInfo = breadcrumbMixin.methods.getPage('scrapedPageMappedCategories')
+      this.page = pageInfo.page
         this.setPageMapped();
       }
 
@@ -254,6 +257,8 @@ export default {
       if (brandScrapedResponse.data) {
         this.scarapedBrands = brandScrapedResponse.data;
         this.filteredScrapedBrands = brandScrapedResponse.data;
+        const pageInfo = breadcrumbMixin.methods.getPage('scrapedPageScrapedCategories')
+        this.pageScraped = pageInfo.page
         this.setPageScraped();
       }
       
@@ -282,6 +287,7 @@ export default {
       }
       // Validate page
       if (this.page < 1) this.page = 1;
+      breadcrumbMixin.methods.savePage('scrapedPageMappedCategories', this.page)
       if (this.page > numPages(this.filteredMappedBrands.length, this.numberPerPage))
         this.page = numPages(this.filteredMappedBrands.length, this.numberPerPage);
       for (
@@ -303,6 +309,7 @@ export default {
 
       // Validate page
       if (this.pageScraped < 1) this.pageScraped = 1;
+      breadcrumbMixin.methods.savePage('scrapedPageScrapedCategories', this.pageScraped)
       if (this.pageScraped > numPages(this.filteredScrapedBrands.length, this.numberPerPage))
         this.pageScraped = numPages(this.filteredScrapedBrands.length, this.numberPerPage);
       for (

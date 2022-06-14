@@ -91,9 +91,10 @@
 import baseMixin from "@/mixins/baseMixin.js";
 import exportModal from '../../components/dialogs/exportModal.vue';
 import LinkedCategoriesModal from '../../components/dialogs/linkedCategoriesModal.vue';
+import breadcrumbMixin from "@/mixins/breadcrumbMixin.js";
 export default {
   components: { exportModal,LinkedCategoriesModal },
-  mixins: [baseMixin],
+  mixins: [baseMixin,breadcrumbMixin],
   data() {
       return {
         loading: false,
@@ -116,6 +117,7 @@ export default {
   watch: {
     page(val) {
       this.loadScrapedCategories(this.lastUsedFilter);
+      breadcrumbMixin.methods.savePage('scrapedCategoryList', this.page)
     },
     search(val) {
       if (val && val !== "") {
@@ -133,6 +135,8 @@ export default {
     this.$nextTick(async function () {
       // var loggedInUser = this.$store.state.auth.user
       // Load the mapped categories
+      const pageInfo = breadcrumbMixin.methods.getPage('scrapedCategoryList')
+      this.page = pageInfo.page
       await this.loadMappedCategories();
       // Load the scraped categories
       await this.loadScrapedCategories();

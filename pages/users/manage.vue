@@ -37,10 +37,11 @@
 import baseMixin from '@/mixins/baseMixin.js'
 import usersList from '../../components/users/usersList.vue';
 import CreateUserDialog from '../../components/users/createUserDialog.vue';
+import breadcrumbMixin from "@/mixins/breadcrumbMixin.js";
 
 export default {
   components: { usersList, CreateUserDialog },
-  mixins: [baseMixin],
+  mixins: [baseMixin,breadcrumbMixin],
   data() {
     return {
       loading: false,
@@ -86,6 +87,8 @@ export default {
         this.users = usersResponse.data;
         console.log('this.users', this.users)
         this.filteredusers = this.users;
+        const pageInfo = breadcrumbMixin.methods.getPage('usersPage')
+        this.page = pageInfo.page
         this.setPage();
       }
       this.loading = false
@@ -121,6 +124,7 @@ export default {
 
       // Validate page
       if (this.page < 1) this.page = 1
+      breadcrumbMixin.methods.savePage('usersPage', this.page)
       if (this.page > numPages(this.filteredusers.length, this.numberPerPage))
         this.page = numPages(this.filteredusers.length, this.numberPerPage)
       for (

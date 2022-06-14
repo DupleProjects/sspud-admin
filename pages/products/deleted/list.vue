@@ -47,8 +47,9 @@
 
 <script>
 import baseMixin from "@/mixins/baseMixin.js";
+import breadcrumbMixin from "@/mixins/breadcrumbMixin.js";
 export default {
-  mixins: [baseMixin],
+  mixins: [baseMixin,breadcrumbMixin],
   data() {
     return {
       loading: false,
@@ -63,6 +64,7 @@ export default {
   watch: {
     page(val) {
       this.loadProducts();
+      breadcrumbMixin.methods.savePage('deletedList', this.page)
     },
     search(val) {},
   },
@@ -71,6 +73,8 @@ export default {
       this.loading = true;
       // var loggedInUser = this.$store.state.auth.user
       // Load Products
+      const pageInfo = breadcrumbMixin.methods.getPage('deletedList')
+      this.page = pageInfo.page
       await this.loadProducts();
       await this.loadCategoriesAndBrands();
       this.loading = false;
