@@ -4,17 +4,18 @@
       <div class="fancy-heading-row">
         <div  v-bind:class="{ 'inner-fancy-heading-row': type === 'scraped', 'inner-fancy-heading-row-staged': type === 'staged' || type === 'published'}">
           <div>Name</div>
+          <div v-if="type === 'staged' || type === 'published'">Has Stock</div>
           <div>Price</div>
           <div>SubCategory</div>
           <div>Brand</div>
-          <div v-if="type === 'staged' || type === 'published'">Published</div>
-          <div v-if="type === 'staged' || type === 'published'">Review Required</div>
+          <div v-if="type === 'staged' || type === 'published'" class="text-center">Published</div>
+          <div v-if="type === 'staged' || type === 'published'" class="text-center">Review Required</div>
         </div>
       </div>
       <div class="product-list">
         <div class="fancy-row" v-for="(product, index) of products" :key="index">
           <div class="" v-bind:class="{ 'inner-fancy-row': type === 'scraped', 'inner-fancy-row-staged': type === 'staged' || type === 'published'}">
-            <div class="column-1">
+            <div class="column-1 pr-2">
               <div class="name-column">
                 {{ product.name }}
               </div>
@@ -24,6 +25,16 @@
               <p class="mb-0" v-if="type === 'staged' || type === 'published'">
                 {{ getCategoryName(product.categoryId)}}
               </p>
+            </div>
+            <div v-if="type === 'staged' || type === 'published'" class="column-1">
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon
+                      v-bind="attrs"
+                      v-on="on" :color="product.hasStock ? 'green' : 'orange'" medium>mdi-package</v-icon>
+                </template>
+                <span>{{product.hasStock ? 'In Stock' : 'Out of Stock'}}</span>
+              </v-tooltip>
             </div>
             <div class="column-1">
               R {{ product.price }}
@@ -321,7 +332,7 @@ export default {
   min-width: 0px;
   padding: 8px 16px;
   display: grid;
-  grid-template-columns: 1.5fr 0.5fr 1fr 1fr 0.5fr 0.5fr 0.5fr;
+  grid-template-columns: 1.5fr 0.5fr 0.5fr 1fr 0.5fr 0.5fr 0.5fr 0.5fr;
   -webkit-box-align: center;
   align-items: center;
 }
@@ -337,7 +348,7 @@ export default {
   min-width: 0px;
   padding: 8px 16px;
   display: grid;
-  grid-template-columns: 1.5fr 0.5fr 1fr 1fr 0.5fr 0.5fr 0.5fr;
+  grid-template-columns: 1.5fr 0.5fr 0.5fr 1fr 0.5fr 0.5fr 0.5fr 0.5fr;
   -webkit-box-align: center;
   align-items: center;
 }

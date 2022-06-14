@@ -228,6 +228,12 @@ export default {
               to: "/users/manage",
               colour: "blue",
             },
+            {
+              icon: "mdi-cog",
+              title: "Process Variables",
+              to: "/setup/processVariables",
+              colour: "blue",
+            },
           ]
         },
       ],
