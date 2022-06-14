@@ -305,24 +305,19 @@ export default {
         this.product.subCategoryId = null;
         this.subCategories = baseMixin.methods.getObjectsWhereKeysHaveValues(this.allCategories, {parentId: this.product.categoryId}, false)
       }
-      let BOBSRequired = false;
-      let subBOBSRequired = false;
-      let SABSRequired = false;
-      let subSABSRequired = false;
+      let certificateRequired = false;
+      let subCertificateRequired = false;
       // Check subcategory
       const category = baseMixin.methods.getObjectsWhereKeysHaveValues(this.allCategories, {id: this.product.categoryId}, true);
       if (category) {
-        BOBSRequired = category.BOBSRequired;
-        SABSRequired = category.SABSRequired;
+        certificateRequired = category.certificateRequired;
       }
       // Check subcategory
       const subCategory = baseMixin.methods.getObjectsWhereKeysHaveValues(this.allCategories, {id: this.product.subCategoryId}, true);
       if (subCategory) {
-        subBOBSRequired = subCategory.BOBSRequired;
-        subSABSRequired = subCategory.SABSRequired;
+        subCertificateRequired = subCategory.certificateRequired;
       }
-      this.product.BOBSRequired = BOBSRequired || subBOBSRequired;
-      this.product.SABSRequired = SABSRequired || subSABSRequired;
+      this.product.certificateRequired = certificateRequired || subCertificateRequired;
     },
     async getData(){
       if (this.type === 'scraped'){

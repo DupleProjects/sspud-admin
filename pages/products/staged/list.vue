@@ -107,6 +107,8 @@ export default {
     async loadProducts(criteria) {
       if (!criteria) {
         criteria = this.criteria;
+      } else {
+        this.criteria = criteria;
       }
       // Load the products
       const stagedProducts = await this.$store.dispatch("dataGate", {
@@ -146,7 +148,6 @@ export default {
       await this.loadProducts();
     },
     async filterChangeCallBack(filter) {
-      console.log("filter", filter);
       // Build the where clause
       if (filter) {
         await this.loadProducts(filter);

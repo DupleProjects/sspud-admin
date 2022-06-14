@@ -25,87 +25,61 @@
         }}
       </v-alert>
       <v-alert
-        v-if="product.BOBSRequired && !product.BOBSCertificate"
-        border="right"
-        colored-border
-        type="error"
-        elevation="2"
-      >
-        This Product requires a BOBS Certificate
+        v-if="product.certificateRequired && certificates.length === 0"
+          border="right"
+          colored-border
+          type="error"
+          elevation="2">
+        This Product requires a certificates
       </v-alert>
-      <v-alert
-        v-if="!product.BOBSRequired"
-        border="right"
-        colored-border
-        type="success"
-        elevation="2"
-      >
-        This Product does not require a BOBS Certificate
-      </v-alert>
-      <div class="d-flex mb-3">
+      <div class="d-flex justify-content-between">
+        <div>
+          <h2>Product Certificates</h2>
+          <p v-if="product.certificateRequired" class="text-muted">This product requires a certificate</p>
+        </div>
         <v-btn
-          :disabled="!product.BOBSCertificate"
-          @click="downloadBOBSCertificate()"
-          class="mt-3"
-          >Download BOBS</v-btn
-        >
-        <v-file-input
-          label="BOBS Certificate"
-          hide-input
-          v-on:change="onNewFileUpload('BOBSCertificates', 'pdf')"
-          v-model="BOBSCertificate"
-        ></v-file-input>
+            color="primary"
+            rounded
+            dark
+            :loading="isSelecting"
+            @click="handleFileImport">
+          Upload File
+        </v-btn>
+        <!-- Create a File Input that will be hidden but triggered with JavaScript -->
+        <input
+            ref="uploader"
+            class="d-none"
+            type="file"
+            @change="onNewFileUpload">
       </div>
-      <v-alert
-        v-if="product.SABSRequired && !product.SABSCertificate"
-        border="right"
-        colored-border
-        type="error"
-        elevation="2"
-      >
-        This Product requires a SABS Certificate
-      </v-alert>
-      <v-alert
-        v-if="!product.SABSRequired"
-        border="right"
-        colored-border
-        type="success"
-        elevation="2"
-      >
-        This Product does not require a SABS Certificate
-      </v-alert>
-      <div class="d-flex mb-3">
+      <hr>
+      <div v-for="(certificate, index) of certificates" :key="index" class="d-flex justify-content-between border-bottom py-2 align-baseline">
+        <a class="link mb-0">{{getCertificateFileName(certificate)}}</a>
         <v-btn
-          :disabled="!product.SABSCertificate"
-          @click="downloadSABSCertificate()"
-          class="mt-3"
-          >Download SABS</v-btn
-        >
-        <v-file-input
-          label="SABS Certificate"
-          hide-input
-          v-on:change="onNewFileUpload('SABSCertificates', 'pdf')"
-          v-model="SABSCertificate"
-        ></v-file-input>
+            @click="downloadCertificate(certificate.certificateLink)"
+            class="">Download</v-btn>
       </div>
-      <v-progress-circular
-        v-if="saving"
-        :size="20"
-        indeterminate
-        color="primary"
-      ></v-progress-circular>
-      <v-btn
-        v-if="!product.publish && !saving"
-        @click="publishProduct()"
-        color="primary"
-        >Publish Product</v-btn
-      >
-      <v-btn
-        v-if="product.publish && !saving"
-        @click="unpublishProduct()"
-        color="warning"
-        >Un Publish Product</v-btn
-      >
+      <div class="text-center no-certificates" v-if="certificates.length === 0">
+        <p>No certificates uploaded</p>
+      </div>
+      <!-- Publish Buttons -->
+      <div class="text-end py-3">
+        <v-progress-circular
+            v-if="saving"
+            :size="20"
+            indeterminate
+            color="primary"
+        ></v-progress-circular>
+        <v-btn
+            v-if="!product.publish && !saving"
+            @click="publishProduct()"
+            color="primary">Publish Product</v-btn>
+        <v-btn
+            v-if="product.publish && !saving"
+            @click="unpublishProduct()"
+            color="warning">Un Publish Product</v-btn>
+      </div>
+          
     </div>
     <v-snackbar v-model="snackbar" :timeout="timeout">
       {{ snackBarText }}
@@ -175,21 +149,37 @@ export default {
   },
   data() {
     return {
+      isSelecting: false,
       snackbar: false,
       snackBarText: "My timeout is set to 2000.",
       timeout: 2000,
       loading: false,
       saving: false,
-      BOBSCertificate: null,
-      SABSCertificate: null,
       couldNotPublishdialog: false,
       invalidItems: [],
-    };
+      newCertificate: null,
+      certificates: []
+    }
+  },
+  beforeMount() {
+    this.$nextTick(async function () {
+      const certificatesResponse = await this.$store.dispatch("dataGate", {
+        tableName: "stagedProductCertificates",
+        operation: "read",
+        whereCriteria: {stagedProductId: this.product.id}
+      });
+      if (certificatesResponse && certificatesResponse.data) {
+        this.certificates = certificatesResponse.data;
+      }
+    });
+  },
+  mounted() {
+
   },
   mounted() {},
   methods: {
     async publishProduct() {
-      if (productMixin.methods.canPublishProduct(this.product).isValidProduct == true ) {
+      if (productMixin.methods.canPublishProduct(this.product, this.certificates).isValidProduct == true ) {
         this.saving = true;
         const response = await this.$store.dispatch("callMiddlewareRoute", {
           product: this.product,
@@ -276,44 +266,48 @@ export default {
         operation: "update",
       });
     },
-    async onNewFileUpload(folder, type) {
+    async onNewFileUpload(e) {
+      this.newCertificate =e.target.files[0];
       const fileReader = new FileReader();
       const self = this;
       // Determine the name
-      let fileName = "";
-      if (folder === "BOBSCertificates") {
-        fileName = this.BOBSCertificate.name.split(".")[0];
-      } else if (folder === "SABSCertificates") {
-        fileName = this.SABSCertificate.name.split(".")[0];
-      }
-      fileName = fileName.replaceAll(" ", "");
-      fileReader.onload = async function () {
+      let fileName = this.newCertificate.name.split('.')[0];
+      fileName = fileName.replaceAll(' ', '');
+      fileReader.onload = async function() {
         const response = await self.$store.dispatch("callMiddlewareRoute", {
           route: "aws/uploadFile",
           fileName,
-          contentType: "application/" + type,
+          contentType: 'application/pdf',
           file: fileReader.result,
-          folder,
+          folder: 'product-certificates'
         });
+        console.log('response', response)
         if (response) {
-          if (folder === "BOBSCertificates") {
-            self.product.BOBSCertificate = response;
-          } else if (folder === "SABSCertificates") {
-            self.product.SABSCertificate = response;
+          // Save certificate
+          const newCertificateToSave = {
+            stagedProductId: self.product.id,
+            certificateLink: response
+          }
+          const savedCertificate = await self.$store.dispatch("dataGate", {
+            primaryKey: "id",
+            entity: newCertificateToSave,
+            tableName: "stagedProductCertificates",
+            operation: "create",
+          });
+          console.log(savedCertificate)
+          // Add the certificate to the certificate list
+          if (savedCertificate && savedCertificate.response) {
+            self.certificates.push(savedCertificate.response);
           }
           await self.saveProduct();
         }
-      };
-      if (folder === "BOBSCertificates") {
-        fileReader.readAsDataURL(this.BOBSCertificate);
-      } else if (folder === "SABSCertificates") {
-        fileReader.readAsDataURL(this.SABSCertificate);
       }
+      fileReader.readAsDataURL(this.newCertificate)
     },
-    downloadBOBSCertificate() {
-      const link = document.createElement("a");
-      link.href = this.product.BOBSCertificate;
-      link.download = "BOBSCertificate.pdf";
+    downloadCertificate(certificate) {
+      const link = document.createElement('a');
+      link.href = certificate.certificateLink;
+      link.download = this.getCertificateFileName(certificate);
       // some browser needs the anchor to be in the doc
       document.body.append(link);
       link.click();
@@ -321,23 +315,29 @@ export default {
       // in case the Blob uses a lot of memory
       setTimeout(() => URL.revokeObjectURL(link.href), 7000);
     },
-    downloadSABSCertificate() {
-      const link = document.createElement("a");
-      link.href = this.product.SABSCertificate;
-      link.download = "SABSCertificate.pdf";
-      // some browser needs the anchor to be in the doc
-      document.body.append(link);
-      link.click();
-      link.remove();
-      // in case the Blob uses a lot of memory
-      setTimeout(() => URL.revokeObjectURL(link.href), 7000);
+    handleFileImport() {
+      this.isSelecting = true;
+
+      // After obtaining the focus when closing the FilePicker, return the button state to normal
+      window.addEventListener('focus', () => {
+        this.isSelecting = false
+      }, { once: true });
+
+      // Trigger click on the FileInput
+      this.$refs.uploader.click();
     },
-  },
-};
+    getCertificateFileName(certificate) {
+      return certificate.certificateLink.split('/')[certificate.certificateLink.split('/').length - 1]
+    }
+  }
+}
 </script>
 
 <style scoped>
 .product-publish-component {
   padding: 20px;
+}
+.no-certificates {
+  height: 30vh
 }
 </style>

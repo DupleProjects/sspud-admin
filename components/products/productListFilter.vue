@@ -27,7 +27,7 @@
       <v-autocomplete
           v-if="type === 'staged'"
           v-model="filter.categoryId"
-          v-on:change="onCategoryChange()"
+          v-on:change="onCategoryChange(false)"
           :items="categories"
           :item-value="'id'"
           :item-text="'name'"
@@ -52,6 +52,7 @@
           clearable
           dense
           solo-inverted
+          :disabled="!filter.categoryId"
       ></v-autocomplete>
       <!--Brand-->
       <v-autocomplete
@@ -155,7 +156,7 @@ export default {
     async onCategoryChange(sub) {
       if (!sub) {
         this.filter.subCategoryId = null;
-        this.subCategories = baseMixin.methods.getObjectsWhereKeysHaveValues(this.allCategories, {parentId: this.filter.categoryId}, false)
+        this.subCategories = baseMixin.methods.getObjectsWhereKeysHaveValues(this.allCategories, {parentId: this.filter.categoryId}, false);
       }
       await this.updateFilter()
     },
@@ -169,18 +170,14 @@ export default {
       if (this.filter.name) {
         criteria.name = { like: this.filter.name }
       }
-      if (this.filter.categoryId === null) {
-        delete this.filter.categoryId;
-      } else {
+      if (this.filter.categoryId !== null) {
         criteria.categoryId = this.filter.categoryId;
       }
-      if (this.filter.subCategoryId === null) {
-        delete this.filter.subCategoryId;
-      } else {
+      if (this.filter.subCategoryId !== null) {
         criteria.subCategoryId = this.filter.subCategoryId;
       }
-      if (this.filter.brandId === null) {
-        delete this.filter.brandId;
+      if (this.filter.brandId !== null) {
+        criteria.brandId = this.filter.brandId;
       }
       if (this.filter.reviewRequired) {
         criteria.reviewRequired = this.filter.reviewRequired;

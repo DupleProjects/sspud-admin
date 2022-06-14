@@ -41,16 +41,16 @@ export default {
                 validBrand: validBrand,
                 validPrice: validPrice
             }
-            // console.log('validName', validName)
-            // console.log('validDescription', validDescription)
-            // console.log('validWeight', validWeight)
-            // console.log('validHeight', validHeight)
-            // console.log('validLength', validLength)
-            // console.log('validWidth', validWidth)
-            // console.log('validStock', validStock)
-            // console.log('validCategory', validCategory)
-            // console.log('validSubCategory', validSubCategory)
-            // console.log('validBrand', validBrand)
+            console.log('validName', validName)
+            console.log('validDescription', validDescription)
+            console.log('validWeight', validWeight)
+            console.log('validHeight', validHeight)
+            console.log('validLength', validLength)
+            console.log('validWidth', validWidth)
+            console.log('validStock', validStock)
+            console.log('validCategory', validCategory)
+            console.log('validSubCategory', validSubCategory)
+            console.log('validBrand', validBrand)
 
             if(validName && validDescription && validPrice && validWeight && validHeight && validLength && validWidth && validStock && validCategory && validSubCategory && validBrand){
                 var isValidCheck = true
@@ -63,31 +63,20 @@ export default {
             }
 
         },
-        canPublishProduct(product) {
+        canPublishProduct(product, certificates) {
             // First check if fields are valid
             const validProduct = this.evaluateProduct(product);
 
             // Check if all necessary certificates are present
-            let validBOBS = false;
-            if (product.BOBSRequired) {
-                if (product.BOBSCertificate) {
-                    validBOBS = true;
+            let validCertificates = false;
+            if (product.certificateRequired) {
+                if (certificates.length > 0) {
+                    validCertificates = true;
                 }
             } else {
-                validBOBS = true;
+                validCertificates = true;
             }
-            let validSABS = false;
-            if (product.SABSRequired) {
-                if (product.SABSCertificate) {
-                    validSABS = true;
-                }
-            } else {
-                validSABS = true;
-            }
-            // console.log('validSABS', validSABS)
-            // console.log('validBOBS', validBOBS)
-            // console.log('validProduct', validProduct)
-            if(validProduct.isValidProduct && validBOBS && validSABS){
+            if(validProduct.isValidProduct && validCertificates){
                 var finalValidCheck = true
             }else{
                 var finalValidCheck = false
@@ -95,7 +84,7 @@ export default {
             // If everything checks out we can publish
             return {
                    isValidProduct: finalValidCheck,
-                   productDetails: validProduct.productValidDetails
+                   productDetails: validProduct.productValidDetails,
             };
         }
     }
