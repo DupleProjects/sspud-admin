@@ -8,8 +8,7 @@
       fadeInUp
       animated
       animatedFadeInUp
-    "
-  >
+    ">
     <div>
       <v-alert
         v-if="!product.publish"
@@ -55,9 +54,16 @@
       <hr>
       <div v-for="(certificate, index) of certificates" :key="index" class="d-flex justify-content-between border-bottom py-2 align-baseline">
         <a class="link mb-0">{{getCertificateFileName(certificate)}}</a>
-        <v-btn
-            @click="downloadCertificate(certificate)"
-            class="">Download</v-btn>
+        <div class="btn-group" role="group" aria-label="Basic example">
+          <button
+              @click="downloadCertificate(certificate)"
+              class="btn btn-primary">Download</button>
+          <button
+              @click="deleteCertificate(certificate)"
+              class="btn btn-danger">
+            Delete
+          </button>
+        </div>
       </div>
       <div class="text-center no-certificates" v-if="certificates.length === 0">
         <p>No certificates uploaded</p>
@@ -161,6 +167,13 @@ export default {
   },
   beforeMount() {
     this.$nextTick(async function () {
+      await this.loadCertificates();
+    });
+  },
+  mounted() {
+  },
+  methods: {
+    async loadCertificates() {
       const certificatesResponse = await this.$store.dispatch("dataGate", {
         tableName: "stagedProductCertificates",
         operation: "read",
@@ -169,13 +182,7 @@ export default {
       if (certificatesResponse && certificatesResponse.data) {
         this.certificates = certificatesResponse.data;
       }
-    });
-  },
-  mounted() {
-
-  },
-  mounted() {},
-  methods: {
+    },
     async publishProduct() {
       console.log("1. 👉",this.certificates);
       if (productMixin.methods.canPublishProduct(this.product, this.certificates).isValidProduct == true ) {
@@ -333,6 +340,26 @@ export default {
     getCertificateFileName(certificate) {
       console.log('certificate', certificate)
       return certificate.certificateLink.split('/')[certificate.certificateLink.split('/').length - 1]
+    },
+    async deleteCertificate(certificate) {
+      this.saving = true;
+      // Get the name
+      let fileName = this.getCertificateFileName(certificate);
+      const response = await this.$store.dispatch("callMiddlewareRoute", {
+        route: "aws/deleteFile",
+        fileName,
+        folder: 'product-certificates'
+      });
+      console.log('response', response)
+      const certificateDeleteResponse = await this.$store.dispatch("dataGate", {
+        tableName: "stagedProductCertificates",
+        operation: "delete",
+        primaryKey: 'id',
+        entity: certificate
+      });
+      console.log('certificateDeleteResponse', certificateDeleteResponse)
+      await this.loadCertificates();
+      this.saving = false;
     }
   }
 }
