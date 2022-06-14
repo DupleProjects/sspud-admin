@@ -1,91 +1,64 @@
 <template>
-  <div class="product-publish-component card fadeInUp animated animatedFadeInUp" v-if="product">
+  <div
+    class="product-publish-component card fadeInUp animated animatedFadeInUp"
+    v-if="product"
+  >
     <div class="">
-      <!-- BZ Main Category -->
-      <v-card class="info-message">
-        <v-card-title> BambaZonke Category </v-card-title>
-        <v-card-subtitle class="card-subtitle">
-          {{ getCategory(product.categoryId) }}
-        </v-card-subtitle>
-        <v-row>
-          <v-col cols="7">
-            <v-card-text>
-              <h6>BOBS Required:</h6>
-              <h6>SABS Required:</h6>
-              <h6>Published:</h6>
-            </v-card-text>
-          </v-col>
-          <v-col cols="5">
-            <v-card-text>
-              <h6>{{ catBOBS }}</h6>
-              <h6>{{ catSABS }}</h6>
-              <h6>{{ catPublished }}</h6>
-            </v-card-text>
-          </v-col>
-        </v-row>
-      </v-card>
-
-      <!-- BZ Subcategory -->
-      <v-card class="info-message">
-        <v-card-title> BambaZonke Subcategory </v-card-title>
-        <v-card-subtitle class="card-subtitle">
-          {{ getSubcategory(product.subCategoryId) }}
-        </v-card-subtitle>
-        <v-row>
-          <v-col cols="7">
-            <v-card-text>
-              <h6>BOBS Required:</h6>
-              <h6>SABS Required:</h6>
-              <h6>Published:</h6>
-            </v-card-text>
-          </v-col>
-          <v-col cols="5">
-            <v-card-text>
-              <h6>{{ subcatBOBS }}</h6>
-              <h6>{{ subcatSABS }}</h6>
-              <h6>{{ subcatPublished }}</h6>
-            </v-card-text>
-          </v-col>
-        </v-row>
-      </v-card>
-      <!-- Scraped Category -->
-      <v-card class="info-message" v-if="linkedScrapedCategory">
-        <v-card-title> Scraped Category </v-card-title>
-        <v-card-subtitle class="card-subtitle">
-          {{ linkedScrapedCategory }}
-        </v-card-subtitle>
-        <v-row>
-          <v-col cols="7">
-            <v-card-text>
-              <h6>Published:</h6>
-            </v-card-text>
-          </v-col>
-          <v-col cols="5">
-            <v-card-text>
-              <h6>{{ scrapedcatPublished }}</h6>
-            </v-card-text>
-          </v-col>
-        </v-row>
-      </v-card>
-      <!-- Scraped Subcategory -->
-      <v-card class="info-message" v-if="linkedScrapedSubcategory">
-        <v-card-title> Scraped Subcategory </v-card-title>
-        <v-card-subtitle class="card-subtitle">
-          {{ linkedScrapedSubcategory }}
-        </v-card-subtitle>
-        <v-row>
-          <v-col cols="7">
-            <v-card-text>
-              <h6>Published:</h6>
-            </v-card-text>
-          </v-col>
-          <v-col cols="5">
-            <v-card-text>
-              <h6>{{ scrapedSubcatPublished }}</h6>
-            </v-card-text>
-          </v-col>
-        </v-row>
-      </v-card>
+      <table class="table">
+        
+        <thead>
+          <tr>
+            <th  scope="col"></th>
+            <th class="table-cell" scope="col"><h5>{{ getCategory(product.categoryId) }}</h5>BambaZonke Category</th>
+            <th class="table-cell" scope="col"><h5>{{ getSubcategory(product.subCategoryId) }}</h5>BambaZonke Subategory</th>
+            <th class="table-cell" scope="col"><h5 v-if="linkedScrapedCategory">{{linkedScrapedCategory}}</h5>Scraped Category</th>
+            <th class="table-cell" scope="col"><h5 v-if="linkedScrapedSubcategory">{{linkedScrapedSubcategory}}</h5>Scraped Subcategory</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Certificate Required -->
+          <tr>
+            <td class="left-cell"><b>Certificate Required</b></td>
+            <td class="table-cell">
+              <v-icon v-if="catCertificate  == 'TRUE'" large color="green">mdi-check</v-icon>
+              <v-icon v-if="catCertificate == 'FALSE'"  large color="red">mdi-close</v-icon>
+              <v-icon v-if="!catCertificate">Not Linked</v-icon>
+            </td>
+            <td class="table-cell">
+              <v-icon v-if="subCatCertificate  == 'TRUE'"  large color="green">mdi-check</v-icon>
+              <v-icon v-if="subCatCertificate == 'FALSE'"  large color="red">mdi-close</v-icon>
+              <h5 style="color:red" v-if="!subCatCertificate">Not Linked</h5>
+            </td>
+            <td class="table-cell"><h5>N/A</h5></td>
+            <td class="table-cell"><h5>N/A</h5></td>
+            
+          </tr>
+          <!-- Publish -->
+          <tr>
+            <td class="left-cell"><b>Publish</b></td>
+            <td class="table-cell">
+              <v-icon v-if="catPublished == 'TRUE'"  large color="green">mdi-check</v-icon>
+              <v-icon v-if="catPublished == 'FALSE'"  large color="red">mdi-close</v-icon>
+              <h5 style="color:red" v-if="!catPublished">Not Linked</h5>
+            </td>
+            <td class="table-cell">
+              <v-icon v-if="subcatPublished == 'TRUE'"  large color="green">mdi-check</v-icon>
+              <v-icon v-if="subcatPublished == 'FALSE'"  large color="red">mdi-close</v-icon>
+              <h5 style="color:red" v-if="!subcatPublished">Not Linked</h5>
+            </td>
+            <td class="table-cell">
+              <v-icon v-if="scrapedcatPublished == 'TRUE'"  large color="green">mdi-check</v-icon>
+              <v-icon v-if="scrapedcatPublished == 'FALSE'"  large color="red">mdi-close</v-icon>
+              <h5 style="color:red" v-if="!scrapedcatPublished">Not Linked</h5>
+            </td>
+            <td class="table-cell">
+              <v-icon v-if="scrapedSubcatPublished == 'TRUE'"  large color="green">mdi-check</v-icon>
+              <v-icon v-if="scrapedSubcatPublished == 'FALSE'"  large color="red">mdi-close</v-icon>
+              <h5 style="color:red" v-if="!scrapedSubcatPublished">Not Linked</h5>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
@@ -106,12 +79,10 @@ export default {
       scrapedCategories: [],
       linkedScrapedCategory: null,
       linkedScrapedSubcategory: null,
-      catBOBS: null,
-      catSABS: null,
       catPublished: null,
-      subcatBOBS: null,
-      subcatSABS: null,
+      catCertificate: null,
       subcatPublished: null,
+      subCatCertificate: null,
       scrapedcatPublished: null,
       scrapedSubcatPublished: null,
     };
@@ -132,6 +103,7 @@ export default {
       });
 
       this.scrapedCategories = scrapedCategoriesResponse.data;
+      console.log("🙌⚡",this.scrapedCategories);
     });
   },
   methods: {
@@ -197,6 +169,9 @@ export default {
       if (this.allBZCategories) {
         const category = this.allBZCategories.find((x) => x.id === categoryId);
 
+        
+          console.log("👉👉",category);
+
         if (category) {
           if (category.publish == 1) {
             this.catPublished = "TRUE";
@@ -204,22 +179,29 @@ export default {
             this.catPublished = "FALSE";
           }
 
-          if (category.BOBSRequired == 1) {
-            this.catBOBS = "TRUE";
-          } else {
-            this.catBOBS = "FALSE";
-          }
+          // if (category.BOBSRequired == 1) {
+          //   this.catBOBS = "TRUE";
+          // } else {
+          //   this.catBOBS = "FALSE";
+          // }
 
-          if (category.SABSRequired == 1) {
-            this.catSABS = "TRUE";
-          } else {
-            this.catSABS = "FALSE";
+          // if (category.SABSRequired == 1) {
+          //   this.catSABS = "TRUE";
+          // } else {
+          //   this.catSABS = "FALSE";
+          // }
+
+          if(category.certificateRequired == 1){
+            this.catCertificate = "TRUE";
+          }else{
+            this.catCertificate = "FALSE";
           }
 
           this.linkedScrapedSubcategory = null;
           const linkedScrapedCat = this.scrapedCategories.find(
             (x) => x.mappedCategoryId === category.id
           );
+          console.log("LINKED SCRAPED CATEGORY",linkedScrapedCat);
           if (linkedScrapedCat) {
             if (
               linkedScrapedCat.parentId == null ||
@@ -255,7 +237,7 @@ export default {
           return category.name;
         }
       }
-      return "Category Not Found";
+      return null;
     },
     getSubcategory(categoryId) {
       if (this.allBZCategories) {
@@ -267,21 +249,27 @@ export default {
             this.subcatPublished = "FALSE";
           }
 
-          if (category.BOBSRequired == 1) {
-            this.subcatBOBS = "TRUE";
-          } else {
-            this.subcatBOBS = "FALSE";
+          if(category.certificateRequired == 1){
+            this.subCatCertificate = "TRUE";
+          }else{
+            this.subCatCertificate = "FALSE";
           }
 
-          if (category.SABSRequired == 1) {
-            this.subcatSABS = "TRUE";
-          } else {
-            this.subcatSABS = "FALSE";
-          }
+          // if (category.BOBSRequired == 1) {
+          //   this.subcatBOBS = "TRUE";
+          // } else {
+          //   this.subcatBOBS = "FALSE";
+          // }
+
+          // if (category.SABSRequired == 1) {
+          //   this.subcatSABS = "TRUE";
+          // } else {
+          //   this.subcatSABS = "FALSE";
+          // }
           return category.name;
         }
       }
-      return "Category Not Found";
+      return null;
     },
   },
 };
@@ -292,16 +280,122 @@ export default {
   padding: 20px;
 }
 
+.row-style {
+  padding: 10px;
+}
+
 .info-message {
-  width: 23%;
+  width: 45%;
   float: left;
-  margin-right: 20px;
-  height: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  height: auto;
 }
 
 .card-subtitle {
   font-size: 18px;
   font-weight: bold;
   margin-top: -10px;
+}
+
+.fancy-table {
+  font-size: small;
+  display: flex;
+  flex-direction: column;
+  min-width: 600px;
+}
+.fancy-heading-row {
+  position: relative;
+  background-color: #5268fa;
+  border-radius: 0px;
+  box-shadow: none;
+  --show-action: 0;
+  border-top: 1px solid rgb(223, 225, 230);
+  border-right: 1px solid rgb(223, 225, 230);
+  border-left: 1px solid rgb(223, 225, 230);
+  color: white;
+  border-image: initial;
+  border-bottom: none;
+}
+.fancy-row {
+  position: relative;
+  background-color: white;
+  border-radius: 0px;
+  box-shadow: none;
+  --show-action: 0;
+  border-top: 1px solid rgb(223, 225, 230);
+  border-right: 1px solid rgb(223, 225, 230);
+  border-left: 1px solid rgb(223, 225, 230);
+  border-image: initial;
+  border-bottom: none;
+  cursor: pointer;
+}
+.fancy-row:hover {
+  background-color: #f5f6f8;
+}
+.fancy-row:hover .actions-column {
+  display: flex;
+}
+.inner-fancy-heading-row {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 1fr 0.5fr 1fr 1fr 1fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.inner-fancy-heading-row-staged {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 1.5fr 0.5fr 1fr 1fr 0.5fr 0.5fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.inner-fancy-row {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 1fr 0.5fr 1fr 1fr 1fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.inner-fancy-row-staged {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 1.5fr 0.5fr 1fr 1fr 0.5fr 0.5fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+
+.name-column {
+  color: #000000;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 500;
+  text-decoration: none;
+  outline: none;
+  display: contents;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.column-1 {
+  -webkit-box-align: center;
+  align-items: center;
+  min-width: 25%;
+}
+
+.product-list {
+  height: 65vh;
+  overflow: auto;
+}
+
+.table-cell{
+  text-align: center;
+}
+
+.left-cell{
+  vertical-align: middle;
 }
 </style>

@@ -138,8 +138,6 @@
     </template>
   </div>
 </template>
-  </div>
-</template>
 
 <script>
 import productMixin from "@/mixins/productMixin.js";
