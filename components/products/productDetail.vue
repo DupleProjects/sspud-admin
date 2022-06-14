@@ -237,7 +237,7 @@ export default {
       await this.getData();
       this.showDetail = true;
       this.loading = true;
-      if (this.type === 'scraped'){
+      if (this.type === 'scraped') {
 
       } else if (this.type === 'staged') {
         const categories = await this.$store.dispatch("dataGate", {

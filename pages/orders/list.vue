@@ -63,10 +63,11 @@ import baseMixin from '@/mixins/baseMixin.js'
 import usersList from '../../components/users/usersList.vue';
 import CreateUserDialog from '../../components/users/createUserDialog.vue';
 import Date from "@/components/base/date";
+import breadcrumbMixin from "@/mixins/breadcrumbMixin.js";
 
 export default {
   components: {Date, usersList, CreateUserDialog },
-  mixins: [baseMixin],
+  mixins: [baseMixin,breadcrumbMixin],
   data() {
     return {
       loading: false,
@@ -80,6 +81,7 @@ export default {
   watch: {
     async page(val) {
       await this.loadOrders();
+      breadcrumbMixin.methods.savePage('ordersList', this.page)
     },
     async search(val) {
       await this.loadOrders(
@@ -95,6 +97,8 @@ export default {
     this.$nextTick(async function () {
       // var loggedInUser = this.$store.state.auth.user
       this.loading = true;
+      const pageInfo = breadcrumbMixin.methods.getPage('ordersList')
+      this.page = pageInfo.page
       await this.loadOrders();
       this.loading = false;
     })

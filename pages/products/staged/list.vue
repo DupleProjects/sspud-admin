@@ -64,10 +64,11 @@
 
 <script>
 import baseMixin from "@/mixins/baseMixin.js";
+import breadcrumbMixin from "@/mixins/breadcrumbMixin.js";
 import exportModal from "../../../components/dialogs/exportModal.vue";
 export default {
   components: { exportModal },
-  mixins: [baseMixin],
+  mixins: [baseMixin,breadcrumbMixin],
   data() {
     return {
       loading: false,
@@ -86,6 +87,7 @@ export default {
   watch: {
     page(val) {
       this.loadProducts();
+      breadcrumbMixin.methods.savePage('stagedList', this.page)
     },
   },
   beforeMount() {
@@ -94,6 +96,9 @@ export default {
       var loggedInUser = this.$store.state.auth.user;
       console.log("loggedInUser", loggedInUser);
       // Load Products
+      
+      const pageInfo = breadcrumbMixin.methods.getPage('stagedList')
+      this.page = pageInfo.page
       await this.loadProducts();
       await this.loadCategoriesAndBrands();
       this.loading = false;
@@ -107,6 +112,8 @@ export default {
     async loadProducts(criteria) {
       if (!criteria) {
         criteria = this.criteria;
+      } else {
+        this.criteria = criteria;
       }
       // Load the products
       const stagedProducts = await this.$store.dispatch("dataGate", {
@@ -146,7 +153,6 @@ export default {
       await this.loadProducts();
     },
     async filterChangeCallBack(filter) {
-      console.log("filter", filter);
       // Build the where clause
       if (filter) {
         await this.loadProducts(filter);

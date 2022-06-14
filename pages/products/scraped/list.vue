@@ -51,10 +51,11 @@
 
 <script>
 import baseMixin from '@/mixins/baseMixin.js'
+import breadcrumbMixin from "@/mixins/breadcrumbMixin.js";
 import exportModal from "../../../components/dialogs/exportModal.vue";
 export default {
   components: { exportModal },
-  mixins: [baseMixin],
+  mixins: [baseMixin,breadcrumbMixin],
   data() {
     return {
       loading: false,
@@ -67,6 +68,7 @@ export default {
   watch: {
     page(val) {
       this.loadProducts()
+      breadcrumbMixin.methods.savePage('scrapedList', this.page)
     },
     search(val) {
 
@@ -76,6 +78,8 @@ export default {
     this.$nextTick(async function () {
       // var loggedInUser = this.$store.state.auth.user
       // Load Products
+      const pageInfo = breadcrumbMixin.methods.getPage('scrapedList')
+      this.page = pageInfo.page
       await this.loadProducts()
     })
   },

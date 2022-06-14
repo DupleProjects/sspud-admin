@@ -28,7 +28,13 @@
               :rules="[(v) => !!v || 'A Name is required']"
               hint="The name of the brand"
               label="Name"
+              v-on:change="checkIfBrandExists(brand.name)"
             ></v-text-field>
+            <div v-show="brandExists">
+              <h5 style="color: red">
+                This brand already exists! Please enter another brand name.
+              </h5>
+            </div>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -41,7 +47,7 @@
           ></v-progress-circular>
           <v-btn
             v-if="!loading"
-            :disabled="!validBrandForm"
+            :disabled="!validBrandForm || brandExists"
             color="primary"
             text
             v-on:click="saveBrand"
@@ -73,6 +79,7 @@ export default {
       validBrandForm: true,
       newCategoryDialog: false,
       brand: null,
+      brandExists: false
     };
   },
   mounted() {},
@@ -104,6 +111,19 @@ export default {
       this.newCategoryDialog = false;
       this.loading = false;
     },
+    async checkIfBrandExists(brandName){
+      const brandExistsResponse = await this.$store.dispatch("dataGate", {
+        whereCriteria: { name: brandName },
+        tableName: "mappedBrands",
+        operation: "read",
+      });
+
+      if (brandExistsResponse.data.length == 0) {
+        this.brandExists = false;
+      } else {
+        this.brandExists = true;
+      }
+    }
   },
 };
 </script>

@@ -1,75 +1,77 @@
 <template>
   <v-app dark>
     <v-navigation-drawer
-      v-if="this.isUserLoggedIn"
-      v-model="drawer"
-      :mini-variant="miniVariant"
-      :clipped="clipped"
-      fixed
-      app
+        v-if="this.isUserLoggedIn"
+        v-model="drawer"
+        :mini-variant="miniVariant"
+        :clipped="clipped"
+        fixed
+        app
     >
       <v-list>
         <v-list-item
-          @click.stop="miniVariant = !miniVariant"
-          class="v-list-item--link"
+            @click.stop="miniVariant = !miniVariant"
+            class="v-list-item--link"
         >
           <v-list-item-action>
             <v-icon
-              >mdi-{{ `chevron-${miniVariant ? "right" : "left"}` }}</v-icon
+            >mdi-{{ `chevron-${miniVariant ? "right" : "left"}` }}
+            </v-icon
             >
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title v-text="'SSPUD'" />
+            <v-list-item-title v-text="'SSPUD'"/>
           </v-list-item-content>
         </v-list-item>
 
         <!-- Navigation List -->
         <v-list-group
-        v-for="item in items"
-        :key="item.title"
-        v-model="item.active"
-        :color="item.colour ? item.colour : 'blue'"
-        :prepend-icon="item.action"
-        no-action
-        v-if="item.items"
-      >
-        <template v-slot:activator>
-          <v-list-item-action>
-            <v-icon :color="item.colour ? item.colour : 'blue'">{{
-              item.icon
-            }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title v-text="item.title"></v-list-item-title>
-          </v-list-item-content>
-        </template>
+            v-for="item in items"
+            :key="item.title"
+            v-model="item.active"
+            :color="item.colour ? item.colour : 'blue'"
+            :prepend-icon="item.action"
+            no-action
+            v-if="item.items"
+        >
+          <template v-slot:activator>
+            <v-list-item-action>
+              <v-icon :color="item.colour ? item.colour : 'blue'">{{
+                  item.icon
+                }}
+              </v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title v-text="item.title"></v-list-item-title>
+            </v-list-item-content>
+          </template>
 
+          <v-list-item
+              v-for="child in item.items"
+              :key="child.title"
+              link
+              :to="child.to">
+            <v-list-item-content>
+              <v-list-item-title v-text="child.title"></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
         <v-list-item
-          v-for="child in item.items"
-          :key="child.title"
-          link
-          :to="child.to"
-        >
-          <v-list-item-content>
-            <v-list-item-title v-text="child.title"></v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list-group>
-      <v-list-item
-          v-for="(item, i) in items"
-          :key="i"
-          :to="item.to"
-          router
-          exact
-          v-if="!item.items"
+            v-for="(item, i) in items"
+            :key="i"
+            :to="item.to"
+            router
+            exact
+            v-if="!item.items"
         >
           <v-list-item-action>
             <v-icon :color="item.colour ? item.colour : 'blue'">{{
-              item.icon
-            }}</v-icon>
+                item.icon
+              }}
+            </v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title v-text="item.title" />
+            <v-list-item-title v-text="item.title"/>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -81,29 +83,29 @@
               exact
               class="v-list-item--link">
             <v-list-item-action>
-              <v-icon :color="'orange'" >mdi-sine-wave</v-icon>
+              <v-icon :color="'orange'">mdi-sine-wave</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-              <v-list-item-title v-text="'Process Logs'" />
+              <v-list-item-title v-text="'Process Logs'"/>
             </v-list-item-content>
           </v-list-item>
           <v-list-item
               class="v-list-item--link">
             <v-list-item-action>
-              <v-icon :color="'yellow'" >mdi-alert</v-icon>
+              <v-icon :color="'yellow'">mdi-alert</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-              <v-list-item-title v-text="userEmail" />
+              <v-list-item-title v-text="userEmail"/>
             </v-list-item-content>
           </v-list-item>
           <v-list-item
               v-on:click="signOut()"
               class="v-list-item--link">
             <v-list-item-action>
-              <v-icon :color="'yellow'" >mdi-alert</v-icon>
+              <v-icon :color="'yellow'">mdi-alert</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-              <v-list-item-title v-text="'Sign out'" />
+              <v-list-item-title v-text="'Sign out'"/>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -111,13 +113,13 @@
     </v-navigation-drawer>
     <v-main style="background-color: #FAFBFE !important;">
       <v-container fluid style="padding: 0px">
-        <Nuxt />
+        <Nuxt/>
       </v-container>
     </v-main>
     <v-footer
         v-if="this.isUserLoggedIn"
-      :absolute="!fixed"
-      app>
+        :absolute="!fixed"
+        app>
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
   </v-app>
@@ -153,7 +155,7 @@ export default {
         {
           title: 'Brands',
           icon: "mdi-watermark",
-          items:[
+          items: [
             {
               icon: "mdi-watermark",
               title: "Manage Brands",
@@ -169,52 +171,70 @@ export default {
           ]
         },
         {
-            title: 'products',
-            icon: "mdi-cart-variant",
-            items:[
-              {
-                icon: "mdi-cart-variant",
-                title: "Scraped Products",
-                to: "/products/scraped/list",
-                colour: "red",
-              },
-              {
-                icon: "mdi-cart-variant",
-                title: "Staged Products",
-                to: "/products/staged/list",
-                colour: "red",
-              },
-              {
-                icon: "mdi-cart-variant",
-                title: "Published Products",
-                to: "/products/published/list",
-                colour: "red",
-              },
-              {
-                icon: "mdi-cart-variant",
-                title: "Deleted Products",
-                to: "/products/deleted/list",
-                colour: "red",
-              },
-            ]
+          title: 'Products',
+          icon: "mdi-cart-variant",
+          items: [
+            {
+              icon: "mdi-cart-variant",
+              title: "Scraped Products",
+              to: "/products/scraped/list",
+              colour: "red",
+            },
+            {
+              icon: "mdi-cart-variant",
+              title: "Staged Products",
+              to: "/products/staged/list",
+              colour: "red",
+            },
+            {
+              icon: "mdi-cart-variant",
+              title: "Published Products",
+              to: "/products/published/list",
+              colour: "red",
+            },
+            {
+              icon: "mdi-cart-variant",
+              title: "Deleted Products",
+              to: "/products/deleted/list",
+              colour: "red",
+            },
+          ]
         },
         {
-          icon: "mdi-train-car",
-          title: "Transport Rates",
-          to: "/transportRates/mainTransportRates",
-          colour: "blue",
-        },
-        {
-          icon: "mdi-account-group",
-          title: "Users",
-          to: "/users/manage",
-          colour: "blue",
-        },
-        {
+          title: 'Orders',
           icon: "mdi-dropbox",
-          title: "Orders",
-          to: "/orders/list",
-          colour: "blue",
+          items: [
+            {
+              icon: "mdi-dropbox",
+              title: "Orders",
+              to: "/orders/list",
+              colour: "blue",
+            }
+          ]
+        },
+        {
+          title: 'Settings',
+          icon: "mdi-cog",
+          items: [
+            {
+              icon: "mdi-train-car",
+              title: "Transport Rates",
+              to: "/transportRates/mainTransportRates",
+              colour: "blue",
+            },
+            {
+              icon: "mdi-account-group",
+              title: "Users",
+              to: "/users/manage",
+              colour: "blue",
+            },
+            {
+              icon: "mdi-cog",
+              title: "Process Variables",
+              to: "/setup/processVariables",
+              colour: "blue",
+            },
+          ]
         },
       ],
       miniVariant: true,
@@ -224,7 +244,8 @@ export default {
     };
   },
   beforeMount() {
-    this.$nextTick(async function () {});
+    this.$nextTick(async function () {
+    });
   },
   computed: {
     isUserLoggedIn() {
