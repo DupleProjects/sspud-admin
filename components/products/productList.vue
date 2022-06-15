@@ -6,7 +6,7 @@
           <div>Name</div>
           <div v-if="type === 'staged' || type === 'published'">Has Stock</div>
           <div>Price</div>
-          <div>SubCategory</div>
+          <div>Subcategory</div>
           <div>Brand</div>
           <div v-if="type === 'staged' || type === 'published'" class="text-center">Published</div>
           <div v-if="type === 'staged' || type === 'published'" class="text-center">Review Required</div>

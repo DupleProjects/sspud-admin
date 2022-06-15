@@ -33,7 +33,6 @@
       <table>
         <thead>
           <tr class="fancy-heading-row">
-            <th>#</th>
             <th>Name</th>
             <th>Published</th>
             <th></th>
@@ -41,7 +40,6 @@
         </thead>
         <tbody>
           <tr v-for="(brand, index) of displayedBrands" :key="index" class="fancy-row">
-            <td>{{ index + 1 }}</td>
             <td>{{ brand.name }}</td>
             <td>
               <v-tooltip v-if="brand.publish" top>

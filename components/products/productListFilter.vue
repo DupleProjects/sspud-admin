@@ -46,7 +46,7 @@
           :items="subCategories"
           :item-value="'id'"
           :item-text="'name'"
-          label="Sub Category"
+          label="Subcategory"
           :hide-details="true"
           class="px-3"
           clearable
