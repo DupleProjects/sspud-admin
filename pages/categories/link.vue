@@ -21,7 +21,7 @@
             <th>Linked Category</th>
             <th>Publish</th>
             <th>Created At</th>
-            <th>Action</th>
+            <th></th>
           </tr>
           </thead>
           <tbody>

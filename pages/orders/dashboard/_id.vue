@@ -1,7 +1,18 @@
 <template>
   <div>
     <h2>Order Dashboard</h2>
-    <div v-if="order">
+    
+      <template>
+        <div class="text-center" style="margin-left:auto; margin-right:auto;">
+        <v-progress-circular
+          v-if="loading"
+          indeterminate
+          color="blue"
+          style="width:70px; height:70px"
+        ></v-progress-circular>
+        </div>
+      </template>
+    <div v-if="order && !loading">
       <div class="row">
         <div class="col-4">
           <div class="card card-shadow m-3 p-3">
