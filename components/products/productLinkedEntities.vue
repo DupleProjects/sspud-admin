@@ -9,15 +9,127 @@
         <thead>
           <tr>
             <th  scope="col"></th>
-            <th class="table-cell" scope="col"><h5>{{ getCategory(product.categoryId) }}</h5>BambaZonke Category</th>
-            <th class="table-cell" scope="col"><h5>{{ getSubcategory(product.subCategoryId) }}</h5>BambaZonke Subategory</th>
-            <th class="table-cell" scope="col"><h5 v-if="linkedScrapedCategory">{{linkedScrapedCategory}}</h5>Scraped Category</th>
-            <th class="table-cell" scope="col"><h5 v-if="linkedScrapedSubcategory">{{linkedScrapedSubcategory}}</h5>Scraped Subcategory</th>
+            <!-- <th class="table-cell" scope="col"><h5 v-if="linkedScrapedCategory">{{linkedScrapedCategory}}</h5>Scraped Category</th>
+            <th class="table-cell" scope="col"><h5 v-if="linkedScrapedSubcategory">{{linkedScrapedSubcategory}}</h5>Scraped Subcategory</th> -->
+            <th class="table-cell" scope="col"><h5>Certificate Required</h5></th>
+            <th class="table-cell" scope="col"><h5>Publish Allowed</h5></th>
           </tr>
         </thead>
         <tbody>
-          <!-- Certificate Required -->
+          <!-- BZ Category -->
           <tr>
+            <td class="left-cell">
+              <h5 class="table-item-heading">{{ productDetails.categoryName}}</h5>
+              <span class="table-item-subheading">BambaZonke Category</span>
+            </td>
+            <td class="table-cell">
+              <v-icon v-if="productDetails.certificateRequired == 1" large color="green">mdi-check</v-icon>
+              <v-icon v-if="productDetails.certificateRequired == 0"  large color="red">mdi-close</v-icon>
+              <!-- <v-icon v-if="!productDetails.certificateRequired">Not Linked</v-icon> -->
+            </td>
+            <td class="table-cell">
+              <v-icon v-if="productDetails.categoryPublish == 1"  large color="green">mdi-check</v-icon>
+              <v-icon v-if="productDetails.categoryPublish == 0"  large color="red">mdi-close</v-icon>
+              <!-- <h5 style="color:red" v-if="!productDetails.categoryPublish">Not Linked</h5> -->
+            </td>       
+          </tr>
+          <!-- BZ Subcategory -->
+          <tr v-if="productDetails.subCategoryName">
+            <td class="left-cell">
+              <h5 class="table-item-heading">{{ productDetails.subCategoryName }}</h5>
+              <span class="table-item-subheading">BambaZonke Subcategory</span>
+            </td>
+            <td class="table-cell">
+              <v-icon v-if="productDetails.subCertificateRequired == 1"  large color="green">mdi-check</v-icon>
+              <v-icon v-if="productDetails.subCertificateRequired == 0"  large color="red">mdi-close</v-icon>
+              <!-- <h5 style="color:red" v-if="!productDetails.subCertificateRequired">Not Linked</h5> -->
+            </td>
+            <td class="table-cell">
+              <v-icon v-if="productDetails.subCategoryPublish == 1"  large color="green">mdi-check</v-icon>
+              <v-icon v-if="productDetails.subCategoryPublish == 0"  large color="red">mdi-close</v-icon>
+              <!-- <h5 style="color:red" v-if="!productDetails.subCategoryPublish">Not Linked</h5> -->
+            </td>       
+          </tr>
+          <!-- BZ Brand -->
+          <tr v-if="productDetails.brandName">
+            <td class="left-cell">
+              <h5 class="table-item-heading">{{ productDetails.brandName }}</h5>
+              <span class="table-item-subheading">BambaZonke Brand</span>
+            </td>
+            <td class="table-cell"><h5>N/A</h5></td>
+            <td class="table-cell">
+              <v-icon v-if="productDetails.brandPublish == 1"  large color="green">mdi-check</v-icon>
+              <v-icon v-if="productDetails.brandPublish == 0"  large color="red">mdi-close</v-icon>
+              <!-- <h5 style="color:red" v-if="!productDetails.subCategoryPublish">Not Linked</h5> -->
+            </td>       
+          </tr>
+          <!-- Scraped Category -->
+          <tr>
+            <td class="left-cell">
+              <h5 class="table-item-heading">{{scrapedProductDetails.categoryName}}</h5>
+              <span class="table-item-subheading">Scraped Category</span>
+            </td>
+            <td class="table-cell"><h5>N/A</h5></td>
+            <td class="table-cell">
+              <v-icon v-if="scrapedProductDetails.categoryPublish == 1"  large color="green">mdi-check</v-icon>
+              <v-icon v-if="scrapedProductDetails.categoryPublish == 0"  large color="red">mdi-close</v-icon>
+              <!-- <h5 style="color:red" v-if="!scrapedProductDetails.categoryPublish">Not Linked</h5> -->
+            </td>
+          </tr>
+          <!-- Scraped Subcategory -->
+          <tr>
+            <td class="left-cell">
+              <h5 class="table-item-heading">{{scrapedProductDetails.subCategoryName}}</h5>
+              <!-- <h5 class="table-item-heading">{{linkedScrapedSubcategory}}</h5> -->
+              <span class="table-item-subheading">Scraped Subcategory</span>
+            </td>
+            <td class="table-cell"><h5>N/A</h5></td>
+            <td class="table-cell">
+              <v-icon v-if="scrapedProductDetails.subCategoryPublish == 1"  large color="green">mdi-check</v-icon>
+              <v-icon v-if="scrapedProductDetails.subCategoryPublish == 0"  large color="red">mdi-close</v-icon>
+              <!-- <h5 style="color:red" v-if="!scrapedProductDetails.subCategoryPublish">Not Linked</h5> -->
+            </td>  
+          </tr>
+          <!-- Scraped Sub-Subcategory -->
+          <tr v-if="scrapedProductDetails.subSubCategoryName">
+            <td class="left-cell">
+              <!-- Certificate -->
+              <h5 class="table-item-heading">{{scrapedProductDetails.subSubCategoryName}}</h5>
+              <span class="table-item-subheading">Scraped Sub-Subcategory</span>
+              <!-- Publish -->
+            </td>
+            <td class="table-cell"><h5>N/A</h5></td>
+            <td class="table-cell">
+              <v-icon v-if="scrapedProductDetails.subSubCategoryPublish == 1"  large color="green">mdi-check</v-icon>
+              <v-icon v-if="scrapedProductDetails.subSubCategoryPublish == 0"  large color="red">mdi-close</v-icon>
+              <!-- <h5 style="color:red" v-if="!scrapedProductDetails.subSubCategoryPublish">Not Linked</h5> -->
+            </td> 
+          </tr>
+          <!-- Scraped Brand -->
+          <tr v-if="scrapedProductDetails.brandName">
+            <td class="left-cell">
+              <!-- Certificate -->
+              <h5 class="table-item-heading">{{scrapedProductDetails.brandName}}</h5>
+              <span class="table-item-subheading">Scraped Brand</span>
+              <!-- Publish -->
+            </td>
+            <td class="table-cell"><h5>N/A</h5></td>
+            <td class="table-cell">
+              <v-icon v-if="scrapedProductDetails.brandPublish == 1"  large color="green">mdi-check</v-icon>
+              <v-icon v-if="scrapedProductDetails.brandPublish == 0"  large color="red">mdi-close</v-icon>
+              <!-- <h5 style="color:red" v-if="!scrapedProductDetails.subSubCategoryPublish">Not Linked</h5> -->
+            </td> 
+          </tr>
+          <!-- Net Publish & Certificate -->
+          <tr>
+            <td class="left-cell">
+              <h5 class="table-item-heading">Net Values</h5>
+            </td>
+            <td class="table-cell"><h5 style="color:red" v-if="netCertificateRequired">CERTIFICATE REQUIRED</h5><h5 style="color:green" v-else>NO CERTIFICATE REQUIRED</h5></td>
+            <td class="table-cell"><h5 style="color:green" v-if="netPublish">CAN PUBLISH</h5><h5 style="color:red" v-else>CANNOT PUBLISH</h5></td>
+          </tr>
+          <!-- Certificate Required -->
+          <!-- <tr>
             <td class="left-cell"><b>Certificate Required</b></td>
             <td class="table-cell">
               <v-icon v-if="catCertificate  == 'TRUE'" large color="green">mdi-check</v-icon>
@@ -32,9 +144,9 @@
             <td class="table-cell"><h5>N/A</h5></td>
             <td class="table-cell"><h5>N/A</h5></td>
             
-          </tr>
+          </tr> -->
           <!-- Publish -->
-          <tr>
+          <!-- <tr>
             <td class="left-cell"><b>Publish</b></td>
             <td class="table-cell">
               <v-icon v-if="catPublished == 'TRUE'"  large color="green">mdi-check</v-icon>
@@ -56,7 +168,7 @@
               <v-icon v-if="scrapedSubcatPublished == 'FALSE'"  large color="red">mdi-close</v-icon>
               <h5 style="color:red" v-if="!scrapedSubcatPublished">Not Linked</h5>
             </td>
-          </tr>
+          </tr> -->
         </tbody>
       </table>
     </div>
@@ -85,30 +197,154 @@ export default {
       subCatCertificate: null,
       scrapedcatPublished: null,
       scrapedSubcatPublished: null,
+      scrapedCategory: null,
+      scrapedProductDetails:{},
+      productDetails:{},
+      netPublish: true,
+      netCertificateRequired: false,
+      allBrands: [],
+      allScrapedBrands: []
     };
   },
   beforeMount() {
     this.$nextTick(async function () {
+
       // this.thisProduct = this.product;
+      console.log("THIS PRODUCT", this.product);
+      // BZ Category Details
       const categories = await this.$store.dispatch("dataGate", {
         tableName: "mappedCategories",
         operation: "read",
       });
 
-      this.allBZCategories = categories.data;
+      if(categories.data){
+        this.allBZCategories = categories.data;
 
+        const mainCategoryBz = this.allBZCategories.find(cat => cat.id === this.product.categoryId);
+        if(mainCategoryBz){
+          this.productDetails.categoryName = mainCategoryBz.name,
+          this.productDetails.categoryPublish = mainCategoryBz.publish,
+          this.productDetails.certificateRequired = mainCategoryBz.certificateRequired
+        }
+
+        const subCategoryBz = this.allBZCategories.find(cat => cat.id === this.product.subCategoryId);
+        if(subCategoryBz){
+          this.productDetails.subCategoryName = subCategoryBz.name,
+          this.productDetails.subCategoryPublish = subCategoryBz.publish,
+          this.productDetails.subCertificateRequired = subCategoryBz.certificateRequired
+        }
+
+      }
+
+      // BZ Brand Details
+      const mappedBrandsResponse = await this.$store.dispatch("dataGate", {
+        tableName: "mappedBrands",
+        operation: "read"
+      });
+
+      if(mappedBrandsResponse.data){
+        this.allBrands = mappedBrandsResponse.data
+
+        const brand = this.allBrands.find(brand => brand.id === this.product.brandId);
+        if(brand){
+          this.productDetails.brandName = brand.name,
+          this.productDetails.brandPublish = brand.publish
+        }
+      }
+
+      console.log("this.productDetails",this.productDetails);
+
+
+
+      
+      if(this.productDetails.certificateRequired == 1 || this.productDetails.subCertificateRequired == 1){
+        this.netCertificateRequired = true;
+      }
+
+      // Scraped Category Details
       const scrapedCategoriesResponse = await this.$store.dispatch("dataGate", {
         tableName: "scrapedCategories",
         operation: "read",
       });
 
-      this.scrapedCategories = scrapedCategoriesResponse.data;
-      console.log("🙌⚡",this.scrapedCategories);
+      if(scrapedCategoriesResponse.data){
+        this.scrapedCategories = scrapedCategoriesResponse.data;
+      }
+      const scrapedProductsResponse = await this.$store.dispatch("dataGate", {
+        tableName: "scrapedProducts",
+        operation: "read",
+        whereCriteria: {id: this.product.scrapedProductId}
+      });
+
+      
+      const scrapedBrandsResponse = await this.$store.dispatch("dataGate", {
+        tableName: "scrapedBrands",
+        operation: "read",
+      });
+        this.allScrapedBrands = scrapedBrandsResponse.data
+
+      if(scrapedProductsResponse.data){
+        this.scrapedCategory = scrapedProductsResponse.data
+        console.log("this.scrapedCategory",this.scrapedCategory);
+
+        const category = this.scrapedCategories.find(cat => cat.name === this.scrapedCategory[0].categoryName);
+        if(category){
+          this.scrapedProductDetails.categoryName = category.name,
+          this.scrapedProductDetails.categoryPublish = category.publish
+        }
+        const subCategory = this.scrapedCategories.find(cat => cat.name === this.scrapedCategory[0].subCategoryName);
+        if(subCategory){
+          this.scrapedProductDetails.subCategoryName = subCategory.name,
+          this.scrapedProductDetails.subCategoryPublish = subCategory.publish
+        }
+        const subSubCategory = this.scrapedCategories.find(cat => cat.name === this.scrapedCategory[0].subSubCategoryName);
+        if(subSubCategory){
+          this.scrapedProductDetails.subSubCategoryName = subSubCategory.name,
+          this.scrapedProductDetails.subSubCategoryPublish = subSubCategory.publish
+        }
+        const scrapedBrand = this.allScrapedBrands.find(brand => brand.name === this.scrapedCategory[0].brand);
+        if(scrapedBrand){
+          this.scrapedProductDetails.brandName = scrapedBrand.name,
+          this.scrapedProductDetails.brandPublish = scrapedBrand.publish
+        }
+
+        
+        this.scrapedProductDetails = {
+          categoryName: category.name,
+          categoryPublish: category.publish,
+          subCategoryName: subCategory.name,
+          subCategoryPublish: subCategory.publish,
+          subSubCategoryName: subSubCategory.name,
+          subSubCategoryPublish: subSubCategory.publish,
+          brandName: scrapedBrand.name,
+          brandPublish: scrapedBrand.publish
+        }
+        
+      }
+
+      if(
+        this.productDetails.categoryPublish == 0 ||
+        this.productDetails.subCategoryPublish == 0 ||
+        this.productDetails.brandPublish == 0 ||
+        this.scrapedProductDetails.subCategoryPublish == 0 ||
+        this.scrapedProductDetails.subSubCategoryName == 0 ||
+        this.scrapedProductDetails.subSubCategoryPublish == 0 ||
+        this.scrapedProductDetails.brandPublish == 0
+      ){
+        this.netPublish = false;
+      }
+
+
+      
+
+      console.log("this.scrapedProductDetails",this.scrapedProductDetails);
+      
+
+      
     });
   },
   methods: {
     async publishProduct() {
-      console.log("this.product", this.product);
       if (productMixin.methods.canPublishProduct(this.product)) {
         this.product.publish = !this.product.publish;
         // Remove review required if we are publishing
@@ -169,9 +405,6 @@ export default {
       if (this.allBZCategories) {
         const category = this.allBZCategories.find((x) => x.id === categoryId);
 
-        
-          console.log("👉👉",category);
-
         if (category) {
           if (category.publish == 1) {
             this.catPublished = "TRUE";
@@ -201,7 +434,6 @@ export default {
           const linkedScrapedCat = this.scrapedCategories.find(
             (x) => x.mappedCategoryId === category.id
           );
-          console.log("LINKED SCRAPED CATEGORY",linkedScrapedCat);
           if (linkedScrapedCat) {
             if (
               linkedScrapedCat.parentId == null ||
@@ -397,5 +629,14 @@ export default {
 
 .left-cell{
   vertical-align: middle;
+}
+
+.table-item-heading{
+  margin-bottom:-3px;
+}
+
+.table-item-subheading{
+  font-size:13px;
+  margin-top:-15px;
 }
 </style>
