@@ -1,8 +1,8 @@
 <template>
-  <div>
-    <div class="row">
-      <div class="col-2"><h2>Main Transport Rates</h2></div>
-      <div class="col-8"></div>
+  <div class="pa-3">
+    <div class="row mt-3">
+      <div class="col-5"><h2>Main Transport Rates</h2></div>
+      <div class="col-5"></div>
       <div class="col-2">
         <v-btn
           style="width: 100%; color: White"
@@ -24,10 +24,10 @@
       <div class="col">
         <h2>Rate Sheets</h2>
         <hr />
-        <div class="table-responsive">
-          <table class="table table-striped table-sm">
+        <div class="fancy-table">
+          <table>
             <thead>
-              <tr>
+              <tr class="fancy-heading-row">
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
                 <th scope="col">Type</th>
@@ -39,11 +39,19 @@
                 v-for="(rateSheet, index) of rateSheets"
                 :key="index"
                 @click="rateSheetClicked(rateSheet)"
+                class="fancy-row"
               >
                 <td>{{ index + 1 }}</td>
                 <td>{{ rateSheet.name }}</td>
                 <td>{{ rateSheet.type }}</td>
-                <td>{{ rateSheet.isActive }}</td>
+                <td>
+                  <v-icon style="margin-left:6px;" medium color="green" v-if="rateSheet.isActive">
+                    mdi-check
+                  </v-icon>
+                  <v-icon style="margin-left:6px;" color="red" medium  v-else>
+                    mdi-close
+                  </v-icon>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -53,13 +61,10 @@
       <div class="col">
         <h2>Rate Sheet Details</h2>
         <hr />
-        <div style="overflow-y: auto; overflow-x: none; height: 75vh">
-          <table
-            class="table table-striped table-sm"
-            v-if="showDefualRates == 'defualt'"
-          >
+        <div class="fancy-table">
+          <table>
             <thead>
-              <tr>
+              <tr class="fancy-heading-row">
                 <th scope="col">KG</th>
                 <th
                   scope="col"
@@ -71,7 +76,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(vol, index) of volumetricUnique" :key="index">
+              <tr v-for="(vol, index) of volumetricUnique" :key="index" class="fancy-row">
                 <td>
                   <b>{{ vol }}</b>
                 </td>
@@ -595,5 +600,103 @@ export default {
 }
 .table-row {
   display: flex;
+}
+
+
+.fancy-table {
+  font-size: small;
+  display: flex;
+  flex-direction: column;
+  min-width: 600px;
+  height:75vh;
+  border-radius: 10px !important;
+  overflow-y: auto;
+  overflow-x: none;
+}
+
+.fancy-heading-row {
+  position: relative;
+  background-color: #5268fa;
+  border-radius: 0px;
+  box-shadow: none;
+  --show-action: 0;
+  border-top: 1px solid rgb(223, 225, 230);
+  border-right: 1px solid rgb(223, 225, 230);
+  border-left: 1px solid rgb(223, 225, 230);
+  color: white;
+  border-image: initial;
+  border-bottom: none;
+  font-weight: normal !important;
+}
+
+.fancy-heading-row th {
+  font-weight: normal;
+  padding: 8px;
+  padding-left: 15px;
+}
+
+.fancy-row {
+  position: relative;
+  background-color: white;
+  border-radius: 0px;
+  box-shadow: none;
+  --show-action: 0;
+  border-top: 1px solid rgb(223, 225, 230);
+  border-right: 1px solid rgb(223, 225, 230);
+  border-left: 1px solid rgb(223, 225, 230);
+  border-image: initial;
+  border-bottom: none;
+  cursor: pointer;
+}
+
+.fancy-row:hover {
+  background-color: #f5f6f8;
+}
+.fancy-row:hover .actions-column {
+  display: flex;
+}
+.inner-fancy-heading-row {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 2fr 0.5fr 1fr 1fr 1fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.inner-fancy-heading-row-staged {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 1.5fr 0.5fr 1fr 1fr 0.5fr 0.5fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.inner-fancy-row {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 2fr 0.5fr 1fr 1fr 1fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.inner-fancy-row-staged {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 1.5fr 0.5fr 1fr 1fr 0.5fr 0.5fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+
+.fancy-row td {
+  padding: 8px;
+  font-size: 15px;
+  padding-left: 15px;
+}
+
+.product-list {
+  min-height: 68vh;
+  max-height: 68vh;
+  overflow: auto;
 }
 </style>
