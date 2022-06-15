@@ -36,7 +36,7 @@
         >
           <template v-slot:activator>
             <v-list-item-action style="margin-right:12px">
-              <v-icon :color="item.colour ? item.colour : 'blue'">{{
+              <v-icon @click.stop="miniVariant = false" :color="item.colour ? item.colour : 'blue'">{{
                   item.icon
                 }}
               </v-icon>
