@@ -1,5 +1,6 @@
 <template>
   <div>
+    
     <!--Header-->
     <div
         class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -16,29 +17,59 @@
         </div>
       </div>
     </div>
+    <div >
+      <template>
+        <div class="text-center" style="margin-left:auto; margin-right:auto;">
+        <v-progress-circular
+          v-if="loading"
+          indeterminate
+          color="black"
+        ></v-progress-circular>
+        </div>
+      </template>
+    
+    </div>
     <!--Table-->
-    <div class="table-responsive">
-      <div class="m-3 card card-shadow">
-        <table class="table table-hover">
+    <div v-if="!loading" class="p-3" style="border-radius: 20px !important;">
+    <div class="fancy-table" :style="tableStyle">
+      <table>
           <thead>
-          <tr>
+          <tr class="fancy-heading-row">
             <th scope="col">Order ID</th>
             <th scope="col">Customer</th>
             <th scope="col">Total</th>
             <th scope="col">Status</th>
             <th scope="col">Created At</th>
+            <th scope="col"></th>
           </tr>
           </thead>
           <tbody class="table-group-divider">
           <tr
-              v-on:click="goToOrder(order)"
               v-for="(order, index) of orders" :key="index"
-              class="order-list-item">
-            <th scope="row">{{order.wooCommerceId}}</th>
+              class="fancy-row">
+            <th>{{order.wooCommerceId}}</th>
             <td>{{order.customerName}}</td>
             <td>P {{order.total}}</td>
             <td>{{order.status}}</td>
             <td><date :date="order.createdAt" /></td>
+            <td>
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    small
+                    class="button-style"
+                    text
+                    v-on:click="goToOrder(order)"
+                    style="text-align: center"
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    <v-icon small>mdi-eye</v-icon>
+                  </v-btn>
+                </template>
+                <span>View Order</span>
+              </v-tooltip>
+            </td>
           </tr>
           </tbody>
         </table>
@@ -122,10 +153,12 @@ export default {
     },
     async goToOrder(order) {
       const params = { id: order.id };
+      this.loading = true
       await this.$router.push({
         name: "orders-dashboard-id",
         params,
       });
+      this.loading = false
     }
   },
 }
@@ -134,5 +167,105 @@ export default {
 <style scoped>
 .order-list-item {
   cursor: pointer;
+}
+
+
+
+.fancy-table {
+  font-size: small;
+  display: flex;
+  flex-direction: column;
+  /* min-height: 75vh; */
+  border-radius: 10px !important;
+}
+
+.fancy-heading-row {
+  position: relative;
+  background-color: #5268fa;
+  border-radius: 0px;
+  box-shadow: none;
+  --show-action: 0;
+  border-top: 1px solid rgb(223, 225, 230);
+  border-right: 1px solid rgb(223, 225, 230);
+  border-left: 1px solid rgb(223, 225, 230);
+  color: white;
+  border-image: initial;
+  border-bottom: none;
+  font-weight: normal !important;
+}
+
+.fancy-heading-row th {
+  font-weight: normal;
+  padding: 8px;
+  padding-left: 15px;
+}
+
+.fancy-row {
+  position: relative;
+  background-color: white;
+  border-radius: 0px;
+  box-shadow: none;
+  --show-action: 0;
+  border-top: 1px solid rgb(223, 225, 230);
+  border-right: 1px solid rgb(223, 225, 230);
+  border-left: 1px solid rgb(223, 225, 230);
+  border-image: initial;
+  border-bottom: none;
+}
+
+.fancy-row:hover {
+  background-color: #f5f6f8;
+}
+.fancy-row:hover .actions-column {
+  display: flex;
+}
+.inner-fancy-heading-row {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 2fr 0.5fr 1fr 1fr 1fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.inner-fancy-heading-row-staged {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 1.5fr 0.5fr 1fr 1fr 0.5fr 0.5fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.inner-fancy-row {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 2fr 0.5fr 1fr 1fr 1fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.inner-fancy-row-staged {
+  min-width: 0px;
+  padding: 8px 16px;
+  display: grid;
+  grid-template-columns: 1.5fr 0.5fr 1fr 1fr 0.5fr 0.5fr 0.5fr;
+  -webkit-box-align: center;
+  align-items: center;
+}
+
+.fancy-row td {
+  padding: 8px;
+  font-size: 15px;
+  padding-left: 15px;
+}
+.fancy-row th {
+  padding: 8px;
+  font-size: 15px;
+  padding-left: 15px;
+}
+
+.product-list {
+  min-height: 68vh;
+  max-height: 68vh;
+  overflow: auto;
 }
 </style>

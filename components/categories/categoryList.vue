@@ -1,13 +1,13 @@
 <template>
-  <div class="p-3" style="border-radius: 20px !important">
-    <div class="fancy-table">
+  <div class="p-3" style="border-radius: 20px !important;">
+    <div class="fancy-table" :style="tableStyle">
       <table>
         <thead class="py-10">
           <tr class="fancy-heading-row">
             <th>Name</th>
             <th>Parent</th>
             <th>Publish</th>
-            <th>CreatedAt</th>
+            <th>Created At</th>
             <th></th>
           </tr>
         </thead>
@@ -81,11 +81,14 @@ export default {
     reloadCallBack: null,
     categories: [],
     allCategories: [],
+    tableStyle:''
   },
   data() {
     return {};
   },
-  mounted() {},
+  mounted() {
+    
+  },
   methods: {
     goToCategoryDashboard(category) {
       this.$router.push({
@@ -136,7 +139,7 @@ export default {
   font-size: small;
   display: flex;
   flex-direction: column;
-  min-height: 75vh;
+  /* min-height: 75vh; */
   border-radius: 10px !important;
 }
 

@@ -96,7 +96,7 @@
       <div class="col">
         <div class="row">
           <div class="col-6">
-            <h3>Bambazonke Brands</h3>
+            <h3>BambaZonke Brands</h3>
           </div>
           <div class="col-4">
             <v-text-field

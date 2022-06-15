@@ -35,7 +35,7 @@
             v-if="item.items"
         >
           <template v-slot:activator>
-            <v-list-item-action>
+            <v-list-item-action style="margin-right:12px">
               <v-icon :color="item.colour ? item.colour : 'blue'">{{
                   item.icon
                 }}
@@ -50,7 +50,14 @@
               v-for="child in item.items"
               :key="child.title"
               link
-              :to="child.to">
+              :to="child.to"
+              style="padding-left:45px;" >
+              <v-list-item-action style="margin-right:12px" >
+              <v-icon :color="child.colour ? child.colour : 'blue'">{{
+                  child.icon
+                }}
+              </v-icon>
+            </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title v-text="child.title"></v-list-item-title>
             </v-list-item-content>
@@ -63,6 +70,7 @@
             router
             exact
             v-if="!item.items"
+            
         >
           <v-list-item-action>
             <v-icon :color="item.colour ? item.colour : 'blue'">{{
@@ -137,6 +145,7 @@ export default {
         {
           title: 'Categories',
           icon: "mdi-shape",
+          colour: "purple",
           items: [
             {
               icon: "mdi-shape",
@@ -145,7 +154,7 @@ export default {
               colour: "purple",
             },
             {
-              icon: "mdi-shape",
+              icon: "mdi-link-variant",
               title: "Link Categories",
               to: "/categories/link",
               colour: "purple",
@@ -155,6 +164,7 @@ export default {
         {
           title: 'Brands',
           icon: "mdi-watermark",
+          colour: "green",
           items: [
             {
               icon: "mdi-watermark",
@@ -163,7 +173,7 @@ export default {
               colour: "green",
             },
             {
-              icon: "mdi-watermark",
+              icon: "mdi-link-variant",
               title: "Link Brands",
               to: "/brands/link",
               colour: "green",
@@ -173,6 +183,7 @@ export default {
         {
           title: 'Products',
           icon: "mdi-cart-variant",
+          colour: "red",
           items: [
             {
               icon: "mdi-cart-variant",
@@ -187,13 +198,13 @@ export default {
               colour: "red",
             },
             {
-              icon: "mdi-cart-variant",
+              icon: "mdi-publish",
               title: "Published Products",
               to: "/products/published/list",
               colour: "red",
             },
             {
-              icon: "mdi-cart-variant",
+              icon: "mdi-trash-can",
               title: "Deleted Products",
               to: "/products/deleted/list",
               colour: "red",
@@ -215,6 +226,7 @@ export default {
         {
           title: 'Settings',
           icon: "mdi-cog",
+          colour: "blue",
           items: [
             {
               icon: "mdi-train-car",

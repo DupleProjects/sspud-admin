@@ -109,6 +109,7 @@
           :categories="linkedCategories"
           :title="'Linked Categories'"
           :allCategories="categories"
+          :location="'dashboard'"
         />
       </v-card-text>
     </v-card>
@@ -121,6 +122,7 @@
           :type="'scraped'"
           :categories="linkedScrapedCategories"
           :title="'Linked Scraped Categories'"
+          :tableStyle="'max-height: 75vh'"
         />
       </v-card-text>
     </v-card>

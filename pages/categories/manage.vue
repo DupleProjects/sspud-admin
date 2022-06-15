@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div >
     <!--Header-->
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mx-3">
       <h1 class="h2">Manage Categories</h1>
@@ -19,7 +19,7 @@
     <hr class="my-0 mx-3">
     <!--Table-->
     <categories-category-list
-        :categories="displayedCategories" :allCategories="categories" :reloadCallBack="saveCallBack"/>
+        :categories="displayedCategories" :allCategories="categories" :reloadCallBack="saveCallBack" :tableStyle="'min-height: 75vh'"/>
     <!--Pagination-->
     <template>
       <div class="text-end">
