@@ -184,7 +184,6 @@ export default {
       }
     },
     async publishProduct() {
-      console.log("1. 👉",this.certificates);
       if (productMixin.methods.canPublishProduct(this.product, this.certificates).isValidProduct == true ) {
         this.saving = true;
         const response = await this.$store.dispatch("callMiddlewareRoute", {
@@ -209,7 +208,6 @@ export default {
           this.product, this.certificates
         );
 
-        console.log("details---",returnedDetails);
 
         this.invalidItems = [];
 
@@ -292,7 +290,6 @@ export default {
           file: fileReader.result,
           folder: 'product-certificates'
         });
-        console.log('response', response)
         if (response) {
           // Save certificate
           const newCertificateToSave = {
@@ -305,7 +302,6 @@ export default {
             tableName: "stagedProductCertificates",
             operation: "create",
           });
-          console.log(savedCertificate)
           // Add the certificate to the certificate list
           if (savedCertificate && savedCertificate.response) {
             self.certificates.push(savedCertificate.response);
@@ -338,7 +334,6 @@ export default {
       this.$refs.uploader.click();
     },
     getCertificateFileName(certificate) {
-      console.log('certificate', certificate)
       return certificate.certificateLink.split('/')[certificate.certificateLink.split('/').length - 1]
     },
     async deleteCertificate(certificate) {
@@ -350,14 +345,12 @@ export default {
         fileName,
         folder: 'product-certificates'
       });
-      console.log('response', response)
       const certificateDeleteResponse = await this.$store.dispatch("dataGate", {
         tableName: "stagedProductCertificates",
         operation: "delete",
         primaryKey: 'id',
         entity: certificate
       });
-      console.log('certificateDeleteResponse', certificateDeleteResponse)
       await this.loadCertificates();
       this.saving = false;
     }

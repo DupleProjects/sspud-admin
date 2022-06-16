@@ -12,7 +12,7 @@
         border-bottom
       "
     >
-      <h2>Link Brands</h2>
+      <h2 class="mt-3">Link Brands</h2>
     </div>
     <div class="row">
       <div class="col">

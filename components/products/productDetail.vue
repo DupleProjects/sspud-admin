@@ -207,6 +207,7 @@
 
 <script>
 import baseMixin from "@/mixins/baseMixin";
+import productMixin from "@/mixins/productMixin.js";
 
 export default {
   props: {
@@ -229,6 +230,7 @@ export default {
       snackbar: false,
       snackBarText: 'My timeout is set to 2000.',
       timeout: 2000,
+      certificates: null
     };
   },
   mounted() {},
@@ -281,6 +283,22 @@ export default {
           //   operation: "update",
           // });
         } else if (this.type === "staged") {
+          
+          const certificatesResponse = await this.$store.dispatch("dataGate", {
+            tableName: "stagedProductCertificates",
+            operation: "read",
+            whereCriteria: {stagedProductId: this.product.id}
+          });
+          if (certificatesResponse && certificatesResponse.data) {
+            this.certificates = certificatesResponse.data;
+          }
+          
+          if(productMixin.methods.canPublishProduct(this.product,this.certificates).isValidProduct == true){
+            this.product.reviewRequired = false
+          }else{
+            this.product.reviewRequired = true
+          }
+
           const response = await this.$store.dispatch("dataGate", {
             primaryKey: "id",
             entity: this.product,
@@ -298,6 +316,18 @@ export default {
         this.snackBarText = 'Product Successfully Saved';
         this.snackbar = true;
         this.saving = false;
+      }
+    },
+    async getReviewRequired() {
+      if (productMixin.methods.canPublishProduct(this.product)) {
+        this.product.publish = !this.product.publish;
+        // Remove review required if we are publishing
+        if (this.product.publish) {
+          this.product.reviewRequired = false;
+        }
+        await this.saveProduct();
+      } else {
+        alert("You can not publish this product. Stuff is still missing.");
       }
     },
     onCategoryChange(sub) {
