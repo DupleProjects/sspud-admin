@@ -5,88 +5,44 @@
         <thead class="py-10">
         <tr class="fancy-heading-row">
           <th class="info-column" scope="col">Name</th>
-          <th class="info-column" scope="col">Surname</th>
-          <th class="info-column" scope="col">Email</th>
-          <th class="info-column" scope="col">Role</th>
+          <th class="info-column" scope="col">Status</th>
+          <th class="info-column" scope="col">Delivery Cost</th>
           <th class="actions-column" scope="col"></th>
         </tr>
         </thead>
         <tbody class="product-list">
-        <tr v-for="(user, index) of users" :key="index" class="fancy-row">
-          <td class="info-column">{{ user.name }}</td>
-          <td class="info-column">{{ user.surname }}</td>
-          <td class="info-column">{{ user.email }}</td>
-          <td class="info-column">{{ user.role }}</td>
+        <tr v-for="(shop, index) of shops" :key="index" class="fancy-row">
+          <td class="info-column">{{ shop.name }}</td>
+          <td class="info-column" v-if="shop.active"> <h6 style="color:green">ACTIVE</h6> </td>
+          <td class="info-column" v-else> <h6 style="color:red">INACTIVE</h6> </td>
+          <td class="info-column"> <span v-if="shop.deliveryCost"> R {{ getCost(shop.deliveryCost) }}</span></td>
           <td class="actions-column">
             <div class="d-flex">
-              <edit-user-dialog
-                  :users="users"
-                  :editedUser="user"
-                  :usersCallBackEdit="usersCallBackEdit"
+              <edit-shop-dialog
+                  :shops="shops"
+                  :editedShop="shop"
+                  :shopsCallBackEdit="shopsCallBackEdit"
               />
-              <v-tooltip top>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                      small
-                      class="button-style"
-                      text
-                      @click="openTheDeleteDialog(user)"
-                      style="text-align: center"
-                      v-bind="attrs"
-                      v-on="on"
-                  >
-                    <v-icon small>mdi-trash-can</v-icon>
-                  </v-btn>
-                </template>
-                <span>Delete</span>
-              </v-tooltip>
             </div>
           </td>
         </tr>
         </tbody>
       </table>
     </div>
-    <!--Delete Dialog-->
-    <v-dialog
-        style="z-index: 10000"
-        v-model="deleteDialog"
-        max-width="800"
-    >
-      <v-card>
-        <v-card-title> Delete User </v-card-title>
-        <v-card-subtitle>
-          Are you sure that you want to delete this user? This action
-          cannot be undone.
-        </v-card-subtitle>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-              color="primary"
-              text
-              v-on:click="deleteUser(userToDelete)"
-          >
-            Confirm Delete
-          </v-btn>
-          <v-btn color="primary" text @click="closeTheDeleteDialog()"
-          >Close</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 
 
 <script>
-import editUserDialog from "./editUserDialog.vue";
+import editShopDialog from "./editShopDialog.vue";
 export default {
-  components: { editUserDialog },
+  components: { editShopDialog },
   props: {
     type: "",
     products: [],
     allCategories: [],
     deleteProductCallBack: null,
-    users: [],
+    shops: [],
     saveCallBack: null,
   },
   data() {
@@ -136,20 +92,18 @@ export default {
       console.log("🔥🔥On Click", this.userToDelete.id);
       this.deleteDialog = true;
     },
-    async usersCallBackEdit(usersCallBack) {
+    async shopsCallBackEdit(usersCallBack) {
       await this.saveCallBack();
     },
-    async deleteUser(user) {
-      this.loading = true;
-      const response = await this.$store.dispatch("dataGate", {
-        primaryKey: "id",
-        entity: user,
-        tableName: "users",
-        operation: "delete",
-      });
-      this.loading = false;
-      this.deleteDialog = false;
-    },
+    getCost(value){
+        console.log("VALUE", value);
+        if(value != null && value != undefined && typeof(value) != "string"){
+            var newValue = value.toFixed(2);
+            return newValue;
+        }else{
+            return null;
+        }
+    }
   },
 };
 </script>
@@ -173,7 +127,6 @@ export default {
 /* .button-style{
   float:right;
 } */
-
 
 
 .fancy-table {

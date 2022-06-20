@@ -246,6 +246,12 @@ export default {
               to: "/setup/processVariables",
               colour: "blue",
             },
+            {
+              icon: "mdi-store",
+              title: "Shops",
+              to: "/shops/manage",
+              colour: "blue",
+            },
           ]
         },
       ],
