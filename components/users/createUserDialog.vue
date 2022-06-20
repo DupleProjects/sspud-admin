@@ -40,6 +40,14 @@
                 hint="The user's email address"
                 label="Email"
             ></v-text-field>
+            <v-autocomplete
+              prepend-icon="mdi-card-account-details-outline"
+              v-model="user.role"
+              :items="roles"
+              label="User Role"
+              required
+              :rules="[(v) => !!v || 'A user role is required']"
+            ></v-autocomplete>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -81,6 +89,7 @@ export default {
       validCategoryForm: true,
       newUserDialog: false,
       user: null,
+      roles: ["Standard","Tech Wizard","Administration"]
     }
   },
   mounted() {
@@ -94,6 +103,7 @@ export default {
         name: '',
         surname: '',
         email: '',
+        role: 'Standard'
       }
     },
     async saveUser() {

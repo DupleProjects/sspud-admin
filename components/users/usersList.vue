@@ -7,6 +7,7 @@
           <th class="info-column" scope="col">Name</th>
           <th class="info-column" scope="col">Surname</th>
           <th class="info-column" scope="col">Email</th>
+          <th class="info-column" scope="col">Role</th>
           <th class="actions-column" scope="col"></th>
         </tr>
         </thead>
@@ -15,6 +16,7 @@
           <td class="info-column">{{ user.name }}</td>
           <td class="info-column">{{ user.surname }}</td>
           <td class="info-column">{{ user.email }}</td>
+          <td class="info-column">{{ user.role }}</td>
           <td class="actions-column">
             <div class="d-flex">
               <edit-user-dialog
