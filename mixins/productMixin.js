@@ -35,7 +35,7 @@ export default {
                 validHeight: validHeight,
                 validLength: validLength,
                 validWidth: validWidth,
-                validStock: validStock,
+                // validStock: validStock,
                 validCategory: validCategory,
                 validSubCategory: validSubCategory,
                 validBrand: validBrand,
@@ -52,7 +52,7 @@ export default {
             // console.log('validSubCategory', validSubCategory)
             // console.log('validBrand', validBrand)
 
-            if(validName && validDescription && validPrice && validWeight && validHeight && validLength && validWidth && validStock && validCategory && validSubCategory && validBrand){
+            if(validName && validDescription && validPrice && validWeight && validHeight && validLength && validWidth && validCategory && validSubCategory && validBrand){
                 var isValidCheck = true
             }else{
                 var isValidCheck = false

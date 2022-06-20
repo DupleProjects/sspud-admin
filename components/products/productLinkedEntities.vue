@@ -210,7 +210,6 @@ export default {
     this.$nextTick(async function () {
 
       // this.thisProduct = this.product;
-      console.log("THIS PRODUCT", this.product);
       // BZ Category Details
       const categories = await this.$store.dispatch("dataGate", {
         tableName: "mappedCategories",
@@ -252,9 +251,6 @@ export default {
         }
       }
 
-      console.log("this.productDetails",this.productDetails);
-
-
 
       
       if(this.productDetails.certificateRequired == 1 || this.productDetails.subCertificateRequired == 1){
@@ -285,7 +281,6 @@ export default {
 
       if(scrapedProductsResponse.data){
         this.scrapedCategory = scrapedProductsResponse.data
-        console.log("this.scrapedCategory",this.scrapedCategory);
 
         const category = this.scrapedCategories.find(cat => cat.name === this.scrapedCategory[0].categoryName);
         if(category){
@@ -336,9 +331,7 @@ export default {
 
 
       
-
-      console.log("this.scrapedProductDetails",this.scrapedProductDetails);
-      
+     
 
       
     });
