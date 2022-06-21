@@ -33,8 +33,8 @@
       <table>
         <thead>
           <tr class="fancy-heading-row">
-            <th>Name</th>
-            <th>Published</th>
+            <th v-on:click="sort('name')">Name</th>
+            <th v-on:click="sort('publish')">Published</th>
             <th></th>
           </tr>
         </thead>
@@ -109,6 +109,7 @@ export default {
       brands: [],
       filteredBrands: [],
       displayedBrands: [],
+      sortObject: {}
     };
   },
   watch: {
@@ -235,6 +236,42 @@ export default {
       }
       this.loading = false;
     },
+    async sort(calledFrom){
+      
+      this.loading = true;
+
+      if (this.sortObject.hasOwnProperty(calledFrom)) {
+        if (this.sortObject[calledFrom] === 'DESC') {
+            // Third Click
+            delete this.sortObject[calledFrom]
+        } else {
+            // Second Click
+              this.sortObject[calledFrom] = 'DESC'
+        }
+      } else {
+          // First Click
+          this.sortObject[calledFrom] = 'ASC'
+      }
+
+
+      const brandsResponse = await this.$store.dispatch("dataGate", {
+        tableName: "mappedBrands",
+        operation: "read",
+        sortCriteria: this.sortObject
+      });
+      if (brandsResponse.count) {
+        this.brandCount = brandsResponse.count;
+      }
+      if (brandsResponse.data) {
+        this.brands = brandsResponse.data;
+        this.filteredBrands = this.brands;
+        const pageInfo = breadcrumbMixin.methods.getPage('mappedBrandsList')
+        this.page = pageInfo.page
+        this.setPage();
+      }
+      this.loading = false;
+      
+    }
   },
 };
 </script>

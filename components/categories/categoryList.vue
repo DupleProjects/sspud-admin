@@ -1,13 +1,13 @@
 <template>
   <div class="p-3" style="border-radius: 20px !important;">
     <div class="fancy-table" :style="tableStyle">
-      <table>
+      <table class="table" id="sortTable">
         <thead class="py-10">
           <tr class="fancy-heading-row">
-            <th>Name</th>
-            <th>Parent</th>
-            <th>Publish</th>
-            <th>Created At</th>
+            <th v-on:click="sort('name')">Name</th>
+            <th v-on:click="sort('parentId')">Parent</th>
+            <th v-on:click="sort('publish')">Publish</th>
+            <th v-on:click="sort('createdAt')">Created At</th>
             <th></th>
           </tr>
         </thead>
@@ -81,10 +81,17 @@ export default {
     reloadCallBack: null,
     categories: [],
     allCategories: [],
-    tableStyle:''
+    tableStyle:'',
+    sortCallBack: null
   },
   data() {
-    return {};
+    return {
+      currentNameSort: null,
+      parentSort: null,
+      publishSort: null,
+      createdAtSort: null,
+      sortObject: {}
+    };
   },
   mounted() {
     
@@ -126,6 +133,24 @@ export default {
 
       return date + " " + time;
     },
+    sort(calledFrom){
+
+      if (this.sortObject.hasOwnProperty(calledFrom)) {
+        if (this.sortObject[calledFrom] === 'DESC') {
+            // Third Click
+            delete this.sortObject[calledFrom]
+        } else {
+            // Second Click
+              this.sortObject[calledFrom] = 'DESC'
+        }
+      } else {
+          // First Click
+          this.sortObject[calledFrom] = 'ASC'
+      }
+
+      this.sortCallBack(this.sortObject);
+      
+    }
   },
 };
 </script>

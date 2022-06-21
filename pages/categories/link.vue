@@ -11,16 +11,23 @@
       </div>
     </div>
     <hr class="my-0 mx-3">
+    <v-overlay :value="loading">
+    <v-progress-circular
+            :size="100"
+            indeterminate
+            color="primary"
+          ></v-progress-circular>
+    </v-overlay>
     <div class="p-3" style="border-radius: 20px !important">
       <div class="fancy-table">
         <table>
           <thead>
           <tr class="fancy-heading-row">
-            <th>Name</th>
-            <th>Shop</th>
-            <th>Linked Category</th>
-            <th>Publish</th>
-            <th>Created At</th>
+            <th v-on:click="sort('name')">Name</th>
+            <th v-on:click="sort('shopId')">Shop</th>
+            <th v-on:click="sort('mappedCategoryId')">Linked Category</th>
+            <th v-on:click="sort('publish')">Publish</th>
+            <th v-on:click="sort('createdAt')">Created At</th>
             <th></th>
           </tr>
           </thead>
@@ -112,6 +119,7 @@ export default {
         allScrapedCategories:[],
         // Filtering
         lastUsedFilter: null,
+        sortObject: {}
     };
   },
   watch: {
@@ -216,6 +224,40 @@ export default {
 
       return date + " " + time;
     },
+    async sort(calledFrom){
+      
+      this.loading = true;
+
+      if (this.sortObject.hasOwnProperty(calledFrom)) {
+        if (this.sortObject[calledFrom] === 'DESC') {
+            // Third Click
+            delete this.sortObject[calledFrom]
+        } else {
+            // Second Click
+              this.sortObject[calledFrom] = 'DESC'
+        }
+      } else {
+          // First Click
+          this.sortObject[calledFrom] = 'ASC'
+      }
+
+
+      const categoriesResponse = await this.$store.dispatch('dataGate', {
+        tableName: 'scrapedCategories',
+        operation: 'read',
+        sortCriteria: this.sortObject
+      });
+
+      if (categoriesResponse.count) {
+        this.scrapedCategoryCount = categoriesResponse.count;
+      }
+      //scraped category data
+      if (categoriesResponse.data) {
+        this.scrapedCategories = categoriesResponse.data;
+      }
+      this.loading = false;
+      
+    }
   },
 };
 </script>

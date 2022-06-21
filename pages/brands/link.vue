@@ -45,8 +45,8 @@
           <table>
             <thead>
               <tr class="fancy-heading-row">
-                <th scope="col">Name</th>
-                <th scope="col">Link</th>
+                <th scope="col" v-on:click="sortScraped('name')">Name</th>
+                <th scope="col" v-on:click="sortScraped('mappedBrandId')">Link</th>
                 <th scope="col"></th>
               </tr>
             </thead>
@@ -111,8 +111,8 @@
           <table>
             <thead>
               <tr class="fancy-heading-row">
-                <th scope="col">Name</th>
-                <th scope="col">Published</th>
+                <th scope="col" v-on:click="sort('name')">Name</th>
+                <th scope="col" v-on:click="sort('name')">Published</th>
               </tr>
             </thead>
             <tbody>
@@ -188,7 +188,9 @@ export default {
       filteredScrapedBrands: [],
       filteredMappedBrands: [],
       displayedMappedBrands: [],
-      displayedScrapedBrands: []
+      displayedScrapedBrands: [],
+      sortObject: {},
+      sortObject2: {},
     };
   },
   watch: {
@@ -432,6 +434,80 @@ export default {
 
       this.loading = false;
     },
+    async sortScraped(calledFrom){
+      
+      this.loading = true;
+
+      if (this.sortObject.hasOwnProperty(calledFrom)) {
+        if (this.sortObject[calledFrom] === 'DESC') {
+            // Third Click
+            delete this.sortObject[calledFrom]
+        } else {
+            // Second Click
+              this.sortObject[calledFrom] = 'DESC'
+        }
+      } else {
+          // First Click
+          this.sortObject[calledFrom] = 'ASC'
+      }
+
+
+      const brandScrapedResponse = await this.$store.dispatch("dataGate", {
+        tableName: "scrapedBrands",
+        operation: "read",
+        sortCriteria: this.sortObject
+      });
+      if (brandScrapedResponse.count) {
+        this.brandScrapedCount = brandScrapedResponse.count;
+      }
+      if (brandScrapedResponse.data) {
+        this.scarapedBrands = brandScrapedResponse.data;
+        this.filteredScrapedBrands = brandScrapedResponse.data;
+        const pageInfo = breadcrumbMixin.methods.getPage('scrapedPageScrapedCategories')
+        this.pageScraped = pageInfo.page
+        this.setPageScraped();
+      }
+
+      this.loading = false;
+      
+    },
+    async sort(calledFrom){
+      
+      this.loading = true;
+
+      if (this.sortObject2.hasOwnProperty(calledFrom)) {
+        if (this.sortObject2[calledFrom] === 'DESC') {
+            // Third Click
+            delete this.sortObject2[calledFrom]
+        } else {
+            // Second Click
+              this.sortObject2[calledFrom] = 'DESC'
+        }
+      } else {
+          // First Click
+          this.sortObject2[calledFrom] = 'ASC'
+      }
+
+
+      const brandResponse = await this.$store.dispatch("dataGate", {
+        tableName: "mappedBrands",
+        operation: "read",
+        sortCriteria: this.sortObject2
+      });
+      if (brandResponse.count) {
+        this.brandCount = brandResponse.count;
+      }
+      if (brandResponse.data) {
+        this.brands = brandResponse.data;
+        this.filteredMappedBrands = brandResponse.data;
+        const pageInfo = breadcrumbMixin.methods.getPage('scrapedPageMappedCategories')
+      this.page = pageInfo.page
+        this.setPageMapped();
+      }
+
+      this.loading = false;
+      
+    }
   },
 };
 </script>

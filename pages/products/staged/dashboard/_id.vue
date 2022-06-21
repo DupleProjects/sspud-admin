@@ -39,7 +39,7 @@
         </div>
       </div>
       <div class="col-9">
-        <v-tabs v-model="tab" align-with-title>
+        <v-tabs background-color="transparent" v-model="tab" align-with-title>
           <v-tabs-slider color="yellow"></v-tabs-slider>
           <v-tab v-for="item in items" :key="item">
             {{ item }}
