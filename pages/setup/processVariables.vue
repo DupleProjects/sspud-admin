@@ -21,44 +21,8 @@
           </v-text-field>
           <v-text-field
               class="mx-3"
-              label="Kg Rate (BWP)"
-              v-model="activeProcessVariables.kgRate"
-              :rules="[(v) => !!v || 'Kg Rate is required']">
-          </v-text-field>
-          <v-text-field
-              class="mx-3"
-              label="Volume Rate (BWP)"
-              v-model="activeProcessVariables.volumeRate"
-              :rules="[(v) => !!v || 'Volume Rate is required']">
-          </v-text-field>
-          <v-text-field
-              class="mx-3"
-              label="Fuel Surcharge (%)"
-              v-model="activeProcessVariables.fuelSurcharge"
-              :rules="[(v) => !!v || 'Fuel Surcharge is required']">
-          </v-text-field>
-          <v-text-field
-              class="mx-3"
-              label="Minimum Transport (BWP)"
-              v-model="activeProcessVariables.minimumTransportChange"
-              :rules="[(v) => !!v || 'Minimum Transport is required']">
-          </v-text-field>
-          <v-text-field
-              class="mx-3"
-              label="BOBS Permit Cost (BWP)"
-              v-model="activeProcessVariables.BOBSPermitCost"
-              :rules="[(v) => !!v || 'BOBS Permit Cost is required']">
-          </v-text-field>
-          <v-text-field
-              class="mx-3"
-              label="Documentation Cost (BWP)"
-              v-model="activeProcessVariables.documentationCost"
-              :rules="[(v) => !!v || 'Documentation Cost is required']">
-          </v-text-field>
-          <v-text-field
-              class="mx-3"
               label="Profit Margin (%)"
-              v-model="activeProcessVariables.profiteMargin"
+              v-model="activeProcessVariables.profitMargin"
               :rules="[(v) => !!v || 'Profit Margin is required']">
           </v-text-field>
         </div>
