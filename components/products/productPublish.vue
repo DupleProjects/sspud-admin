@@ -78,6 +78,7 @@
         ></v-progress-circular>
         <v-btn
             v-if="!product.publish && !saving"
+            :disabled="checkIfCanPublish()"
             @click="publishProduct()"
             color="primary">Publish Product</v-btn>
         <v-btn
@@ -147,6 +148,7 @@
 
 <script>
 import productMixin from "@/mixins/productMixin.js";
+
 export default {
   props: {
     product: null,
@@ -162,12 +164,137 @@ export default {
       couldNotPublishdialog: false,
       invalidItems: [],
       newCertificate: null,
-      certificates: []
+      certificates: [],
+      allBZCategories: [],
+      scrapedProductDetails:{},
+      productDetails:{},
+      netPublish: true,
+      netCertificateRequired: false,
+      allBrands: [],
+      allScrapedBrands: []
     }
   },
   beforeMount() {
     this.$nextTick(async function () {
       await this.loadCertificates();
+      
+      
+      // BZ Category Details
+      const categories = await this.$store.dispatch("dataGate", {
+        tableName: "mappedCategories",
+        operation: "read",
+      });
+
+      if(categories.data){
+        this.allBZCategories = categories.data;
+
+        const mainCategoryBz = this.allBZCategories.find(cat => cat.id === this.product.categoryId);
+        if(mainCategoryBz){
+          this.productDetails.categoryName = mainCategoryBz.name,
+          this.productDetails.categoryPublish = mainCategoryBz.publish,
+          this.productDetails.certificateRequired = mainCategoryBz.certificateRequired
+        }
+
+        const subCategoryBz = this.allBZCategories.find(cat => cat.id === this.product.subCategoryId);
+        if(subCategoryBz){
+          this.productDetails.subCategoryName = subCategoryBz.name,
+          this.productDetails.subCategoryPublish = subCategoryBz.publish,
+          this.productDetails.subCertificateRequired = subCategoryBz.certificateRequired
+        }
+
+      }
+
+      // BZ Brand Details
+      const mappedBrandsResponse = await this.$store.dispatch("dataGate", {
+        tableName: "mappedBrands",
+        operation: "read"
+      });
+
+      if(mappedBrandsResponse.data){
+        this.allBrands = mappedBrandsResponse.data
+
+        const brand = this.allBrands.find(brand => brand.id === this.product.brandId);
+        if(brand){
+          this.productDetails.brandName = brand.name,
+          this.productDetails.brandPublish = brand.publish
+        }
+      }
+      
+      if(this.productDetails.certificateRequired == 1 || this.productDetails.subCertificateRequired == 1){
+        this.netCertificateRequired = true;
+      }
+
+      // Scraped Category Details
+      const scrapedCategoriesResponse = await this.$store.dispatch("dataGate", {
+        tableName: "scrapedCategories",
+        operation: "read",
+      });
+
+      if(scrapedCategoriesResponse.data){
+        this.scrapedCategories = scrapedCategoriesResponse.data;
+      }
+      const scrapedProductsResponse = await this.$store.dispatch("dataGate", {
+        tableName: "scrapedProducts",
+        operation: "read",
+        whereCriteria: {id: this.product.scrapedProductId}
+      });
+
+      
+      const scrapedBrandsResponse = await this.$store.dispatch("dataGate", {
+        tableName: "scrapedBrands",
+        operation: "read",
+      });
+        this.allScrapedBrands = scrapedBrandsResponse.data
+
+      if(scrapedProductsResponse.data){
+        this.scrapedCategory = scrapedProductsResponse.data
+
+        const category = this.scrapedCategories.find(cat => cat.name === this.scrapedCategory[0].categoryName);
+        if(category){
+          this.scrapedProductDetails.categoryName = category.name,
+          this.scrapedProductDetails.categoryPublish = category.publish
+        }
+        const subCategory = this.scrapedCategories.find(cat => cat.name === this.scrapedCategory[0].subCategoryName);
+        if(subCategory){
+          this.scrapedProductDetails.subCategoryName = subCategory.name,
+          this.scrapedProductDetails.subCategoryPublish = subCategory.publish
+        }
+        const subSubCategory = this.scrapedCategories.find(cat => cat.name === this.scrapedCategory[0].subSubCategoryName);
+        if(subSubCategory){
+          this.scrapedProductDetails.subSubCategoryName = subSubCategory.name,
+          this.scrapedProductDetails.subSubCategoryPublish = subSubCategory.publish
+        }
+        const scrapedBrand = this.allScrapedBrands.find(brand => brand.name === this.scrapedCategory[0].brand);
+        if(scrapedBrand){
+          this.scrapedProductDetails.brandName = scrapedBrand.name,
+          this.scrapedProductDetails.brandPublish = scrapedBrand.publish
+        }
+
+        
+        this.scrapedProductDetails = {
+          categoryName: category.name,
+          categoryPublish: category.publish,
+          subCategoryName: subCategory.name,
+          subCategoryPublish: subCategory.publish,
+          subSubCategoryName: subSubCategory.name,
+          subSubCategoryPublish: subSubCategory.publish,
+          brandName: scrapedBrand.name,
+          brandPublish: scrapedBrand.publish
+        }
+      }
+
+      if(
+        this.productDetails.categoryPublish == 0 ||
+        this.productDetails.subCategoryPublish == 0 ||
+        this.productDetails.brandPublish == 0 ||
+        this.scrapedProductDetails.subCategoryPublish == 0 ||
+        this.scrapedProductDetails.subSubCategoryName == 0 ||
+        this.scrapedProductDetails.subSubCategoryPublish == 0 ||
+        this.scrapedProductDetails.brandPublish == 0
+      ){
+        this.netPublish = false;
+      }
+      
     });
   },
   mounted() {
@@ -181,6 +308,22 @@ export default {
       });
       if (certificatesResponse && certificatesResponse.data) {
         this.certificates = certificatesResponse.data;
+      }
+    },
+    checkIfCanPublish(){
+      this.loading = true
+      if(productMixin.methods.canPublishProduct(this.product,this.certificates).isValidProduct == true){
+        if(this.netPublish == true){
+          this.loading = false
+          return false;
+        }else{
+          this.loading = false
+          return true;
+        }
+    }
+      else{
+        this.loading = false
+        return true;
       }
     },
     async publishProduct() {
