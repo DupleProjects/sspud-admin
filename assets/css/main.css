@@ -69,5 +69,18 @@
 .card-shadow {
   box-shadow: 0px 0px 6px 2px #cbcbcb;
 }
+/* Confluence */
+:root {
+  --bannerHeight: 0px;
+  --topNavigationHeight: 0px;
+}
+
+.confluence-card {
+  padding-top: 12px;
+  background-color: rgb(255, 255, 255);
+  border-radius: 3px;
+  box-shadow: rgb(9 30 66 / 25%) 0px 1px 1px, rgb(9 30 66 / 31%) 0px 0px 1px;
+}
+
 
 /* Other */
