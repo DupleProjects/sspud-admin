@@ -248,7 +248,6 @@ export default {
       return 'Category Not Found';
     },
     async deleteThisProduct() {
-      console.log("🔥🔥🔥🔥On Confirm",this.productToDelete.id);
       //delete the product from scrapedProducts
       const deleteResponse = await this.$store.dispatch("callMiddlewareRoute", {
         stagedProduct: this.productToDelete,
@@ -256,17 +255,14 @@ export default {
       });
 
       if (deleteResponse && deleteResponse.response) {
-        console.log("😁SUCCESSFULLY DELETED PRODUCT",this.productToDelete.id);
           this.deleteProductCallBack()
       } else {
-        console.log("🔥COULD NOT DELETE PRODUCT");
       }
       this.deleteDialog = false;
       this.closeTheDeleteDialog();
     },
     async openTheDeleteDialog(product) { 
-      this.productToDelete = product;
-      console.log("🔥🔥On Click",this.productToDelete.id);   
+      this.productToDelete = product;   
       this.deleteDialog = true;
     },
   },
