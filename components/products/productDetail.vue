@@ -22,6 +22,7 @@
           <!--Name-->
           <div class="col-12">
             <v-text-field
+                class="mb-0"
                 label="Name"
                 v-model="product.name"
                 :rules="[(v) => !!v || 'A name is required']"
@@ -65,6 +66,21 @@
                 :rules="[(v) => !!v || 'A brand is required']"
                 :messages="['Choose a BambaZonke Brand for this product']"
             ></v-autocomplete>
+            <v-text-field
+                class="mt-5"
+                label="Shipping Width"
+                v-model="product.shippingWidth"
+                prepend-icon="mdi-ruler"
+                :rules="[(v) => !!v || 'Shipping Width is required']"
+                :disabled="!edit"
+            ></v-text-field>
+            <v-text-field
+                label="Shipping Heigth"
+                v-model="product.shippingHeight"
+                prepend-icon="mdi-ruler"
+                :rules="[(v) => !!v || 'Shipping Heigth is required']"
+                :disabled="!edit"
+            ></v-text-field>
           </div>
           <div class="col-6">
             <!--Category-->
@@ -101,6 +117,21 @@
                 :rules="[(v) => !!v || 'A sub category is required']"
                 :messages="['Choose a BambaZonke sub category for this product']"
             ></v-autocomplete>
+            <v-text-field
+                class="mt-5"
+                label="Shipping Weight"
+                v-model="product.shippingWeight"
+                prepend-icon="mdi-ruler"
+                :rules="[(v) => !!v || 'Shipping Weight is required']"
+                :disabled="!edit"
+            ></v-text-field>
+            <v-text-field
+                label="Shipping Length"
+                v-model="product.shippingLength"
+                prepend-icon="mdi-ruler"
+                :rules="[(v) => !!v || 'Shipping Length is required']"
+                :disabled="!edit"
+            ></v-text-field>
           </div>
 <!--          <div class="col-6 picka-picka">-->
 <!--            <div class="p-5 mt-4">-->
@@ -147,7 +178,7 @@
 <!--              </div>-->
 <!--            </div>-->
 <!--          </div>-->
-          <div class="col-6">
+          <!-- <div class="col-6">
             <v-text-field
                 label="Shipping Width"
                 v-model="product.shippingWidth"
@@ -162,21 +193,8 @@
                 :rules="[(v) => !!v || 'Shipping Heigth is required']"
                 :disabled="!edit"
             ></v-text-field>
-            <v-text-field
-                label="Shipping Weight"
-                v-model="product.shippingWeight"
-                prepend-icon="mdi-ruler"
-                :rules="[(v) => !!v || 'Shipping Weight is required']"
-                :disabled="!edit"
-            ></v-text-field>
-            <v-text-field
-                label="Shipping Length"
-                v-model="product.shippingLength"
-                prepend-icon="mdi-ruler"
-                :rules="[(v) => !!v || 'Shipping Length is required']"
-                :disabled="!edit"
-            ></v-text-field>
-          </div>
+            
+          </div> -->
         </div>
         <div class="w-100 text-end">
           <v-progress-circular
@@ -190,7 +208,7 @@
               color="green"
               @click="saveProductInfo()"
               :disabled="!edit">
-            Save Product Information
+            <span style="color:white">Save Product Information</span> 
           </v-btn>
         </div>
       </v-form>

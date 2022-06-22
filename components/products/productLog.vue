@@ -13,14 +13,14 @@
       <tbody>
         <tr v-for="(history, index) of prodHistory" :key="index">
           <td>
-            <h5>
-              <b>{{ history.description }}</b>
-            </h5>
+            <h6>
+              <b class="mt-5">{{ history.description }}</b>
+            </h6>
           </td>
           <td>
-            <h5>
+            <h6>
               <b>{{ history.date }}</b>
-            </h5>
+            </h6>
           </td>
         </tr>
       </tbody>

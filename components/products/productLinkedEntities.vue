@@ -11,8 +11,8 @@
             <th  scope="col"></th>
             <!-- <th class="table-cell" scope="col"><h5 v-if="linkedScrapedCategory">{{linkedScrapedCategory}}</h5>Scraped Category</th>
             <th class="table-cell" scope="col"><h5 v-if="linkedScrapedSubcategory">{{linkedScrapedSubcategory}}</h5>Scraped Subcategory</th> -->
-            <th class="table-cell" scope="col"><h5>Certificate Required</h5></th>
-            <th class="table-cell" scope="col"><h5>Publish Allowed</h5></th>
+            <th class="table-cell" scope="col"><h6>Certificate Required</h6></th>
+            <th class="table-cell" scope="col"><h6>Publish Allowed</h6></th>
           </tr>
         </thead>
         <tbody>
@@ -24,7 +24,7 @@
             </td>
             <td class="table-cell">
               <v-icon v-if="productDetails.certificateRequired == 1" large color="green">mdi-check</v-icon>
-              <v-icon v-if="productDetails.certificateRequired == 0"  large color="red">mdi-close</v-icon>
+              <v-icon v-else-if="productDetails.certificateRequired == 0"  large color="red">mdi-close</v-icon>
               <!-- <v-icon v-if="!productDetails.certificateRequired">Not Linked</v-icon> -->
             </td>
             <td class="table-cell">
@@ -125,8 +125,8 @@
             <td class="left-cell">
               <h5 class="table-item-heading">Net Values</h5>
             </td>
-            <td class="table-cell"><h5 style="color:red" v-if="netCertificateRequired">CERTIFICATE REQUIRED</h5><h5 style="color:green" v-else>NO CERTIFICATE REQUIRED</h5></td>
-            <td class="table-cell"><h5 style="color:green" v-if="netPublish">CAN PUBLISH</h5><h5 style="color:red" v-else>CANNOT PUBLISH</h5></td>
+            <td class="table-cell"><h6 style="color:red" v-if="netCertificateRequired">CERTIFICATE REQUIRED</h6><h6 style="color:green" v-else>NO CERTIFICATE REQUIRED</h6></td>
+            <td class="table-cell"><h6 style="color:green" v-if="netPublish">CAN PUBLISH</h6><h6 style="color:red" v-else>CANNOT PUBLISH</h6></td>
           </tr>
           <!-- Certificate Required -->
           <!-- <tr>
@@ -618,6 +618,7 @@ export default {
 
 .table-cell{
   text-align: center;
+  font-size: small;
 }
 
 .left-cell{
@@ -626,6 +627,7 @@ export default {
 
 .table-item-heading{
   margin-bottom:-3px;
+  font-size: medium;
 }
 
 .table-item-subheading{
