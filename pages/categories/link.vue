@@ -11,12 +11,13 @@
       </div>
     </div>
     <hr class="my-0 mx-3">
-    <v-overlay :value="loading">
+    <v-overlay :value="loading" style="text-align:center;">
     <v-progress-circular
             :size="100"
             indeterminate
             color="primary"
           ></v-progress-circular>
+          <h1>Sorting Categories</h1>
     </v-overlay>
     <div class="p-3" style="border-radius: 20px !important">
       <div class="fancy-table">

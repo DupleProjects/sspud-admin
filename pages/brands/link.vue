@@ -112,7 +112,7 @@
             <thead>
               <tr class="fancy-heading-row">
                 <th scope="col" v-on:click="sort('name')">Name</th>
-                <th scope="col" v-on:click="sort('name')">Published</th>
+                <th scope="col" v-on:click="sort('publish')">Published</th>
               </tr>
             </thead>
             <tbody>
@@ -487,6 +487,8 @@ export default {
           // First Click
           this.sortObject2[calledFrom] = 'ASC'
       }
+
+      console.log("this.sortObject2",this.sortObject2);
 
 
       const brandResponse = await this.$store.dispatch("dataGate", {

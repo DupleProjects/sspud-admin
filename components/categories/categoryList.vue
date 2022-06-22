@@ -148,7 +148,10 @@ export default {
           this.sortObject[calledFrom] = 'ASC'
       }
 
+      console.log("CAT SORT",this.sortObject);
+
       this.sortCallBack(this.sortObject);
+
       
     }
   },

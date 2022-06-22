@@ -1,12 +1,12 @@
 <template>
   <div class="p-3" style="border-radius: 20px !important;">
-    <div class="fancy-table" :style="tableStyle">
+    <div class="fancy-table">
       <table>
         <thead class="py-10">
         <tr class="fancy-heading-row">
-          <th class="info-column" scope="col">Name</th>
-          <th class="info-column" scope="col">Status</th>
-          <th class="info-column" scope="col">Delivery Cost</th>
+          <th class="info-column" scope="col" v-on:click="sort('name')">Name</th>
+          <th class="info-column" scope="col" v-on:click="sort('active')">Status</th>
+          <th class="info-column" scope="col" v-on:click="sort('deliveryCost')">Delivery Cost</th>
           <th class="actions-column" scope="col"></th>
         </tr>
         </thead>
@@ -44,12 +44,14 @@ export default {
     deleteProductCallBack: null,
     shops: [],
     saveCallBack: null,
+    sortCallback: null
   },
   data() {
     return {
       deleteDialog: false,
       loading: false,
       userToDelete: {},
+      sortObject: {}
     };
   },
   mounted() {},
@@ -89,20 +91,38 @@ export default {
     },
     openTheDeleteDialog(user) {
       this.userToDelete = user;
-      console.log("🔥🔥On Click", this.userToDelete.id);
       this.deleteDialog = true;
     },
     async shopsCallBackEdit(usersCallBack) {
       await this.saveCallBack();
     },
     getCost(value){
-        console.log("VALUE", value);
         if(value != null && value != undefined && typeof(value) != "string"){
             var newValue = value.toFixed(2);
             return newValue;
         }else{
             return null;
         }
+    },
+    sort(calledFrom){
+      
+      // this.loading = true;
+
+      if (this.sortObject.hasOwnProperty(calledFrom)) {
+        if (this.sortObject[calledFrom] === 'DESC') {
+            // Third Click
+            delete this.sortObject[calledFrom]
+        } else {
+            // Second Click
+              this.sortObject[calledFrom] = 'DESC'
+        }
+      } else {
+          // First Click
+          this.sortObject[calledFrom] = 'ASC'
+      }
+
+      this.sortCallback(this.sortObject)
+      
     }
   },
 };

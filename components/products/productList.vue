@@ -1,15 +1,23 @@
 <template>
   <div class="p-3">
+    <v-overlay :value="loading" style="text-align:center;">
+    <v-progress-circular
+            :size="100"
+            indeterminate
+            color="primary"
+          ></v-progress-circular>
+          <h1>Sorting Products</h1>
+    </v-overlay>
     <div class="fancy-table">
       <div class="fancy-heading-row">
         <div  v-bind:class="{ 'inner-fancy-heading-row': type === 'scraped', 'inner-fancy-heading-row-staged': type === 'staged' || type === 'published'}">
-          <div>Name</div>
-          <div v-if="type === 'staged' || type === 'published'">Has Stock</div>
-          <div>Price</div>
-          <div>Subcategory</div>
-          <div>Brand</div>
-          <div v-if="type === 'staged' || type === 'published'" class="text-center">Published</div>
-          <div v-if="type === 'staged' || type === 'published'" class="text-center">Review Required</div>
+          <div v-on:click="sort('name','name')">Name</div>
+          <div v-if="type === 'staged' || type === 'published'" v-on:click="sort('hasStock','hasStock')">Has Stock</div>
+          <div v-on:click="sort('price','price')">Price</div>
+          <div v-on:click="sort('subCategoryName','subCategoryId')">Subcategory</div>
+          <div v-on:click="sort('brand','brandId')">Brand</div>
+          <div v-if="type === 'staged' || type === 'published'" class="text-center" v-on:click="sort(null,'publish')">Published</div>
+          <div v-if="type === 'staged' || type === 'published'" class="text-center" v-on:click="sort(null,'reviewRequired')">Review Required</div>
         </div>
       </div>
       <div class="product-list">
@@ -194,13 +202,16 @@ export default {
     products: [],
     allCategories: [],
     allBrands: [],
-    deleteProductCallBack: null
+    deleteProductCallBack: null,
+    sortCallback: null,
+    sortCallbackStaged: null,
   },
   data() {
     return {
       deleteDialog: false,
       loading: false,
-      productToDelete: {}
+      productToDelete: {},
+      sortObject: {}
     };
   },
   mounted() {},
@@ -265,6 +276,54 @@ export default {
       this.productToDelete = product;   
       this.deleteDialog = true;
     },
+    async sort(scrapedCriteria,stagedCriteria){
+      this.loading = true
+
+      if(this.type == "scraped"){
+      
+        if (this.sortObject.hasOwnProperty(scrapedCriteria)) {
+          if (this.sortObject[scrapedCriteria] === 'DESC') {
+              // Third Click
+              delete this.sortObject[scrapedCriteria]
+          } else {
+              // Second Click
+                this.sortObject[scrapedCriteria] = 'DESC'
+          }
+        } else {
+            // First Click
+            this.sortObject[scrapedCriteria] = 'ASC'
+        }
+
+
+        console.log("PROD SORT",this.sortObject);
+
+        await this.sortCallback(this.sortObject)
+
+      }
+
+      if(this.type == "staged" || this.type == "published"){
+        if (this.sortObject.hasOwnProperty(stagedCriteria)) {
+          if (this.sortObject[stagedCriteria] === 'DESC') {
+              // Third Click
+              delete this.sortObject[stagedCriteria]
+          } else {
+              // Second Click
+                this.sortObject[stagedCriteria] = 'DESC'
+          }
+        } else {
+            // First Click
+            this.sortObject[stagedCriteria] = 'ASC'
+        }
+
+
+        console.log("PROD SORT",this.sortObject);
+
+        await this.sortCallbackStaged(this.sortObject)
+      }
+
+      this.loading = false
+
+    }
   },
 };
 </script>

@@ -18,7 +18,7 @@
     </div>
     <!--Table-->
     <users-list
-        :users="displayedUsers" :saveCallBack="saveCallBack"/>
+        :users="displayedUsers" :saveCallBack="saveCallBack" :sortCallback="sortCallback"/>
     <!--Pagination-->
     <template>
       <div class="text-end">
@@ -52,7 +52,7 @@ export default {
       users: [],
       filteredusers: [],
       displayedUsers: [],
-      subCategories: [],
+      subCategories: []
     }
   },
   watch: {
@@ -83,9 +83,7 @@ export default {
       }
 
       if (usersResponse.data) {
-        console.log('usersResponse.data', usersResponse.data)
         this.users = usersResponse.data;
-        console.log('this.users', this.users)
         this.filteredusers = this.users;
         const pageInfo = breadcrumbMixin.methods.getPage('usersPage')
         this.page = pageInfo.page
@@ -106,16 +104,13 @@ export default {
         operation: 'read',
       });
       this.filteredusers = usersResponse.data;
-      console.log("3. MANAGE loadUsers");
       this.setPage();
     },
     async saveCallBack() {
-      console.log("2. MANAGE saveCallBack");
       await this.loadUsers()
     },
     // Pagination
     setPage() {
-      console.log("4. MANAGE setPage");
       this.displayedUsers = []
 
       function numPages(total, numPerPage) {
@@ -136,6 +131,17 @@ export default {
           this.displayedUsers.push(this.filteredusers[i])
         }
       }
+    },
+    async sortCallback(crit) {
+      console.log("CRITERIA",crit);
+      const usersResponse = await this.$store.dispatch('dataGate', {
+        tableName: 'users',
+        operation: 'read',
+        sortCriteria: crit
+      });
+      this.users = usersResponse.data
+      this.filteredusers = usersResponse.data;
+      this.setPage();
     },
   },
 }

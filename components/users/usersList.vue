@@ -1,13 +1,13 @@
 <template>
   <div class="p-3" style="border-radius: 20px !important;">
-    <div class="fancy-table" :style="tableStyle">
+    <div class="fancy-table">
       <table>
         <thead class="py-10">
         <tr class="fancy-heading-row">
-          <th class="info-column" scope="col">Name</th>
-          <th class="info-column" scope="col">Surname</th>
-          <th class="info-column" scope="col">Email</th>
-          <th class="info-column" scope="col">Role</th>
+          <th class="info-column" scope="col" v-on:click="sort('name')">Name</th>
+          <th class="info-column" scope="col" v-on:click="sort('surname')">Surname</th>
+          <th class="info-column" scope="col" v-on:click="sort('email')">Email</th>
+          <th class="info-column" scope="col" v-on:click="sort('role')">Role</th>
           <th class="actions-column" scope="col"></th>
         </tr>
         </thead>
@@ -88,12 +88,15 @@ export default {
     deleteProductCallBack: null,
     users: [],
     saveCallBack: null,
+    sortCallback: null
   },
   data() {
     return {
       deleteDialog: false,
       loading: false,
       userToDelete: {},
+      sortCriteria: {},
+      sortObject: {}
     };
   },
   mounted() {},
@@ -150,6 +153,26 @@ export default {
       this.loading = false;
       this.deleteDialog = false;
     },
+    sort(calledFrom){
+      
+      // this.loading = true;
+
+      if (this.sortObject.hasOwnProperty(calledFrom)) {
+        if (this.sortObject[calledFrom] === 'DESC') {
+            // Third Click
+            delete this.sortObject[calledFrom]
+        } else {
+            // Second Click
+              this.sortObject[calledFrom] = 'DESC'
+        }
+      } else {
+          // First Click
+          this.sortObject[calledFrom] = 'ASC'
+      }
+
+      this.sortCallback(this.sortObject)
+      
+    }
   },
 };
 </script>

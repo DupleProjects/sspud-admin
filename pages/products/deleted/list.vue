@@ -29,6 +29,7 @@
         :allCategories="allCategories"
         :allBrands="allBrands"
         :deleteProductCallBack="deleteProductCallBack"
+        :sortCallbackStaged="sortCallback"
       />
       <!--Pagination-->
       <template>
@@ -59,6 +60,7 @@ export default {
       products: [],
       allCategories: [],
       allBrands: [],
+      sortCriteria: {},
     };
   },
   watch: {
@@ -85,12 +87,20 @@ export default {
   },
   methods: {
     // Loading stuff
-    async loadProducts() {
+    async loadProducts(crit) {
       // Load the products
+
+      if (!crit) {
+        crit = this.sortCriteria;
+      } else {
+        this.sortCriteria = crit;
+      }
+
       const deletedProducts = await this.$store.dispatch("dataGate", {
         tableName: "stagedProducts",
         operation: "read",
         whereCriteria: {deleted: 1},
+        sortCriteria: crit ? crit : {},
         page: this.page,
         numberPerPage: this.numberPerPage,
       });
@@ -122,6 +132,12 @@ export default {
     },
     async deleteProductCallBack() {
       await this.loadProducts();
+    },
+    async sortCallback(crit) {
+      // Build the where clause
+      if (crit) {
+        await this.loadProducts(crit);
+      }
     },
   },
 };
