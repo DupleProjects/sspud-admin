@@ -45,7 +45,7 @@
             <v-text-field
                 label="Price"
                 v-model="product.price"
-                prepend-icon="mdi-currency-usd"
+                prepend-icon="mdi-alpha-p-box-outline"
                 :rules="[(v) => !!v || 'A price is required']"
                 :disabled="!edit"
             ></v-text-field>

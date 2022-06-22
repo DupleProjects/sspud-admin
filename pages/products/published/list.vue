@@ -32,6 +32,11 @@
     </div>
     <hr class="my-0 mx-3">
     <div v-if="!loading">
+      <product-list-filter
+        :filterChangeCallBack="filterChangeCallBack"
+        :filter="filter"
+        :type="'staged'"
+      />
       <products-product-list
           :type="'published'"
           :allCategories="allCategories"
@@ -57,8 +62,9 @@
 import baseMixin from '@/mixins/baseMixin.js'
 import breadcrumbMixin from "@/mixins/breadcrumbMixin.js";
 import exportModal from "../../../components/dialogs/exportModal.vue";
+import ProductListFilter from '../../../components/products/productListFilter.vue';
 export default {
-  components: { exportModal },
+  components: { exportModal, ProductListFilter },
   mixins: [baseMixin,breadcrumbMixin],
   data() {
     return {
@@ -104,6 +110,9 @@ export default {
     async loadProducts(criteria, sortCrit) {
       if (!criteria) {
         criteria = this.criteria;
+      }else{
+        criteria.deleted = 0
+        criteria.publish = 1
       }
 
       if (!sortCrit) {
