@@ -33,7 +33,7 @@
     <hr class="my-0 mx-3">
     <div v-if="!loading">
       <!--Table-->
-      <products-product-list :type="'scraped'" :products="products" :canDelete="false" />
+      <products-product-list :type="'scraped'" :products="products" :canDelete="false" :sortCallback="sortCallback" />
       <!--Pagination-->
       <template>
         <div class="text-end">
@@ -63,6 +63,7 @@ export default {
       numberPerPage: 20,
       productCount: 0,
       products: [],
+      sortCriteria: {},
     }
   },
   watch: {
@@ -89,12 +90,19 @@ export default {
   },
   methods: {
     // Loading stuff
-    async loadProducts() {
-      this.loading = true
+    async loadProducts(crit) {
+      // this.loading = true
+
+      if (!crit) {
+        crit = this.sortCriteria;
+      } else {
+        this.sortCriteria = crit;
+      }
       // Load the products
       const scrapedProducts = await this.$store.dispatch('dataGate', {
         tableName: 'scrapedProducts',
         operation: 'read',
+        sortCriteria: crit ? crit : {},
         page: this.page,
         numberPerPage: this.numberPerPage
       });
@@ -105,7 +113,13 @@ export default {
         this.products = scrapedProducts.data;
       }
 
-      this.loading = false
+      // this.loading = false
+    },
+    async sortCallback(crit) {
+      // Build the where clause
+      if (crit) {
+        await this.loadProducts(crit);
+      }
     },
   },
 }
