@@ -13,7 +13,7 @@
       ></v-text-field>
       <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
-          Export here please
+          <export-modal :exportTableName="'orders'" :exportSheetName="'Orders'" :products="orders" />
         </div>
       </div>
     </div>
@@ -95,9 +95,10 @@ import usersList from '../../components/users/usersList.vue';
 import CreateUserDialog from '../../components/users/createUserDialog.vue';
 import Date from "@/components/base/date";
 import breadcrumbMixin from "@/mixins/breadcrumbMixin.js";
+import ExportModal from '../../components/dialogs/exportModal.vue';
 
 export default {
-  components: {Date, usersList, CreateUserDialog },
+  components: {Date, usersList, CreateUserDialog, ExportModal },
   mixins: [baseMixin,breadcrumbMixin],
   data() {
     return {

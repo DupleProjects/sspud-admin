@@ -15,15 +15,17 @@
     <v-dialog style="z-index: 10000" v-model="exportModal" max-width="500">
       <v-card>
         <v-card-title> Export </v-card-title>
-        <v-card-subtitle>
-          Are you sure that you want to export the products?
+        <v-card-subtitle class="mt-0">
+          Please indicate if you would like to export the current {{exportSheetName}} or all {{exportSheetName}}.
         </v-card-subtitle>
+        <v-card-text>
         <v-switch
           v-model="exportAll"
           v-on:change="removeDoc();open()"
           label="Export all"
         >
         </v-switch>
+        </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-progress-circular
