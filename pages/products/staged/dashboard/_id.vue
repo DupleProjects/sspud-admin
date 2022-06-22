@@ -2,31 +2,42 @@
   <div class="p-2">
     <div class="row" v-if="!loading">
       <div class="col-3" v-if="product">
-        <div class="card m-2 card-shadow fadeInUp animated animatedFadeInUp">
+        <v-card>
+          <div class="m-2 fadeInUp animated animatedFadeInUp">
           <img class="card-img-top" :src="product.imageSrc" alt="image" style="width:100%">
           <div class="card-body">
-            <v-alert
+            <v-card>
+              <v-alert
                 border="right"
                 colored-border
                 :type="product.hasStock ? 'success' : 'error'"
                 elevation="2">
               Has Stock
             </v-alert>
-            <v-alert
+            </v-card>
+            
+            <v-card>
+              <v-alert
                 border="right"
                 colored-border
                 :type="product.special ? 'success' : 'error'"
                 elevation="2">
               Special
             </v-alert>
-            <v-alert
+            </v-card>
+            
+            <v-card>
+              <v-alert
                 border="right"
                 colored-border
                 :type="'info'"
                 elevation="2">
               <a target="_blank" :href="product.href">Shop Link</a>
             </v-alert>
-            <v-alert
+            </v-card>
+            
+            <v-card>
+              <v-alert
                 border="right"
                 colored-border
                 :type="'info'"
@@ -35,8 +46,12 @@
                 elevation="2">
               <a :href="'../../../products/scraped/dashboard/' + product.scrapedProductId">Scraped Product</a>
             </v-alert>
+            </v-card>
+            
           </div>
         </div>
+        </v-card>
+        
       </div>
       <div class="col-9">
         <v-tabs background-color="transparent" v-model="tab" align-with-title>
