@@ -31,15 +31,15 @@
     </div>
     <!--Table-->
     <div v-if="!loading" class="p-3" style="border-radius: 20px !important;">
-    <div class="fancy-table" :style="tableStyle">
+    <div class="fancy-table">
       <table>
           <thead>
           <tr class="fancy-heading-row">
-            <th scope="col">Order ID</th>
-            <th scope="col">Customer</th>
-            <th scope="col">Total</th>
-            <th scope="col">Status</th>
-            <th scope="col">Created At</th>
+            <th scope="col" v-on:click="sort('wooCommerceId')">Order ID</th>
+            <th scope="col" v-on:click="sort('customerName')">Customer</th>
+            <th scope="col" v-on:click="sort('total')">Total</th>
+            <th scope="col" v-on:click="sort('status')">Status</th>
+            <th scope="col" v-on:click="sort('createdAt')">Created At</th>
             <th scope="col"></th>
           </tr>
           </thead>
@@ -107,6 +107,8 @@ export default {
       numberPerPage: 20,
       orderCount: 0,
       orders: [],
+      sortObject: {},
+      activeFilter: null
     }
   },
   watch: {
@@ -115,13 +117,18 @@ export default {
       breadcrumbMixin.methods.savePage('ordersList', this.page)
     },
     async search(val) {
-      await this.loadOrders(
+      const theFilter = await this.loadOrders(
           {
             customerName: {
               like: val
             }
           }
       );
+      this.activeFilter = {
+        customerName: {
+          like: val
+        }
+      }
     },
   },
   beforeMount() {
@@ -140,11 +147,18 @@ export default {
     })
   },
   methods: {
-    async loadOrders(filter) {
+    async loadOrders(filter, sortCrit) {
+
+      if (!sortCrit) {
+        sortCrit = this.sortCriteria;
+      } else {
+        this.sortCriteria = sortCrit;
+      }
       const ordersResponse = await this.$store.dispatch('dataGate', {
         tableName: 'orders',
         operation: 'read',
         whereCriteria: filter ? {...filter} : null,
+        sortCriteria: sortCrit ? sortCrit : {},
         page: this.page,
         numberPerPage: this.numberPerPage,
       });
@@ -159,6 +173,35 @@ export default {
         params,
       });
       this.loading = false
+    },
+    async sort(calledFrom){
+      
+      // this.loading = true;
+
+      if (this.sortObject.hasOwnProperty(calledFrom)) {
+        if (this.sortObject[calledFrom] === 'DESC') {
+            // Third Click
+            delete this.sortObject[calledFrom]
+        } else {
+            // Second Click
+              this.sortObject[calledFrom] = 'DESC'
+        }
+      } else {
+          // First Click
+          this.sortObject[calledFrom] = 'ASC'
+      }
+
+      console.log("this.sortObject",this.sortObject);
+
+
+      if(this.activeFilter){
+        console.log("1");
+        this.loadOrders(this.activeFilter, this.sortObject);
+      }else{
+        console.log("2");
+        this.loadOrders(null, this.sortObject);
+      }
+      
     }
   },
 }
