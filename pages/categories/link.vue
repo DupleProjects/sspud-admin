@@ -24,11 +24,11 @@
         <table>
           <thead>
           <tr class="fancy-heading-row">
-            <th v-on:click="sort('name')">Name</th>
-            <th v-on:click="sort('shopId')">Shop</th>
-            <th v-on:click="sort('mappedCategoryId')">Linked Category</th>
-            <th v-on:click="sort('publish')">Publish</th>
-            <th v-on:click="sort('createdAt')">Created At</th>
+            <th v-on:click="sort('name')">Name <v-icon v-if="nameSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="nameSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+            <th v-on:click="sort('shopId')">Shop <v-icon v-if="shopSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="shopSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+            <th v-on:click="sort('mappedCategoryId')">Linked Category <v-icon v-if="linkedCategorySort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="linkedCategorySort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+            <th v-on:click="sort('publish')">Publish <v-icon v-if="publishSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="publishSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+            <th v-on:click="sort('createdAt')">Created At <v-icon v-if="createdSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="createdSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
             <th></th>
           </tr>
           </thead>
@@ -120,7 +120,12 @@ export default {
         allScrapedCategories:[],
         // Filtering
         lastUsedFilter: null,
-        sortObject: {}
+        sortObject: {},
+        nameSort: null,
+        shopSort: null,
+        linkedCategorySort: null,
+        publishSort: null,
+        createdSort: null,
     };
   },
   watch: {
@@ -233,13 +238,58 @@ export default {
         if (this.sortObject[calledFrom] === 'DESC') {
             // Third Click
             delete this.sortObject[calledFrom]
+            if(calledFrom == 'name'){
+              this.nameSort = null
+            }
+            else if(calledFrom == 'shopId'){
+              this.shopSort = null
+            }
+            else if(calledFrom == 'mappedCategoryId'){
+              this.linkedCategorySort = null
+            }
+            else if(calledFrom == 'publish'){
+              this.publishSort = null
+            }
+            else if(calledFrom == 'createdAt'){
+              this.createdSort = null
+            }
         } else {
             // Second Click
               this.sortObject[calledFrom] = 'DESC'
+              if(calledFrom == 'name'){
+                this.nameSort = 'DESC'
+              }
+              else if(calledFrom == 'shopId'){
+                this.shopSort = 'DESC'
+              }
+              else if(calledFrom == 'mappedCategoryId'){
+                this.linkedCategorySort = 'DESC'
+              }
+              else if(calledFrom == 'publish'){
+                this.publishSort = 'DESC'
+              }
+              else if(calledFrom == 'createdAt'){
+                this.createdSort = 'DESC'
+              }
         }
       } else {
           // First Click
           this.sortObject[calledFrom] = 'ASC'
+          if(calledFrom == 'name'){
+              this.nameSort = 'ASC'
+            }
+            else if(calledFrom == 'shopId'){
+              this.shopSort = 'ASC'
+            }
+            else if(calledFrom == 'mappedCategoryId'){
+              this.linkedCategorySort = 'ASC'
+            }
+            else if(calledFrom == 'publish'){
+              this.publishSort = 'ASC'
+            }
+            else if(calledFrom == 'createdAt'){
+              this.createdSort = 'ASC'
+            }
       }
 
 

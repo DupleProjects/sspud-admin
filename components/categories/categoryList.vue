@@ -4,10 +4,10 @@
       <table class="table" id="sortTable">
         <thead class="py-10">
           <tr class="fancy-heading-row">
-            <th v-on:click="sort('name')">Name</th>
-            <th v-on:click="sort('parentId')">Parent</th>
-            <th v-on:click="sort('publish')">Publish</th>
-            <th v-on:click="sort('createdAt')">Created At</th>
+            <th v-on:click="sort('name')">Name <v-icon v-if="nameSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="nameSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+            <th v-on:click="sort('parentId')">Parent <v-icon v-if="parentSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="parentSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+            <th v-on:click="sort('publish')">Publish <v-icon v-if="publishSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="publishSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+            <th v-on:click="sort('createdAt')">Created At <v-icon v-if="createdSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="createdSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
             <th></th>
           </tr>
         </thead>
@@ -86,11 +86,11 @@ export default {
   },
   data() {
     return {
-      currentNameSort: null,
+      sortObject: {},
+      nameSort: null,
       parentSort: null,
       publishSort: null,
-      createdAtSort: null,
-      sortObject: {}
+      createdSort: null,
     };
   },
   mounted() {
@@ -136,16 +136,44 @@ export default {
     sort(calledFrom){
 
       if (this.sortObject.hasOwnProperty(calledFrom)) {
+        console.log("👉",this.sortObject.hasOwnProperty(calledFrom));
         if (this.sortObject[calledFrom] === 'DESC') {
             // Third Click
             delete this.sortObject[calledFrom]
+            if(calledFrom == 'name'){
+              this.nameSort = null
+            }else if(calledFrom == 'parentId'){
+              this.parentSort = null
+            }else if(calledFrom == 'publish'){
+              this.publishSort = null
+            }else if(calledFrom == 'createdAt'){
+              this.createdSort = null
+            }
         } else {
             // Second Click
               this.sortObject[calledFrom] = 'DESC'
+              if(calledFrom == 'name'){
+              this.nameSort = 'DESC'
+            }else if(calledFrom == 'parentId'){
+              this.parentSort = 'DESC'
+            }else if(calledFrom == 'publish'){
+              this.publishSort = 'DESC'
+            }else if(calledFrom == 'createdAt'){
+              this.createdSort = 'DESC'
+            }
         }
       } else {
           // First Click
           this.sortObject[calledFrom] = 'ASC'
+          if(calledFrom == 'name'){
+              this.nameSort = 'ASC'
+            }else if(calledFrom == 'parentId'){
+              this.parentSort = 'ASC'
+            }else if(calledFrom == 'publish'){
+              this.publishSort = 'ASC'
+            }else if(calledFrom == 'createdAt'){
+              this.createdSort = 'ASC'
+            }
       }
 
       console.log("CAT SORT",this.sortObject);

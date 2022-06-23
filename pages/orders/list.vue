@@ -35,11 +35,11 @@
       <table>
           <thead>
           <tr class="fancy-heading-row">
-            <th scope="col" v-on:click="sort('wooCommerceId')">Order ID</th>
-            <th scope="col" v-on:click="sort('customerName')">Customer</th>
-            <th scope="col" v-on:click="sort('total')">Total</th>
-            <th scope="col" v-on:click="sort('status')">Status</th>
-            <th scope="col" v-on:click="sort('createdAt')">Created At</th>
+            <th scope="col" v-on:click="sort('wooCommerceId')">Order ID <v-icon v-if="wooIdSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="wooIdSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+            <th scope="col" v-on:click="sort('customerName')">Customer <v-icon v-if="customerSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="customerSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+            <th scope="col" v-on:click="sort('total')">Total <v-icon v-if="totalSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="totalSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+            <th scope="col" v-on:click="sort('status')">Status <v-icon v-if="statusSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="statusSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+            <th scope="col" v-on:click="sort('createdAt')">Created At <v-icon v-if="createdSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="createdSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
             <th scope="col"></th>
           </tr>
           </thead>
@@ -109,7 +109,12 @@ export default {
       orderCount: 0,
       orders: [],
       sortObject: {},
-      activeFilter: null
+      activeFilter: null,
+      wooIdSort: null,
+      customerSort: null,
+      totalSort: null,
+      statusSort: null,
+      createdSort: null,
     }
   },
   watch: {
@@ -183,13 +188,58 @@ export default {
         if (this.sortObject[calledFrom] === 'DESC') {
             // Third Click
             delete this.sortObject[calledFrom]
+            if(calledFrom == 'wooCommerceId'){
+              this.wooIdSort = null
+            }
+            else if(calledFrom == 'customerName'){
+              this.customerSort = null
+            }
+            else if(calledFrom == 'total'){
+              this.totalSort = null
+            }
+            else if(calledFrom == 'status'){
+              this.statusSort = null
+            }
+            else if(calledFrom == 'createdAt'){
+              this.createdSort = null
+            }
         } else {
             // Second Click
               this.sortObject[calledFrom] = 'DESC'
+              if(calledFrom == 'wooCommerceId'){
+                this.wooIdSort = 'DESC'
+              }
+              else if(calledFrom == 'customerName'){
+                this.customerSort = 'DESC'
+              }
+              else if(calledFrom == 'total'){
+                this.totalSort = 'DESC'
+              }
+              else if(calledFrom == 'status'){
+                this.statusSort = 'DESC'
+              }
+              else if(calledFrom == 'createdAt'){
+                this.createdSort = 'DESC'
+              }
         }
       } else {
           // First Click
           this.sortObject[calledFrom] = 'ASC'
+          if(calledFrom == 'wooCommerceId'){
+            this.wooIdSort = 'ASC'
+          }
+          else if(calledFrom == 'customerName'){
+            this.customerSort = 'ASC'
+          }
+          else if(calledFrom == 'total'){
+            this.totalSort = 'ASC'
+          }
+          else if(calledFrom == 'status'){
+            this.statusSort = 'ASC'
+          }
+          else if(calledFrom == 'createdAt'){
+            this.createdSort = 'ASC'
+          }
       }
 
       console.log("this.sortObject",this.sortObject);

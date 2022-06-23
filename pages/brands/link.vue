@@ -45,8 +45,8 @@
           <table>
             <thead>
               <tr class="fancy-heading-row">
-                <th scope="col" v-on:click="sortScraped('name')">Name</th>
-                <th scope="col" v-on:click="sortScraped('mappedBrandId')">Link</th>
+                <th scope="col" v-on:click="sortScraped('name')">Name <v-icon v-if="nameSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="nameSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+                <th scope="col" v-on:click="sortScraped('mappedBrandId')">Link <v-icon v-if="linkedSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="linkedSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
                 <th scope="col"></th>
               </tr>
             </thead>
@@ -111,8 +111,8 @@
           <table>
             <thead>
               <tr class="fancy-heading-row">
-                <th scope="col" v-on:click="sort('name')">Name</th>
-                <th scope="col" v-on:click="sort('publish')">Published</th>
+                <th scope="col" v-on:click="sort('name')">Name <v-icon v-if="nameSort2 == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="nameSort2 == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+                <th scope="col" v-on:click="sort('publish')">Published <v-icon v-if="publishSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="publishSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
               </tr>
             </thead>
             <tbody>
@@ -191,6 +191,10 @@ export default {
       displayedScrapedBrands: [],
       sortObject: {},
       sortObject2: {},
+      nameSort: null,
+      linkedSort: null,
+      nameSort2: null,
+      publishSort: null,
     };
   },
   watch: {
@@ -442,13 +446,31 @@ export default {
         if (this.sortObject[calledFrom] === 'DESC') {
             // Third Click
             delete this.sortObject[calledFrom]
+            if(calledFrom == 'name'){
+              this.nameSort = null
+            }
+            else if(calledFrom == 'mappedBrandId'){
+              this.linkedSort = null
+            }
         } else {
             // Second Click
               this.sortObject[calledFrom] = 'DESC'
+              if(calledFrom == 'name'){
+                this.nameSort = 'DESC'
+              }
+              else if(calledFrom == 'mappedBrandId'){
+                this.linkedSort = 'DESC'
+              }
         }
       } else {
           // First Click
           this.sortObject[calledFrom] = 'ASC'
+          if(calledFrom == 'name'){
+            this.nameSort = 'ASC'
+          }
+          else if(calledFrom == 'mappedBrandId'){
+            this.linkedSort = 'ASC'
+          }
       }
 
 
@@ -479,13 +501,31 @@ export default {
         if (this.sortObject2[calledFrom] === 'DESC') {
             // Third Click
             delete this.sortObject2[calledFrom]
+            if(calledFrom == 'name'){
+              this.nameSort2 = null
+            }
+            else if(calledFrom == 'publish'){
+              this.publishSort = null
+            }
         } else {
             // Second Click
               this.sortObject2[calledFrom] = 'DESC'
+              if(calledFrom == 'name'){
+                this.nameSort2 = 'DESC'
+              }
+              else if(calledFrom == 'publish'){
+                this.publishSort = 'DESC'
+              }
         }
       } else {
           // First Click
           this.sortObject2[calledFrom] = 'ASC'
+          if(calledFrom == 'name'){
+            this.nameSort2 = 'ASC'
+          }
+          else if(calledFrom == 'publish'){
+            this.publishSort = 'ASC'
+          }
       }
 
       console.log("this.sortObject2",this.sortObject2);

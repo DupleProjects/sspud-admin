@@ -2,15 +2,14 @@
   <div
     class="product-publish-component card fadeInUp animated animatedFadeInUp"
     v-if="product"
+    style="max-height:70vh; overflow-y: auto; overflow-x:hidden;"
   >
-    <div class="">
+    <div class="mt-n5">
       <table class="table">
         
         <thead>
           <tr>
             <th  scope="col"></th>
-            <!-- <th class="table-cell" scope="col"><h5 v-if="linkedScrapedCategory">{{linkedScrapedCategory}}</h5>Scraped Category</th>
-            <th class="table-cell" scope="col"><h5 v-if="linkedScrapedSubcategory">{{linkedScrapedSubcategory}}</h5>Scraped Subcategory</th> -->
             <th class="table-cell" scope="col"><h6>Certificate Required</h6></th>
             <th class="table-cell" scope="col"><h6>Publish Allowed</h6></th>
           </tr>
@@ -23,13 +22,13 @@
               <span class="table-item-subheading">BambaZonke Category</span>
             </td>
             <td class="table-cell">
-              <v-icon v-if="productDetails.certificateRequired == 1" large color="green">mdi-check</v-icon>
-              <v-icon v-else-if="productDetails.certificateRequired == 0"  large color="red">mdi-close</v-icon>
+              <v-icon v-if="productDetails.certificateRequired == 1" medium color="green">mdi-check</v-icon>
+              <v-icon v-else-if="productDetails.certificateRequired == 0"  medium color="red">mdi-close</v-icon>
               <!-- <v-icon v-if="!productDetails.certificateRequired">Not Linked</v-icon> -->
             </td>
             <td class="table-cell">
-              <v-icon v-if="productDetails.categoryPublish == 1"  large color="green">mdi-check</v-icon>
-              <v-icon v-if="productDetails.categoryPublish == 0"  large color="red">mdi-close</v-icon>
+              <v-icon v-if="productDetails.categoryPublish == 1"  medium color="green">mdi-check</v-icon>
+              <v-icon v-if="productDetails.categoryPublish == 0"  medium color="red">mdi-close</v-icon>
               <!-- <h5 style="color:red" v-if="!productDetails.categoryPublish">Not Linked</h5> -->
             </td>       
           </tr>
@@ -40,13 +39,13 @@
               <span class="table-item-subheading">BambaZonke Subcategory</span>
             </td>
             <td class="table-cell">
-              <v-icon v-if="productDetails.subCertificateRequired == 1"  large color="green">mdi-check</v-icon>
-              <v-icon v-if="productDetails.subCertificateRequired == 0"  large color="red">mdi-close</v-icon>
+              <v-icon v-if="productDetails.subCertificateRequired == 1"  medium color="green">mdi-check</v-icon>
+              <v-icon v-if="productDetails.subCertificateRequired == 0"  medium color="red">mdi-close</v-icon>
               <!-- <h5 style="color:red" v-if="!productDetails.subCertificateRequired">Not Linked</h5> -->
             </td>
             <td class="table-cell">
-              <v-icon v-if="productDetails.subCategoryPublish == 1"  large color="green">mdi-check</v-icon>
-              <v-icon v-if="productDetails.subCategoryPublish == 0"  large color="red">mdi-close</v-icon>
+              <v-icon v-if="productDetails.subCategoryPublish == 1"  medium color="green">mdi-check</v-icon>
+              <v-icon v-if="productDetails.subCategoryPublish == 0"  medium color="red">mdi-close</v-icon>
               <!-- <h5 style="color:red" v-if="!productDetails.subCategoryPublish">Not Linked</h5> -->
             </td>       
           </tr>
@@ -58,8 +57,8 @@
             </td>
             <td class="table-cell"><h5>N/A</h5></td>
             <td class="table-cell">
-              <v-icon v-if="productDetails.brandPublish == 1"  large color="green">mdi-check</v-icon>
-              <v-icon v-if="productDetails.brandPublish == 0"  large color="red">mdi-close</v-icon>
+              <v-icon v-if="productDetails.brandPublish == 1"  medium color="green">mdi-check</v-icon>
+              <v-icon v-if="productDetails.brandPublish == 0"  medium color="red">mdi-close</v-icon>
               <!-- <h5 style="color:red" v-if="!productDetails.subCategoryPublish">Not Linked</h5> -->
             </td>       
           </tr>
@@ -71,8 +70,8 @@
             </td>
             <td class="table-cell"><h5>N/A</h5></td>
             <td class="table-cell">
-              <v-icon v-if="scrapedProductDetails.categoryPublish == 1"  large color="green">mdi-check</v-icon>
-              <v-icon v-if="scrapedProductDetails.categoryPublish == 0"  large color="red">mdi-close</v-icon>
+              <v-icon v-if="scrapedProductDetails.categoryPublish == 1"  medium color="green">mdi-check</v-icon>
+              <v-icon v-if="scrapedProductDetails.categoryPublish == 0"  medium color="red">mdi-close</v-icon>
               <!-- <h5 style="color:red" v-if="!scrapedProductDetails.categoryPublish">Not Linked</h5> -->
             </td>
           </tr>
@@ -85,8 +84,8 @@
             </td>
             <td class="table-cell"><h5>N/A</h5></td>
             <td class="table-cell">
-              <v-icon v-if="scrapedProductDetails.subCategoryPublish == 1"  large color="green">mdi-check</v-icon>
-              <v-icon v-if="scrapedProductDetails.subCategoryPublish == 0"  large color="red">mdi-close</v-icon>
+              <v-icon v-if="scrapedProductDetails.subCategoryPublish == 1"  medium color="green">mdi-check</v-icon>
+              <v-icon v-if="scrapedProductDetails.subCategoryPublish == 0"  medium color="red">mdi-close</v-icon>
               <!-- <h5 style="color:red" v-if="!scrapedProductDetails.subCategoryPublish">Not Linked</h5> -->
             </td>  
           </tr>
@@ -100,8 +99,8 @@
             </td>
             <td class="table-cell"><h5>N/A</h5></td>
             <td class="table-cell">
-              <v-icon v-if="scrapedProductDetails.subSubCategoryPublish == 1"  large color="green">mdi-check</v-icon>
-              <v-icon v-if="scrapedProductDetails.subSubCategoryPublish == 0"  large color="red">mdi-close</v-icon>
+              <v-icon v-if="scrapedProductDetails.subSubCategoryPublish == 1"  medium color="green">mdi-check</v-icon>
+              <v-icon v-if="scrapedProductDetails.subSubCategoryPublish == 0"  medium color="red">mdi-close</v-icon>
               <!-- <h5 style="color:red" v-if="!scrapedProductDetails.subSubCategoryPublish">Not Linked</h5> -->
             </td> 
           </tr>
@@ -115,8 +114,8 @@
             </td>
             <td class="table-cell"><h5>N/A</h5></td>
             <td class="table-cell">
-              <v-icon v-if="scrapedProductDetails.brandPublish == 1"  large color="green">mdi-check</v-icon>
-              <v-icon v-if="scrapedProductDetails.brandPublish == 0"  large color="red">mdi-close</v-icon>
+              <v-icon v-if="scrapedProductDetails.brandPublish == 1"  medium color="green">mdi-check</v-icon>
+              <v-icon v-if="scrapedProductDetails.brandPublish == 0"  medium color="red">mdi-close</v-icon>
               <!-- <h5 style="color:red" v-if="!scrapedProductDetails.subSubCategoryPublish">Not Linked</h5> -->
             </td> 
           </tr>
@@ -126,49 +125,8 @@
               <h5 class="table-item-heading">Net Values</h5>
             </td>
             <td class="table-cell"><h6 style="color:red" v-if="netCertificateRequired">CERTIFICATE REQUIRED</h6><h6 style="color:green" v-else>NO CERTIFICATE REQUIRED</h6></td>
-            <td class="table-cell"><h6 style="color:green" v-if="netPublish">CAN PUBLISH</h6><h6 style="color:red" v-else>CANNOT PUBLISH</h6></td>
+            <td class="table-cell"><h6 style="color:green" v-if="netPublish">PUBLISH ALLOWED <br> ON ALL RELATED ENTITIES</h6><h6 style="color:red" v-else>PUBLISH NOT ALLOWED <br> ON SOME RELATED ENTITIES</h6></td>
           </tr>
-          <!-- Certificate Required -->
-          <!-- <tr>
-            <td class="left-cell"><b>Certificate Required</b></td>
-            <td class="table-cell">
-              <v-icon v-if="catCertificate  == 'TRUE'" large color="green">mdi-check</v-icon>
-              <v-icon v-if="catCertificate == 'FALSE'"  large color="red">mdi-close</v-icon>
-              <v-icon v-if="!catCertificate">Not Linked</v-icon>
-            </td>
-            <td class="table-cell">
-              <v-icon v-if="subCatCertificate  == 'TRUE'"  large color="green">mdi-check</v-icon>
-              <v-icon v-if="subCatCertificate == 'FALSE'"  large color="red">mdi-close</v-icon>
-              <h5 style="color:red" v-if="!subCatCertificate">Not Linked</h5>
-            </td>
-            <td class="table-cell"><h5>N/A</h5></td>
-            <td class="table-cell"><h5>N/A</h5></td>
-            
-          </tr> -->
-          <!-- Publish -->
-          <!-- <tr>
-            <td class="left-cell"><b>Publish</b></td>
-            <td class="table-cell">
-              <v-icon v-if="catPublished == 'TRUE'"  large color="green">mdi-check</v-icon>
-              <v-icon v-if="catPublished == 'FALSE'"  large color="red">mdi-close</v-icon>
-              <h5 style="color:red" v-if="!catPublished">Not Linked</h5>
-            </td>
-            <td class="table-cell">
-              <v-icon v-if="subcatPublished == 'TRUE'"  large color="green">mdi-check</v-icon>
-              <v-icon v-if="subcatPublished == 'FALSE'"  large color="red">mdi-close</v-icon>
-              <h5 style="color:red" v-if="!subcatPublished">Not Linked</h5>
-            </td>
-            <td class="table-cell">
-              <v-icon v-if="scrapedcatPublished == 'TRUE'"  large color="green">mdi-check</v-icon>
-              <v-icon v-if="scrapedcatPublished == 'FALSE'"  large color="red">mdi-close</v-icon>
-              <h5 style="color:red" v-if="!scrapedcatPublished">Not Linked</h5>
-            </td>
-            <td class="table-cell">
-              <v-icon v-if="scrapedSubcatPublished == 'TRUE'"  large color="green">mdi-check</v-icon>
-              <v-icon v-if="scrapedSubcatPublished == 'FALSE'"  large color="red">mdi-close</v-icon>
-              <h5 style="color:red" v-if="!scrapedSubcatPublished">Not Linked</h5>
-            </td>
-          </tr> -->
         </tbody>
       </table>
     </div>
@@ -501,6 +459,11 @@ export default {
 </script>
 
 <style scoped>
+
+
+h5{
+  font-size:12px;
+}
 .product-publish-component {
   padding: 20px;
 }
@@ -518,7 +481,7 @@ export default {
 }
 
 .card-subtitle {
-  font-size: 18px;
+  font-size: 12px;
   font-weight: bold;
   margin-top: -10px;
 }
@@ -626,12 +589,13 @@ export default {
 }
 
 .table-item-heading{
-  margin-bottom:-3px;
+  font-size:10px;
+  margin-bottom:-10px;
   font-size: medium;
 }
 
 .table-item-subheading{
-  font-size:13px;
+  font-size:10px;
   margin-top:-15px;
 }
 </style>

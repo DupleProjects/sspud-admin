@@ -53,7 +53,7 @@
       </div>
       <hr>
       <div v-for="(certificate, index) of certificates" :key="index" class="d-flex justify-content-between border-bottom py-2 align-baseline">
-        <a class="link mb-0">{{getCertificateFileName(certificate)}}</a>
+        <a class="link mb-0" @click="downloadCertificate(certificate)">{{getCertificateFileName(certificate)}}</a>
         <div class="btn-group" role="group" aria-label="Basic example">
           <button
               @click="downloadCertificate(certificate)"

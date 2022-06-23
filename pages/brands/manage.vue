@@ -33,8 +33,8 @@
       <table>
         <thead>
           <tr class="fancy-heading-row">
-            <th v-on:click="sort('name')">Name</th>
-            <th v-on:click="sort('publish')">Published</th>
+            <th v-on:click="sort('name')">Name <v-icon v-if="nameSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="nameSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+            <th v-on:click="sort('publish')">Published <v-icon v-if="publishSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="publishSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
             <th></th>
           </tr>
         </thead>
@@ -109,7 +109,9 @@ export default {
       brands: [],
       filteredBrands: [],
       displayedBrands: [],
-      sortObject: {}
+      sortObject: {},
+      nameSort: null,
+      publishSort: null,
     };
   },
   watch: {
@@ -244,13 +246,31 @@ export default {
         if (this.sortObject[calledFrom] === 'DESC') {
             // Third Click
             delete this.sortObject[calledFrom]
+            if(calledFrom == 'name'){
+              this.nameSort = null
+            }
+            else if(calledFrom == 'publish'){
+              this.publishSort = null
+            }
         } else {
             // Second Click
               this.sortObject[calledFrom] = 'DESC'
+              if(calledFrom == 'name'){
+                this.nameSort = 'DESC'
+              }
+              else if(calledFrom == 'publish'){
+                this.publishSort = 'DESC'
+              }
         }
       } else {
           // First Click
           this.sortObject[calledFrom] = 'ASC'
+          if(calledFrom == 'name'){
+            this.nameSort = 'ASC'
+          }
+          else if(calledFrom == 'publish'){
+            this.publishSort = 'ASC'
+          }
       }
 
 
