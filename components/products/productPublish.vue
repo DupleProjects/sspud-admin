@@ -31,17 +31,20 @@
           elevation="2">
         This Product requires a certificates
       </v-alert>
+      <v-card>
       <div class="d-flex justify-content-between">
         <div>
-          <h2>Product Certificates</h2>
-          <p v-if="product.certificateRequired" class="text-muted">This product requires a certificate</p>
+          <v-card-title><h2>Product Certificates</h2></v-card-title>
+          <v-card-subtitle><p v-if="product.certificateRequired" class="text-muted">This product requires a certificate</p></v-card-subtitle>
         </div>
+        
         <v-btn
             color="primary"
             rounded
             dark
             :loading="isSelecting"
-            @click="handleFileImport">
+            @click="handleFileImport"
+            class="mt-5 mr-5">
           Upload File
         </v-btn>
         <!-- Create a File Input that will be hidden but triggered with JavaScript -->
@@ -51,9 +54,10 @@
             type="file"
             @change="onNewFileUpload">
       </div>
-      <hr>
-      <div v-for="(certificate, index) of certificates" :key="index" class="d-flex justify-content-between border-bottom py-2 align-baseline">
-        <a class="link mb-0">{{getCertificateFileName(certificate)}}</a>
+      <v-card-text>
+      <hr class="mt-n5">
+      <div v-for="(certificate, index) of certificates" :key="index" class="d-flex justify-content-between border-bottom py-2 px-2 align-baseline">
+        <a class="link mb-0" @click="downloadCertificate(certificate)">{{getCertificateFileName(certificate)}}</a>
         <div class="btn-group" role="group" aria-label="Basic example">
           <button
               @click="downloadCertificate(certificate)"
@@ -68,6 +72,8 @@
       <div class="text-center no-certificates" v-if="certificates.length === 0">
         <p>No certificates uploaded</p>
       </div>
+      </v-card-text>
+      </v-card>
       <!-- Publish Buttons -->
       <div class="text-end py-3">
         <v-progress-circular
@@ -78,13 +84,12 @@
         ></v-progress-circular>
         <v-btn
             v-if="!product.publish && !saving"
-            :disabled="checkIfCanPublish()"
             @click="publishProduct()"
             color="primary">Publish Product</v-btn>
         <v-btn
             v-if="product.publish && !saving"
             @click="unpublishProduct()"
-            color="warning">Un Publish Product</v-btn>
+            color="warning">Unpublish Product</v-btn>
       </div>
           
     </div>
@@ -171,7 +176,8 @@ export default {
       netPublish: true,
       netCertificateRequired: false,
       allBrands: [],
-      allScrapedBrands: []
+      allScrapedBrands: [],
+      unlinkedEntities: false
     }
   },
   beforeMount() {
@@ -193,6 +199,10 @@ export default {
           this.productDetails.categoryName = mainCategoryBz.name,
           this.productDetails.categoryPublish = mainCategoryBz.publish,
           this.productDetails.certificateRequired = mainCategoryBz.certificateRequired
+        }else{
+          this.productDetails.categoryName = null
+          this.productDetails.categoryPublish = null
+          this.productDetails.certificateRequired = null
         }
 
         const subCategoryBz = this.allBZCategories.find(cat => cat.id === this.product.subCategoryId);
@@ -200,6 +210,10 @@ export default {
           this.productDetails.subCategoryName = subCategoryBz.name,
           this.productDetails.subCategoryPublish = subCategoryBz.publish,
           this.productDetails.subCertificateRequired = subCategoryBz.certificateRequired
+        }else{
+          this.productDetails.subCategoryName = null
+          this.productDetails.subCategoryPublish = null
+          this.productDetails.subCertificateRequired = null
         }
 
       }
@@ -217,6 +231,9 @@ export default {
         if(brand){
           this.productDetails.brandName = brand.name,
           this.productDetails.brandPublish = brand.publish
+        }else{
+          this.productDetails.brandName = null
+          this.productDetails.brandPublish = null
         }
       }
       
@@ -285,13 +302,19 @@ export default {
 
       if(
         this.productDetails.categoryPublish == 0 ||
+        this.productDetails.categoryPublish == null ||
         this.productDetails.subCategoryPublish == 0 ||
+        this.productDetails.subCategoryPublish == null ||
         this.productDetails.brandPublish == 0 ||
+        this.productDetails.brandPublish == null ||
         this.scrapedProductDetails.subCategoryPublish == 0 ||
         this.scrapedProductDetails.subSubCategoryName == 0 ||
         this.scrapedProductDetails.subSubCategoryPublish == 0 ||
         this.scrapedProductDetails.brandPublish == 0
       ){
+        if(this.productDetails.categoryPublish == null ||this.productDetails.subCategoryPublish == null ||this.productDetails.brandPublish == null){
+          this.unlinkedEntities = true;
+        }
         this.netPublish = false;
       }
       
@@ -389,6 +412,13 @@ export default {
         }
         if (!returnedDetails.productDetails.validCertificates) {
           this.invalidItems.push("Required certificates not uploaded");
+        }
+        if(!this.netPublish){
+          if(this.unlinkedEntities){
+            this.invalidItems.push("Some entities have not been linked.");
+          }else{
+            this.invalidItems.push("Publish is not allowed on some or all of the linked entities.");
+          }
         }
       }
     },
@@ -506,6 +536,6 @@ export default {
   padding: 20px;
 }
 .no-certificates {
-  height: 30vh
+  height: 15vh
 }
 </style>

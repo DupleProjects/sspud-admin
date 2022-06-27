@@ -1,15 +1,23 @@
 <template>
   <div class="p-3">
+    <v-overlay :value="loading" style="text-align:center;">
+    <v-progress-circular
+            :size="100"
+            indeterminate
+            color="primary"
+          ></v-progress-circular>
+          <h1>Sorting Products</h1>
+    </v-overlay>
     <div class="fancy-table">
       <div class="fancy-heading-row">
         <div  v-bind:class="{ 'inner-fancy-heading-row': type === 'scraped', 'inner-fancy-heading-row-staged': type === 'staged' || type === 'published'}">
-          <div>Name</div>
-          <div v-if="type === 'staged' || type === 'published'">Has Stock</div>
-          <div>Price</div>
-          <div>Subcategory</div>
-          <div>Brand</div>
-          <div v-if="type === 'staged' || type === 'published'" class="text-center">Published</div>
-          <div v-if="type === 'staged' || type === 'published'" class="text-center">Review Required</div>
+          <div v-on:click="sort('name','name')">Name <v-icon v-if="sortingOrders.nameSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.nameSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
+          <div v-if="type === 'staged' || type === 'published'" v-on:click="sort('hasStock','hasStock')">Has Stock <v-icon v-if="sortingOrders.hasStockSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.hasStockSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
+          <div v-on:click="sort('price','price')">Price <v-icon v-if="sortingOrders.priceSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.priceSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
+          <div v-on:click="sort('subCategoryName','subCategoryId')">Subcategory <v-icon v-if="sortingOrders.subCategorySort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.subCategorySort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
+          <div v-on:click="sort('brand','brandId')">Brand <v-icon v-if="sortingOrders.brandSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.brandSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
+          <div v-if="type === 'staged' || type === 'published'" class="text-center" v-on:click="sort(null,'publish')">Published <v-icon v-if="sortingOrders.publishSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.publishSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
+          <div v-if="type === 'staged' || type === 'published'" class="text-center" v-on:click="sort(null,'reviewRequired')">Review Required <v-icon v-if="sortingOrders.reviewSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.reviewSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
         </div>
       </div>
       <div class="product-list">
@@ -194,13 +202,37 @@ export default {
     products: [],
     allCategories: [],
     allBrands: [],
-    deleteProductCallBack: null
+    deleteProductCallBack: null,
+    sortCallback: null,
+    sortCallbackStaged: null,
   },
   data() {
     return {
       deleteDialog: false,
       loading: false,
-      productToDelete: {}
+      productToDelete: {},
+      sortObject: {},
+      // scrapedSorting:{
+      //   scrapedNameSort: null,
+      //   priceSort: null,
+      //   subCategorySort: null,
+      //   brandSort: null,
+      // },
+      // stagedSorting: {
+      //   scrapedNameSort: null,
+      //   priceSort: null,
+      //   subCategorySort: null,
+      //   brandSort: null,
+      // }
+      sortingOrders:{
+        nameSort: null,
+        priceSort: null,
+        subCategorySort: null,
+        brandSort: null,
+        hasStockSort: null,
+        publishSort: null,
+        reviewSort: null
+      }
     };
   },
   mounted() {},
@@ -265,6 +297,153 @@ export default {
       this.productToDelete = product;   
       this.deleteDialog = true;
     },
+    async sort(scrapedCriteria,stagedCriteria){
+      this.loading = true
+
+      if(this.type == "scraped"){
+      
+        if (this.sortObject.hasOwnProperty(scrapedCriteria)) {
+          if (this.sortObject[scrapedCriteria] === 'DESC') {
+              // Third Click
+              delete this.sortObject[scrapedCriteria]
+              if(scrapedCriteria == 'name'){
+                this.sortingOrders.nameSort = null
+              }
+              else if(scrapedCriteria == 'price'){
+                this.sortingOrders.priceSort = null
+              }
+              else if(scrapedCriteria == 'subCategoryName'){
+                this.sortingOrders.subCategorySort = null
+              }
+              else if(scrapedCriteria == 'brand'){
+                this.sortingOrders.brandSort = null
+              }
+          } else {
+              // Second Click
+                this.sortObject[scrapedCriteria] = 'DESC'
+                if(scrapedCriteria == 'name'){
+                  this.sortingOrders.nameSort = 'DESC'
+                }
+                else if(scrapedCriteria == 'price'){
+                  this.sortingOrders.priceSort = 'DESC'
+                }
+                else if(scrapedCriteria == 'subCategoryName'){
+                  this.sortingOrders.subCategorySort = 'DESC'
+                }
+                else if(scrapedCriteria == 'brand'){
+                  this.sortingOrders.brandSort = 'DESC'
+                }
+          }
+        } else {
+            // First Click
+            this.sortObject[scrapedCriteria] = 'ASC'
+            if(scrapedCriteria == 'name'){
+              this.sortingOrders.nameSort = 'ASC'
+            }
+            else if(scrapedCriteria == 'price'){
+              this.sortingOrders.priceSort = 'ASC'
+            }
+            else if(scrapedCriteria == 'subCategoryName'){
+              this.sortingOrders.subCategorySort = 'ASC'
+            }
+            else if(scrapedCriteria == 'brand'){
+              this.sortingOrders.brandSort = 'ASC'
+            }
+        }
+
+
+        console.log("PROD SORT",this.sortObject);
+
+        await this.sortCallback(this.sortObject)
+
+      }
+
+      if(this.type == "staged" || this.type == "published"){
+        if (this.sortObject.hasOwnProperty(stagedCriteria)) {
+          if (this.sortObject[stagedCriteria] === 'DESC') {
+              // Third Click
+              delete this.sortObject[stagedCriteria]
+              if(stagedCriteria == 'name'){
+                this.sortingOrders.nameSort = null
+              }
+              else if(stagedCriteria == 'price'){
+                this.sortingOrders.priceSort = null
+              }
+              else if(stagedCriteria == 'hasStock'){
+                this.sortingOrders.hasStockSort = null
+              }
+              else if(stagedCriteria == 'subCategoryId'){
+                this.sortingOrders.subCategorySort = null
+              }
+              else if(stagedCriteria == 'brandId'){
+                this.sortingOrders.brandSort = null
+              }
+              else if(stagedCriteria == 'publish'){
+                this.sortingOrders.publishSort = null
+              }
+              else if(stagedCriteria == 'reviewRequired'){
+                this.sortingOrders.reviewSort = null
+              }
+          } else {
+              // Second Click
+                this.sortObject[stagedCriteria] = 'DESC'
+                if(stagedCriteria == 'name'){
+                  this.sortingOrders.nameSort = 'DESC'
+                }
+                else if(stagedCriteria == 'price'){
+                  this.sortingOrders.priceSort = 'DESC'
+                }
+                else if(stagedCriteria == 'hasStock'){
+                  this.sortingOrders.hasStockSort = 'DESC'
+                }
+                else if(stagedCriteria == 'subCategoryId'){
+                  this.sortingOrders.subCategorySort = 'DESC'
+                }
+                else if(stagedCriteria == 'brandId'){
+                  this.sortingOrders.brandSort = 'DESC'
+                }
+                else if(stagedCriteria == 'publish'){
+                  this.sortingOrders.publishSort = 'DESC'
+                }
+                else if(stagedCriteria == 'reviewRequired'){
+                  this.sortingOrders.reviewSort = 'DESC'
+                }
+          }
+        } else {
+            // First Click
+            this.sortObject[stagedCriteria] = 'ASC'
+            if(stagedCriteria == 'name'){
+              this.sortingOrders.nameSort = 'ASC'
+            }
+            else if(stagedCriteria == 'price'){
+              this.sortingOrders.priceSort = 'ASC'
+            }
+            else if(stagedCriteria == 'hasStock'){
+              this.sortingOrders.hasStockSort = 'ASC'
+            }
+            else if(stagedCriteria == 'subCategoryId'){
+              this.sortingOrders.subCategorySort = 'ASC'
+            }
+            else if(stagedCriteria == 'brandId'){
+              this.sortingOrders.brandSort = 'ASC'
+            }
+            else if(stagedCriteria == 'publish'){
+              this.sortingOrders.publishSort = 'ASC'
+            }
+            else if(stagedCriteria == 'reviewRequired'){
+              this.sortingOrders.reviewSort = 'ASC'
+            }
+        }
+
+
+        console.log("PROD SORT",this.sortObject);
+
+        await this.sortCallbackStaged(this.sortObject)
+      }
+
+      this.loading = false
+
+    }
   },
 };
 </script>

@@ -11,13 +11,13 @@ export const authStore = {
   getters: {
     isUserLoggedIn(state) {
       return !!state.user;
-    }
+    },
+    activeUser: state => state.user
   },
 
   mutations: {
     async set_user(store, data) {
       console.log("Setting user");
-      console.log()
       store.user = data;
       return;
     },
@@ -42,6 +42,8 @@ export const authStore = {
         headers: {},
         data: body
       })
+      // attach token
+      me.data.result.token = currCookie;
       try{
         await commit('set_user', me.data.result)
         return;
@@ -61,6 +63,7 @@ export const authStore = {
         headers: {},
         data: body
       })
+      console.log('logInUser', logInUser)
       console.log('logged in user: ', logInUser.data);
       await commit('set_user', logInUser.data.user)
       // await setAuthToken(logInUser.data.token)
@@ -99,3 +102,5 @@ export const authStore = {
     }
   }
 }
+
+export default authStore

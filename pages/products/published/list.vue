@@ -32,11 +32,17 @@
     </div>
     <hr class="my-0 mx-3">
     <div v-if="!loading">
+      <product-list-filter
+        :filterChangeCallBack="filterChangeCallBack"
+        :filter="filter"
+        :type="'staged'"
+      />
       <products-product-list
           :type="'published'"
           :allCategories="allCategories"
           :allBrands="allBrands"
-          :products="products" />
+          :products="products"
+          :sortCallbackStaged="sortCallback" />
       <!--Pagination-->
       <template>
         <div class="text-end">
@@ -56,8 +62,9 @@
 import baseMixin from '@/mixins/baseMixin.js'
 import breadcrumbMixin from "@/mixins/breadcrumbMixin.js";
 import exportModal from "../../../components/dialogs/exportModal.vue";
+import ProductListFilter from '../../../components/products/productListFilter.vue';
 export default {
-  components: { exportModal },
+  components: { exportModal, ProductListFilter },
   mixins: [baseMixin,breadcrumbMixin],
   data() {
     return {
@@ -69,6 +76,8 @@ export default {
       products: [],
       allCategories: [],
       allBrands: [],
+      sortCriteria: {},
+      activeFilter: null
     }
   },
   watch: {
@@ -98,15 +107,25 @@ export default {
   },
   methods: {
     // Loading stuff
-    async loadProducts(criteria) {
+    async loadProducts(criteria, sortCrit) {
       if (!criteria) {
         criteria = this.criteria;
+      }else{
+        criteria.deleted = 0
+        criteria.publish = 1
+      }
+
+      if (!sortCrit) {
+        sortCrit = this.sortCriteria;
+      } else {
+        this.sortCriteria = sortCrit;
       }
       // Load the products
       const scrapedProducts = await this.$store.dispatch('dataGate', {
         tableName: 'stagedProducts',
         operation: 'read',
         whereCriteria: criteria ? criteria : {deleted: 0, publish: 1},
+        sortCriteria: sortCrit ? sortCrit : {},
         page: this.page,
         numberPerPage: this.numberPerPage
       });
@@ -155,9 +174,20 @@ export default {
           delete filter.brandId;
         }
         this.criteria = criteria;
+        this.activeFilter = filter;
         await this.loadProducts(filter);
       }
-    }
+    },
+    async sortCallback(crit) {
+      // Build the where clause
+      if (crit) {
+        if(this.activeFilter){
+          await this.loadProducts(this.activeFilter, crit);
+        }else{
+          await this.loadProducts(null, crit);
+        }
+      }
+    },
   },
 }
 </script>

@@ -32,8 +32,13 @@
     </div>
     <hr class="my-0 mx-3">
     <div v-if="!loading">
+      <product-list-filter
+        :filter="filter" 
+        :filterChangeCallBack="filterChangeCallBackScraped" 
+        :type="'scraped'" 
+      />
       <!--Table-->
-      <products-product-list :type="'scraped'" :products="products" :canDelete="false" />
+      <products-product-list :type="'scraped'" :products="products" :canDelete="false" :sortCallback="sortCallback" />
       <!--Pagination-->
       <template>
         <div class="text-end">
@@ -53,8 +58,10 @@
 import baseMixin from '@/mixins/baseMixin.js'
 import breadcrumbMixin from "@/mixins/breadcrumbMixin.js";
 import exportModal from "../../../components/dialogs/exportModal.vue";
+import ProductListFilter from '../../../components/products/productListFilter.vue';
+import ScrapedProductListFilter from '../../../components/products/scrapedProductListFilter.vue';
 export default {
-  components: { exportModal },
+  components: { exportModal, ProductListFilter, ScrapedProductListFilter },
   mixins: [baseMixin,breadcrumbMixin],
   data() {
     return {
@@ -63,6 +70,9 @@ export default {
       numberPerPage: 20,
       productCount: 0,
       products: [],
+      sortCriteria: {},
+      filter: {},
+      criteria: {},
     }
   },
   watch: {
@@ -89,12 +99,26 @@ export default {
   },
   methods: {
     // Loading stuff
-    async loadProducts() {
-      this.loading = true
+    async loadProducts(crit, filter) {
+      // this.loading = true
+      if (!filter) {
+        filter = this.criteria;
+      } else {
+        this.criteria = filter;
+      }
+
+      if (!crit) {
+        crit = this.sortCriteria;
+      } else {
+        this.sortCriteria = crit;
+      }
+
       // Load the products
       const scrapedProducts = await this.$store.dispatch('dataGate', {
         tableName: 'scrapedProducts',
         operation: 'read',
+        sortCriteria: crit ? crit : {},
+        whereCriteria: filter ? filter : {},
         page: this.page,
         numberPerPage: this.numberPerPage
       });
@@ -105,7 +129,20 @@ export default {
         this.products = scrapedProducts.data;
       }
 
-      this.loading = false
+      // this.loading = false
+    },
+    async sortCallback(crit) {
+      // Build the where clause
+      if (crit) {
+        await this.loadProducts(crit);
+      }
+    },
+    async filterChangeCallBackScraped(filter) {
+      // Build the where clause
+      if (filter) {
+        this.activeFilter = filter;
+        await this.loadProducts(null,filter);
+      }
     },
   },
 }

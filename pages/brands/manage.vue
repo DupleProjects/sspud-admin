@@ -33,8 +33,8 @@
       <table>
         <thead>
           <tr class="fancy-heading-row">
-            <th>Name</th>
-            <th>Published</th>
+            <th v-on:click="sort('name')">Name <v-icon v-if="nameSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="nameSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+            <th v-on:click="sort('publish')">Published <v-icon v-if="publishSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="publishSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
             <th></th>
           </tr>
         </thead>
@@ -109,6 +109,9 @@ export default {
       brands: [],
       filteredBrands: [],
       displayedBrands: [],
+      sortObject: {},
+      nameSort: null,
+      publishSort: null,
     };
   },
   watch: {
@@ -235,6 +238,60 @@ export default {
       }
       this.loading = false;
     },
+    async sort(calledFrom){
+      
+      this.loading = true;
+
+      if (this.sortObject.hasOwnProperty(calledFrom)) {
+        if (this.sortObject[calledFrom] === 'DESC') {
+            // Third Click
+            delete this.sortObject[calledFrom]
+            if(calledFrom == 'name'){
+              this.nameSort = null
+            }
+            else if(calledFrom == 'publish'){
+              this.publishSort = null
+            }
+        } else {
+            // Second Click
+              this.sortObject[calledFrom] = 'DESC'
+              if(calledFrom == 'name'){
+                this.nameSort = 'DESC'
+              }
+              else if(calledFrom == 'publish'){
+                this.publishSort = 'DESC'
+              }
+        }
+      } else {
+          // First Click
+          this.sortObject[calledFrom] = 'ASC'
+          if(calledFrom == 'name'){
+            this.nameSort = 'ASC'
+          }
+          else if(calledFrom == 'publish'){
+            this.publishSort = 'ASC'
+          }
+      }
+
+
+      const brandsResponse = await this.$store.dispatch("dataGate", {
+        tableName: "mappedBrands",
+        operation: "read",
+        sortCriteria: this.sortObject
+      });
+      if (brandsResponse.count) {
+        this.brandCount = brandsResponse.count;
+      }
+      if (brandsResponse.data) {
+        this.brands = brandsResponse.data;
+        this.filteredBrands = this.brands;
+        const pageInfo = breadcrumbMixin.methods.getPage('mappedBrandsList')
+        this.page = pageInfo.page
+        this.setPage();
+      }
+      this.loading = false;
+      
+    }
   },
 };
 </script>

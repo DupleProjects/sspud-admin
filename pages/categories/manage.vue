@@ -19,7 +19,7 @@
     <hr class="my-0 mx-3">
     <!--Table-->
     <categories-category-list
-        :categories="displayedCategories" :allCategories="categories" :reloadCallBack="saveCallBack" :tableStyle="'min-height: 75vh'"/>
+        :categories="displayedCategories" :allCategories="categories" :reloadCallBack="saveCallBack" :tableStyle="'min-height: 75vh'" :sortCallBack="sortCallBack"/>
     <!--Pagination-->
     <template>
       <div class="text-end">
@@ -108,6 +108,18 @@ export default {
     },
     async saveCallBack() {
       await this.loadCategories()
+    },
+    async sortCallBack(crit) {
+      const categoriesResponse = await this.$store.dispatch('dataGate', {
+        tableName: 'mappedCategories',
+        operation: 'read',
+        sortCriteria: crit
+      });
+      this.categories = categoriesResponse.data
+      this.filteredCategories = categoriesResponse.data;
+      const pageInfo = breadcrumbMixin.methods.getPage('mappedCategoryList')
+      this.page = pageInfo.page
+      this.setPage();
     },
     goToCategoryDashboard(category) {
       this.$router.push(

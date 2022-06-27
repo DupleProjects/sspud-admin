@@ -1,13 +1,13 @@
 <template>
   <div class="p-3" style="border-radius: 20px !important;">
-    <div class="fancy-table" :style="tableStyle">
+    <div class="fancy-table">
       <table>
         <thead class="py-10">
         <tr class="fancy-heading-row">
-          <th class="info-column" scope="col">Name</th>
-          <th class="info-column" scope="col">Surname</th>
-          <th class="info-column" scope="col">Email</th>
-          <th class="info-column" scope="col">Role</th>
+          <th class="info-column" scope="col" v-on:click="sort('name')">Name <v-icon v-if="nameSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="nameSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+          <th class="info-column" scope="col" v-on:click="sort('surname')">Surname <v-icon v-if="surnameSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="surnameSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+          <th class="info-column" scope="col" v-on:click="sort('email')">Email <v-icon v-if="emailSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="emailSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+          <th class="info-column" scope="col" v-on:click="sort('role')">Role <v-icon v-if="roleSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="roleSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
           <th class="actions-column" scope="col"></th>
         </tr>
         </thead>
@@ -88,12 +88,19 @@ export default {
     deleteProductCallBack: null,
     users: [],
     saveCallBack: null,
+    sortCallback: null
   },
   data() {
     return {
       deleteDialog: false,
       loading: false,
       userToDelete: {},
+      sortCriteria: {},
+      sortObject: {},
+      nameSort: null,
+      surnameSort: null,
+      emailSort: null,
+      roleSort: null,
     };
   },
   mounted() {},
@@ -150,6 +157,62 @@ export default {
       this.loading = false;
       this.deleteDialog = false;
     },
+    sort(calledFrom){
+      
+      // this.loading = true;
+
+      if (this.sortObject.hasOwnProperty(calledFrom)) {
+        if (this.sortObject[calledFrom] === 'DESC') {
+            // Third Click
+            delete this.sortObject[calledFrom]
+            if(calledFrom == 'name'){
+              this.nameSort = null
+            }
+            else if(calledFrom == 'surname'){
+              this.surnameSort = null
+            }
+            else if(calledFrom == 'email'){
+              this.emailSort = null
+            }
+            else if(calledFrom == 'role'){
+              this.roleSort = null
+            }
+        } else {
+            // Second Click
+              this.sortObject[calledFrom] = 'DESC'
+              if(calledFrom == 'name'){
+                this.nameSort = 'DESC'
+              }
+              else if(calledFrom == 'surname'){
+                this.surnameSort = 'DESC'
+              }
+              else if(calledFrom == 'email'){
+                this.emailSort = 'DESC'
+              }
+              else if(calledFrom == 'role'){
+                this.roleSort = 'DESC'
+              }
+        }
+      } else {
+          // First Click
+          this.sortObject[calledFrom] = 'ASC'
+          if(calledFrom == 'name'){
+            this.nameSort = 'ASC'
+          }
+          else if(calledFrom == 'surname'){
+            this.surnameSort = 'ASC'
+          }
+          else if(calledFrom == 'email'){
+            this.emailSort = 'ASC'
+          }
+          else if(calledFrom == 'role'){
+            this.roleSort = 'ASC'
+          }
+      }
+
+      this.sortCallback(this.sortObject)
+      
+    }
   },
 };
 </script>

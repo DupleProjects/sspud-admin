@@ -13,7 +13,7 @@
       ></v-text-field>
       <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
-          Export here please
+          <export-modal :exportTableName="'orders'" :exportSheetName="'Orders'" :products="orders" />
         </div>
       </div>
     </div>
@@ -31,15 +31,15 @@
     </div>
     <!--Table-->
     <div v-if="!loading" class="p-3" style="border-radius: 20px !important;">
-    <div class="fancy-table" :style="tableStyle">
+    <div class="fancy-table">
       <table>
           <thead>
           <tr class="fancy-heading-row">
-            <th scope="col">Order ID</th>
-            <th scope="col">Customer</th>
-            <th scope="col">Total</th>
-            <th scope="col">Status</th>
-            <th scope="col">Created At</th>
+            <th scope="col" v-on:click="sort('wooCommerceId')">Order ID <v-icon v-if="wooIdSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="wooIdSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+            <th scope="col" v-on:click="sort('customerName')">Customer <v-icon v-if="customerSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="customerSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+            <th scope="col" v-on:click="sort('total')">Total <v-icon v-if="totalSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="totalSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+            <th scope="col" v-on:click="sort('status')">Status <v-icon v-if="statusSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="statusSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
+            <th scope="col" v-on:click="sort('createdAt')">Created At <v-icon v-if="createdSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="createdSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
             <th scope="col"></th>
           </tr>
           </thead>
@@ -95,9 +95,10 @@ import usersList from '../../components/users/usersList.vue';
 import CreateUserDialog from '../../components/users/createUserDialog.vue';
 import Date from "@/components/base/date";
 import breadcrumbMixin from "@/mixins/breadcrumbMixin.js";
+import ExportModal from '../../components/dialogs/exportModal.vue';
 
 export default {
-  components: {Date, usersList, CreateUserDialog },
+  components: {Date, usersList, CreateUserDialog, ExportModal },
   mixins: [baseMixin,breadcrumbMixin],
   data() {
     return {
@@ -107,6 +108,13 @@ export default {
       numberPerPage: 20,
       orderCount: 0,
       orders: [],
+      sortObject: {},
+      activeFilter: null,
+      wooIdSort: null,
+      customerSort: null,
+      totalSort: null,
+      statusSort: null,
+      createdSort: null,
     }
   },
   watch: {
@@ -115,13 +123,18 @@ export default {
       breadcrumbMixin.methods.savePage('ordersList', this.page)
     },
     async search(val) {
-      await this.loadOrders(
+      const theFilter = await this.loadOrders(
           {
             customerName: {
               like: val
             }
           }
       );
+      this.activeFilter = {
+        customerName: {
+          like: val
+        }
+      }
     },
   },
   beforeMount() {
@@ -140,11 +153,18 @@ export default {
     })
   },
   methods: {
-    async loadOrders(filter) {
+    async loadOrders(filter, sortCrit) {
+
+      if (!sortCrit) {
+        sortCrit = this.sortCriteria;
+      } else {
+        this.sortCriteria = sortCrit;
+      }
       const ordersResponse = await this.$store.dispatch('dataGate', {
         tableName: 'orders',
         operation: 'read',
         whereCriteria: filter ? {...filter} : null,
+        sortCriteria: sortCrit ? sortCrit : {},
         page: this.page,
         numberPerPage: this.numberPerPage,
       });
@@ -159,6 +179,80 @@ export default {
         params,
       });
       this.loading = false
+    },
+    async sort(calledFrom){
+      
+      // this.loading = true;
+
+      if (this.sortObject.hasOwnProperty(calledFrom)) {
+        if (this.sortObject[calledFrom] === 'DESC') {
+            // Third Click
+            delete this.sortObject[calledFrom]
+            if(calledFrom == 'wooCommerceId'){
+              this.wooIdSort = null
+            }
+            else if(calledFrom == 'customerName'){
+              this.customerSort = null
+            }
+            else if(calledFrom == 'total'){
+              this.totalSort = null
+            }
+            else if(calledFrom == 'status'){
+              this.statusSort = null
+            }
+            else if(calledFrom == 'createdAt'){
+              this.createdSort = null
+            }
+        } else {
+            // Second Click
+              this.sortObject[calledFrom] = 'DESC'
+              if(calledFrom == 'wooCommerceId'){
+                this.wooIdSort = 'DESC'
+              }
+              else if(calledFrom == 'customerName'){
+                this.customerSort = 'DESC'
+              }
+              else if(calledFrom == 'total'){
+                this.totalSort = 'DESC'
+              }
+              else if(calledFrom == 'status'){
+                this.statusSort = 'DESC'
+              }
+              else if(calledFrom == 'createdAt'){
+                this.createdSort = 'DESC'
+              }
+        }
+      } else {
+          // First Click
+          this.sortObject[calledFrom] = 'ASC'
+          if(calledFrom == 'wooCommerceId'){
+            this.wooIdSort = 'ASC'
+          }
+          else if(calledFrom == 'customerName'){
+            this.customerSort = 'ASC'
+          }
+          else if(calledFrom == 'total'){
+            this.totalSort = 'ASC'
+          }
+          else if(calledFrom == 'status'){
+            this.statusSort = 'ASC'
+          }
+          else if(calledFrom == 'createdAt'){
+            this.createdSort = 'ASC'
+          }
+      }
+
+      console.log("this.sortObject",this.sortObject);
+
+
+      if(this.activeFilter){
+        console.log("1");
+        this.loadOrders(this.activeFilter, this.sortObject);
+      }else{
+        console.log("2");
+        this.loadOrders(null, this.sortObject);
+      }
+      
     }
   },
 }

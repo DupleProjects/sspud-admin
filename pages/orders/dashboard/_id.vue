@@ -16,11 +16,12 @@
             color="blue"
             style="width:70px; height:70px"
         ></v-progress-circular>
+        <h1 v-if="order && !order.wooCommerceOrder">Could not load order</h1>
       </div>
     </div>
     <div v-if="order && !loading">
       <div class="confluence-page-layout">
-        <div class="confluence-left-column">
+        <div class="confluence-left-column" v-if="order.wooCommerceOrder">
           <div class="confluence-card p-2 mb-2">
             <p class="lead">
               Customer
@@ -52,14 +53,14 @@
             <p>{{order.wooCommerceOrder.shipping.postcode}}</p>
           </div>
         </div>
-        <div class="order-main-section">
+        <div class="order-main-section" v-if="order.wooCommerceOrder">
           <div class="order-detail-grid">
             <div class="confluence-card p-3">
               <p class="lead"><strong>Order</strong> #{{order.wooCommerceOrder.id}}</p>
               <hr class="mt-0">
               <v-select
                   v-model="order.sspudOrder.status"
-                  :items="['Order Placed', 'Shop Orders Placed', 'Order Received At Warehouse']"
+                  :items="['Awaiting Payment', 'Payment Received', 'Queued', 'Order Placed At Providers', 'Review Required', 'Processing At TH', 'In Transit To Depot', 'At Depot', 'n Transit To Customer', 'Order Complete']"
                   label="Order Status"
                   class="mb-2"
                   :hide-details="true"
@@ -69,7 +70,7 @@
             </div>
             <div v-for="(shop, index) of order.sspudOrderReferences" :key="index" class="order-shop-reference">
               <div class="confluence-card p-3">
-                <h3>Shop {{shop.shopId}}</h3>
+                <h3>{{getShopName(shop.shopId)}}</h3>
                 <div class="d-flex">
                   <v-text-field
                       style="flex: 1"
@@ -83,13 +84,15 @@
                       style="flex: 1"
                       class="px-2"
                       v-model="shop.status"
-                      :items="['Order Placed', 'Order Received At Warehouse']"
+                      :items="['Queued', 'Order Placed', 'Review Required']"
                       prepend-icon="mdi-card-account-details-outline"
                       label="Order Status"
                       hint="The status of the order at the shop"
                   ></v-select>
                   <div>
-                    <button class="btn btn-primary">Save</button>
+                    <button
+                        @click="saveShopReference(shop)"
+                        class="btn btn-primary">Save</button>
                   </div>
                 </div>
                 <div class="table-responsive">
@@ -187,6 +190,7 @@ export default {
     return {
       order: null,
       loading: false,
+      shops: []
     };
   },
   beforeMount() {
@@ -203,6 +207,13 @@ export default {
         this.order = ordersResponse;
       }
       console.log('ordersResponse', ordersResponse)
+      const shops = await this.$store.dispatch('dataGate', {
+        tableName: 'shops',
+        operation: 'read',
+      });
+      if (shops && shops.data) {
+        this.shops = shops.data;
+      }
       this.loading = false;
     });
   },
@@ -211,7 +222,6 @@ export default {
   },
   methods: {
     getPaymentSum() {
-      console.log('this.order', this.order)
       let sum = 0;
       // Add shop totals
       for (let i = 0; i < this.order.sspudOrderReferences.length; i++) {
@@ -226,8 +236,23 @@ export default {
       sum += Number(this.order.wooCommerceOrder.shipping_total);
       return sum;
     },
-    saveShopReference() {
-
+    async saveShopReference(reference) {
+      console.log('reference', reference)
+      const clone = baseMixin.methods.clone(reference);
+      delete clone.products;
+      const response = await this.$store.dispatch("dataGate", {
+        primaryKey: "id",
+        entity: clone,
+        tableName: "orderShopReferences",
+        operation: "update",
+      });
+    },
+    getShopName(shopId) {
+      const shop = baseMixin.methods.getObjectsWhereKeysHaveValues(this.shops, {id: shopId}, true);
+      if (shop) {
+        return shop.name;
+      }
+      return "";
     }
   },
 };
