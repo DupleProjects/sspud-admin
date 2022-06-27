@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pa-5" style="height:100vh;">
     <h2>Product Dashboard</h2>
     <products-product-detail
         :type="'scraped'"

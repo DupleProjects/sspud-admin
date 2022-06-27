@@ -16,6 +16,7 @@
           <div v-on:click="sort('price','price')">Price <v-icon v-if="sortingOrders.priceSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.priceSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
           <div v-on:click="sort('subCategoryName','subCategoryId')">Subcategory <v-icon v-if="sortingOrders.subCategorySort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.subCategorySort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
           <div v-on:click="sort('brand','brandId')">Brand <v-icon v-if="sortingOrders.brandSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.brandSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
+          <div v-if="type === 'scraped'" v-on:click="sort('shopId',null)">Shop <v-icon v-if="sortingOrders.shopSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.shopSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
           <div v-if="type === 'staged' || type === 'published'" class="text-center" v-on:click="sort(null,'publish')">Published <v-icon v-if="sortingOrders.publishSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.publishSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
           <div v-if="type === 'staged' || type === 'published'" class="text-center" v-on:click="sort(null,'reviewRequired')">Review Required <v-icon v-if="sortingOrders.reviewSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.reviewSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
         </div>
@@ -55,6 +56,9 @@
             </div>
             <div v-if="type === 'scraped'" class="column-1">
               {{ product.brand }}
+            </div>
+            <div v-if="type === 'scraped'" class="column-1">
+              {{ getShop(product.shopId) }}
             </div>
             <div v-if="type === 'staged' || type === 'published'" class="column-1">
               {{getBrandName(product.brandId)}}
@@ -205,6 +209,7 @@ export default {
     deleteProductCallBack: null,
     sortCallback: null,
     sortCallbackStaged: null,
+    shops: []
   },
   data() {
     return {
@@ -443,6 +448,20 @@ export default {
 
       this.loading = false
 
+    },
+    getShop(id){
+
+      if(this.shops && this.shops != []){
+        const shopName = this.shops.find(shop => shop.id === id);
+
+        if(shopName){
+          return shopName.name;
+        }else{
+          return "Shop Not Found"
+        }        
+      }else{
+        return "Shop Not Found"
+      }
     }
   },
 };
