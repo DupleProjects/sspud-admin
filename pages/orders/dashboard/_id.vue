@@ -16,11 +16,12 @@
             color="blue"
             style="width:70px; height:70px"
         ></v-progress-circular>
+        <h1 v-if="order && !order.wooCommerceOrder">Could not load order</h1>
       </div>
     </div>
     <div v-if="order && !loading">
       <div class="confluence-page-layout">
-        <div class="confluence-left-column">
+        <div class="confluence-left-column" v-if="order.wooCommerceOrder">
           <div class="confluence-card p-2 mb-2">
             <p class="lead">
               Customer
@@ -52,7 +53,7 @@
             <p>{{order.wooCommerceOrder.shipping.postcode}}</p>
           </div>
         </div>
-        <div class="order-main-section">
+        <div class="order-main-section" v-if="order.wooCommerceOrder">
           <div class="order-detail-grid">
             <div class="confluence-card p-3">
               <p class="lead"><strong>Order</strong> #{{order.wooCommerceOrder.id}}</p>

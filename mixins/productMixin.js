@@ -87,6 +87,46 @@ export default {
                    isValidProduct: finalValidCheck,
                    productDetails: validProduct.productValidDetails,
             };
+        },
+        createProductLogForProperty(product, originalProduct, property, logs, isNumber) {
+            // Check if there is any difference between original and saved product
+            if (isNumber) {
+                product[property] = Number(product[property])
+            }
+            // Check each relevant property
+            if (product[property] !== originalProduct[property]) {
+                const newLog = {
+                    stagedProductId: product.id,
+                    property,
+                    fromValue: originalProduct[property],
+                    toValue: product[property]
+                }
+                logs.push(newLog);
+            }
+        },
+        createProductLogs(product, originalProduct) {
+            // Check if there is any difference between original and saved product
+            const logs = [];
+            // Check each relevant property
+            // Name
+            this.createProductLogForProperty(product, originalProduct, 'name', logs);
+            // Description
+            this.createProductLogForProperty(product, originalProduct, 'description', logs);
+            // Category id
+            this.createProductLogForProperty(product, originalProduct, 'categoryId', logs);
+            // Sub Category id
+            this.createProductLogForProperty(product, originalProduct, 'subCategoryId', logs);
+            // brand id
+            this.createProductLogForProperty(product, originalProduct, 'brandId', logs);
+            // shippingLength
+            this.createProductLogForProperty(product, originalProduct, 'shippingLength', logs, true);
+            // shippingHeight
+            this.createProductLogForProperty(product, originalProduct, 'shippingHeight', logs, true);
+            // shippingWidth
+            this.createProductLogForProperty(product, originalProduct, 'shippingWidth', logs, true);
+            // shippingWeight
+            this.createProductLogForProperty(product, originalProduct, 'shippingWeight', logs, true);
+            return logs;
         }
     }
 }

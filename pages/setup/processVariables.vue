@@ -15,9 +15,21 @@
         <div class="d-flex">
           <v-text-field
               class="mx-3"
-              label="Volumetric Weight Factor"
-              v-model="activeProcessVariables.volumetricWeightFactor"
-              :rules="[(v) => !!v || 'Volumetric Weight Factor is required']">
+              label="Foreign Tax"
+              v-model="activeProcessVariables.foreignTax"
+              :rules="[(v) => !!v || 'Foreign Tax is required']">
+          </v-text-field>
+          <v-text-field
+              class="mx-3"
+              label="Domestic Tax"
+              v-model="activeProcessVariables.domesticTax"
+              :rules="[(v) => !!v || 'Domestic Tax is required']">
+          </v-text-field>
+          <v-text-field
+              class="mx-3"
+              label="Foreign Conversion"
+              v-model="activeProcessVariables.foreignConversion"
+              :rules="[(v) => !!v || 'Foreign Conversion is required']">
           </v-text-field>
           <v-text-field
               class="mx-3"
