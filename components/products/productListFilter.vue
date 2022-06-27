@@ -202,17 +202,20 @@ export default {
           tableName: "mappedCategories",
           operation: "read",
         });
-        this.allCategories = categories.data;
-        categories.data.forEach((category) => {
-          if (!category.parentId) {
-            this.categories.push(category);
-          }
-          if (this.filter.categoryId) {
-            this.subCategories = baseMixin.methods.getObjectsWhereKeysHaveValues(
-                this.allCategories, {parentId: this.filter.categoryId}, false
-            );
-          }
-        });
+        if (categories && categories.success) {
+          this.allCategories = categories.data;
+          categories.data.forEach((category) => {
+            if (!category.parentId) {
+              this.categories.push(category);
+            }
+            if (this.filter.categoryId) {
+              this.subCategories = baseMixin.methods.getObjectsWhereKeysHaveValues(
+                  this.allCategories, {parentId: this.filter.categoryId}, false
+              );
+            }
+          });
+
+        }
         const brandsResponse = await this.$store.dispatch("dataGate", {
           tableName: "mappedBrands",
           operation: "read",

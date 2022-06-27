@@ -123,6 +123,7 @@
           <div class="row mb-5">
             <div class="col-3">
               <v-text-field
+                :type="'number'"
                 class="mt-5"
                 label="Shipping Length (mm)"
                 v-model="product.shippingLength"
@@ -133,6 +134,7 @@
             </div>
             <div class="col-3">
               <v-text-field
+                :type="'number'"
                 class="mt-5"
                 label="Shipping Width (mm)"
                 v-model="product.shippingWidth"
@@ -143,6 +145,7 @@
             </div>
             <div class="col-3">
               <v-text-field
+                :type="'number'"
                 class="mt-5"
                 label="Shipping Heigth (mm)"
                 v-model="product.shippingHeight"
@@ -153,6 +156,7 @@
             </div>
             <div class="col-3">
               <v-text-field
+                :type="'number'"
                 class="mt-5"
                 label="Shipping Weight (kg)"
                 v-model="product.shippingWeight"
@@ -376,6 +380,8 @@ export default {
       brands: [],
       category: null,
       subCategory: null,
+      // Used to compare at the end
+      originalProduct: null,
       // Snackbar
       snackbar: false,
       snackBarText: "My timeout is set to 2000.",
@@ -386,11 +392,12 @@ export default {
   mounted() {},
   beforeMount() {
     this.$nextTick(async function () {
+      // Clone the product to compare later
+      this.originalProduct = baseMixin.methods.clone(this.product);
       await this.getData();
       this.showDetail = true;
       this.loading = true;
-      if (this.type === "scraped") {
-      } else if (this.type === "staged") {
+      if (this.type === "staged") {
         const categories = await this.$store.dispatch("dataGate", {
           tableName: "mappedCategories",
           operation: "read",
@@ -426,49 +433,27 @@ export default {
     async saveProductInfo() {
       if (this.$refs.validProductForm.validate()) {
         this.saving = true;
-        if (this.type === "scraped") {
-          // Can't
-          // const response = await this.$store.dispatch("dataGate", {
-          //   primaryKey: "id",
-          //   entity: this.product,
-          //   tableName: "scrapedProducts",
-          //   operation: "update",
-          // });
-        } else if (this.type === "staged") {
-          const certificatesResponse = await this.$store.dispatch("dataGate", {
-            tableName: "stagedProductCertificates",
-            operation: "read",
-            whereCriteria: { stagedProductId: this.product.id },
-          });
-          if (certificatesResponse && certificatesResponse.data) {
-            this.certificates = certificatesResponse.data;
-          }
-
-          if (
-            productMixin.methods.canPublishProduct(
-              this.product,
-              this.certificates
-            ).isValidProduct == true
-          ) {
-            this.product.reviewRequired = false;
-          } else {
-            this.product.reviewRequired = true;
-          }
-
-          const response = await this.$store.dispatch("dataGate", {
-            primaryKey: "id",
-            entity: this.product,
-            tableName: "stagedProducts",
-            operation: "update",
-          });
-        } else if (this.type === "published") {
-          const response = await this.$store.dispatch("dataGate", {
-            primaryKey: "id",
-            entity: this.product,
-            tableName: "publishedProducts",
-            operation: "update",
-          });
+        const certificatesResponse = await this.$store.dispatch("dataGate", {
+          tableName: "stagedProductCertificates",
+          operation: "read",
+          whereCriteria: { stagedProductId: this.product.id },
+        });
+        if (certificatesResponse && certificatesResponse.data) {
+          this.certificates = certificatesResponse.data;
         }
+        // Check review required
+        const canPublish = productMixin.methods.canPublishProduct(
+            this.product,
+            this.certificates
+        );
+        this.product.reviewRequired = !canPublish.isValidProduct;
+        const response = await this.$store.dispatch("dataGate", {
+          primaryKey: "id",
+          entity: this.product,
+          tableName: "stagedProducts",
+          operation: "update",
+        });
+        await this.compareProduct();
         this.snackBarText = "Product Successfully Saved";
         this.snackbar = true;
         this.saving = false;
@@ -519,31 +504,42 @@ export default {
         certificateRequired || subCertificateRequired;
     },
     async getData() {
-      if (this.type === "scraped") {
-      } else if (this.type === "staged") {
-        const categories = await this.$store.dispatch("dataGate", {
-          tableName: "mappedCategories",
-          operation: "read",
+      const categories = await this.$store.dispatch("dataGate", {
+        tableName: "mappedCategories",
+        operation: "read",
+      });
+      if (this.product) {
+        this.allCategories = categories.data;
+        categories.data.forEach((category) => {
+          if (category.parentId) {
+            this.subCategories.push(category);
+          } else {
+            this.categories.push(category);
+          }
         });
-        if (this.product) {
-          this.allCategories = categories.data;
-          categories.data.forEach((category) => {
-            if (category.parentId) {
-              this.subCategories.push(category);
-            } else {
-              this.categories.push(category);
-            }
-          });
-        }
-        const brandsResponse = await this.$store.dispatch("dataGate", {
-          tableName: "mappedBrands",
-          operation: "read",
-        });
-        if (brandsResponse.hasOwnProperty("data")) {
-          this.brands = brandsResponse.data;
-        }
+      }
+      const brandsResponse = await this.$store.dispatch("dataGate", {
+        tableName: "mappedBrands",
+        operation: "read",
+      });
+      if (brandsResponse.hasOwnProperty("data")) {
+        this.brands = brandsResponse.data;
       }
     },
+    async compareProduct() {
+      // Check if there is any difference between original and saved product
+      const logs = productMixin.methods.createProductLogs(this.product, this.originalProduct);
+      console.log('logs', logs)
+      // Save the logs
+      for (let i = 0; i < logs.length; i++) {
+        const logCreateResponse = await this.$store.dispatch("dataGate", {
+          tableName: "stagedProductLogs",
+          operation: "create",
+          primaryKey: 'id',
+          entity: logs[i]
+        });
+      }
+    }
   },
 };
 </script>

@@ -10,10 +10,13 @@ export const entityDataStore = {
 
   mutations: {},
   actions: {
+    async setToken({ commit }, data) {
+      // axios.defaults.headers.common['Authorization'] = "Bearer " + data.token
+      headers.Authorization = 'Bearer ' + data.token
+    },
     async dataGate({ commit }, data) {
       const body = data;
       console.log("dataGate " + data.tableName + " request data", data);
-      headers.Authorization = 'Bearer ' + 'blabla'
       const response = await axios({
         method: "post",
         url: process.env.apiURL + "/dataGate",
@@ -38,6 +41,7 @@ export const entityDataStore = {
     },
     async callMiddlewareRoute({ commit }, data) {
       console.log(data.route, data);
+      headers.Authorization = 'Bearer ' + data.token
       if (data.hasOwnProperty("route")) {
         const response = await axios({
           method: "post",
