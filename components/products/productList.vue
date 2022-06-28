@@ -46,7 +46,7 @@
               </v-tooltip>
             </div>
             <div class="column-1">
-              R {{ product.price }}
+              P {{ product.price }}
             </div>
             <div v-if="type === 'scraped'" class="column-1">
               {{ product.subCategoryName }}

@@ -196,11 +196,29 @@
           <div class="col-3" style="height:100%" >
             <v-card class="mt-10" style="height:100%"  justify="center" align="center">
                 <div style="text-align:center;">
+                  
+          
                 <img
-                  :src="product.scrapedImageSrc"
+                  v-if="product.imageSrc && product.imageSrc != 'null' && product.imageSrc != ''"
+                  :src="product.imageSrc"
                   alt="image"
                   style="width: 100%; vertical-align:middle;"
                 />
+                <v-btn
+            color="primary"
+            rounded
+            dark
+            :loading="isSelecting"
+            @click="handleFileImport"
+            class="mt-5">
+          Upload Own Product Image
+        </v-btn>
+        <!-- Create a File Input that will be hidden but triggered with JavaScript -->
+        <input
+            ref="uploader"
+            class="d-none"
+            type="file"
+            @change="onNewFileUpload">
               </div>              
             </v-card>
           </div>
@@ -387,6 +405,9 @@ export default {
       snackBarText: "My timeout is set to 2000.",
       timeout: 2000,
       certificates: null,
+      newImage: null,
+      certificates: [],
+      isSelecting: false,
     };
   },
   mounted() {},
@@ -539,7 +560,52 @@ export default {
           entity: logs[i]
         });
       }
-    }
+    },
+    async onNewFileUpload(e) {
+      this.newImage = e.target.files[0];
+      const fileReader = new FileReader();
+      const self = this;
+      // Determine the name
+      let fileName = this.newImage.name.split('.')[0];
+      fileName = fileName.replaceAll(' ', '');
+      fileReader.onload = async function() {
+        console.log("result:",fileReader.result);
+        const response = await self.$store.dispatch("callMiddlewareRoute", {
+          route: "aws/uploadFile",
+          fileName,
+          contentType: 'image/jpeg',
+          file: fileReader.result,
+          folder: 'images'
+        });
+        if (response) {
+          // Save image
+          const newImageToSave = self.product
+          newImageToSave.imageSrc = response
+          
+          const updateScrapedProductResponse = await self.$store.dispatch("dataGate", {
+            primaryKey: "id",
+            tableName: "scrapedProducts",
+            operation: "update",
+            entity: newImageToSave
+          });
+          if (updateScrapedProductResponse && updateScrapedProductResponse.data) {
+            self.product = updateScrapedProductResponse.data
+          }
+        }
+      },
+      fileReader.readAsDataURL(this.newImage)
+    },
+    handleFileImport() {
+      this.isSelecting = true;
+
+      // After obtaining the focus when closing the FilePicker, return the button state to normal
+      window.addEventListener('focus', () => {
+        this.isSelecting = false
+      }, { once: true });
+
+      // Trigger click on the FileInput
+      this.$refs.uploader.click();
+    },
   },
 };
 </script>
