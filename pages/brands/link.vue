@@ -537,8 +537,6 @@ export default {
           }
       }
 
-      console.log("this.sortObject2",this.sortObject2);
-
 
       const brandResponse = await this.$store.dispatch("dataGate", {
         tableName: "mappedBrands",
@@ -569,12 +567,9 @@ export default {
         }
       })
 
-      // console.log(unlinkedBrands);
-
       for(let i = 0; i < unlinkedBrands.length; i++){
         var thisBrand = this.allMappedBrands.find( brand => brand.name == unlinkedBrands[i].name);
         if(!thisBrand){
-          // console.log("IF",unlinkedBrand);
           var createdBrand = {
             name: unlinkedBrands[i].name
           }
@@ -611,7 +606,6 @@ export default {
             }
           }
         }else{
-          // console.log("ELSE",unlinkedBrand);
           var linkBrand = {
               id: unlinkedBrands[i].id,
               name: unlinkedBrands[i].name,
@@ -634,7 +628,6 @@ export default {
               });
             }
         }
-        console.log("DONE: ",i);
       }      
 
     }

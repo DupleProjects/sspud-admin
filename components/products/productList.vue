@@ -356,9 +356,6 @@ export default {
             }
         }
 
-
-        console.log("PROD SORT",this.sortObject);
-
         await this.sortCallback(this.sortObject)
 
       }
@@ -439,9 +436,6 @@ export default {
               this.sortingOrders.reviewSort = 'ASC'
             }
         }
-
-
-        console.log("PROD SORT",this.sortObject);
 
         await this.sortCallbackStaged(this.sortObject)
       }

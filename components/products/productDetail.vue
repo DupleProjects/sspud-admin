@@ -550,7 +550,6 @@ export default {
     async compareProduct() {
       // Check if there is any difference between original and saved product
       const logs = productMixin.methods.createProductLogs(this.product, this.originalProduct);
-      console.log('logs', logs)
       // Save the logs
       for (let i = 0; i < logs.length; i++) {
         const logCreateResponse = await this.$store.dispatch("dataGate", {
@@ -569,7 +568,6 @@ export default {
       let fileName = this.newImage.name.split('.')[0];
       fileName = fileName.replaceAll(' ', '');
       fileReader.onload = async function() {
-        console.log("result:",fileReader.result);
         const response = await self.$store.dispatch("callMiddlewareRoute", {
           route: "aws/uploadFile",
           fileName,

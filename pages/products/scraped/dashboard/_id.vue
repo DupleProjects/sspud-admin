@@ -23,14 +23,12 @@ export default {
     this.$nextTick(async function () {
       this.loading = true;
       // Get the product for the product id
-      console.log('this.$router.currentRoute.params.id', this.$router.currentRoute.params.id)
       if (this.$router.currentRoute.params.id) {
         const productResponse = await this.$store.dispatch('dataGate', {
           tableName: 'scrapedProducts',
           operation: 'read',
           whereCriteria: {id: this.$router.currentRoute.params.id}
         });
-        console.log('productResponse', productResponse)
         // Check if valid response
         if (productResponse.data && productResponse.data.length > 0) {
           this.product = productResponse.data[0];
