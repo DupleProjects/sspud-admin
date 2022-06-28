@@ -1,5 +1,5 @@
 <template>
-  <div style="height:100%; overflow-y:auto; overflow-x:hidden;" >
+  <div style="height: 100%; overflow-y: auto; overflow-x: hidden">
     <div
       v-if="loading"
       class="d-flex flex-column justify-content-center loader"
@@ -17,8 +17,17 @@
       </div>
     </div>
     <div v-if="product && !loading">
-      <v-form ref="validProductForm" v-model="validProductForm" lazy-validation>
-        <div class="row"  style="height:75vh; overflow-y:auto; overflow-x:hidden;">
+      <!-- Staged Products -->
+      <v-form
+        ref="validProductForm"
+        v-if="type == 'staged'"
+        v-model="validProductForm"
+        lazy-validation
+      >
+        <div
+          class="row"
+          style="height: 75vh; overflow-y: auto; overflow-x: hidden"
+        >
           <!--Name-->
           <div class="col-12">
             <v-text-field
@@ -158,7 +167,7 @@
             </div>
           </div>
         </div>
-        <div style="background-color:white;" class="w-100 text-end">
+        <div style="background-color: white" class="w-100 text-end">
           <v-progress-circular
             v-if="saving"
             :size="20"
@@ -175,6 +184,192 @@
           </v-btn>
         </div>
       </v-form>
+      <!-- Scraped Products -->
+      <!-- <v-form ref="validProductForm"  v-model="validProductForm" lazy-validation> -->
+
+      <div
+        class="row"
+        v-if="type == 'scraped'"
+        style="height: 95vh; overflow-y: auto; overflow-x: hidden"
+      >
+        <div class="row mx-3">
+          <div class="col-3" style="height:100%" >
+            <v-card class="mt-10" style="height:100%"  justify="center" align="center">
+                <div style="text-align:center;">
+                  
+          
+                <img
+                  v-if="product.imageSrc && product.imageSrc != 'null' && product.imageSrc != ''"
+                  :src="product.imageSrc"
+                  alt="image"
+                  style="width: 100%; vertical-align:middle;"
+                />
+                <v-btn
+            color="primary"
+            rounded
+            dark
+            :loading="isSelecting"
+            @click="handleFileImport"
+            class="mt-5">
+          Upload Own Product Image
+        </v-btn>
+        <!-- Create a File Input that will be hidden but triggered with JavaScript -->
+        <input
+            ref="uploader"
+            class="d-none"
+            type="file"
+            @change="onNewFileUpload">
+              </div>              
+            </v-card>
+          </div>
+          <div class="col-9" style="height:100%">
+            <v-card class="mt-10" style="height:100%">
+              <v-card-title> Basic Details </v-card-title>
+              <v-card-text>
+                <!--Name-->
+                <div class="col-12">
+                  <v-text-field
+                    prepend-icon="mdi-tag-text-outline"
+                    class="mb-0"
+                    label="Name"
+                    color="black"
+                    v-model="product.name"
+                    :rules="[(v) => !!v || 'A name is required']"
+                    readonly
+                    style="color: black !important"
+                  >
+                  </v-text-field>
+                </div>
+                <!--Description-->
+                <div v-if="product.description" class="col-12">
+                  <v-textarea
+                    rows="2"
+                    class="mb-0"
+                    label="Description"
+                    v-model="product.description"
+                    :rules="[(v) => !!v || 'A description is required']"
+                    readonly
+                  ></v-textarea>
+                </div>
+                <!-- Price -->
+                <div class="col-6">
+                  <!--Price-->
+                  <v-text-field
+                    label="Price"
+                    v-model="product.price"
+                    prepend-icon="mdi-alpha-p-box-outline"
+                    :rules="[(v) => !!v || 'A price is required']"
+                    readonly
+                    class="mt-n5"
+                  ></v-text-field>
+                </div>
+              </v-card-text>
+            </v-card>
+          </div>
+        </div>
+
+        <div class="row mt-13 mx-3">
+          <div class="col-12">
+            <v-card>
+              <v-card-title> Brand & Categories </v-card-title>
+              <v-card-text>
+                <div class="row mb-5 ml-3">
+                  <div class="col-3">
+                    <!--Brand-->
+                    Brand
+                    <h4 style="color: green">{{ product.brand }}</h4>
+                  </div>
+                  <div class="col-3">
+                    <!--Category-->
+                    Category
+                    <h4 style="color: purple">{{ product.categoryName }}</h4>
+                  </div>
+                  <div class="col-3">
+                    <!--Sub Category-->
+                    Sub Category
+                    <h4 style="color: purple">{{ product.subCategoryName }}</h4>
+                  </div>
+                  <div class="col-3">
+                    <!--Sub-Subcategory-->
+                    Sub-Subcategory
+                    <h4 style="color: purple">
+                      {{ product.subSubCategoryName }}
+                    </h4>
+                  </div>
+                </div>
+              </v-card-text>
+            </v-card>
+          </div>
+        </div>
+
+        <div class="row mb-5 mx-3">
+          <div class="col-12">
+            <v-card>
+              <v-card-title>Shipping Dimensions</v-card-title>
+              <v-card-text>
+                <div class="row mb-5">
+                  <div class="col-3">
+                    <v-text-field
+                      class="mt-5"
+                      label="Shipping Length (mm)"
+                      v-model="product.shippingLength"
+                      prepend-icon="mdi-ruler"
+                      :rules="[(v) => !!v || 'Shipping Length is required']"
+                      readonly
+                    ></v-text-field>
+                  </div>
+                  <div class="col-3">
+                    <v-text-field
+                      class="mt-5"
+                      label="Shipping Width (mm)"
+                      v-model="product.shippingWidth"
+                      prepend-icon="mdi-ruler"
+                      :rules="[(v) => !!v || 'Shipping Width is required']"
+                      readonly
+                    ></v-text-field>
+                  </div>
+                  <div class="col-3">
+                    <v-text-field
+                      class="mt-5"
+                      label="Shipping Heigth (mm)"
+                      v-model="product.shippingHeight"
+                      prepend-icon="mdi-ruler"
+                      :rules="[(v) => !!v || 'Shipping Heigth is required']"
+                      readonly
+                    ></v-text-field>
+                  </div>
+                  <div class="col-3">
+                    <v-text-field
+                      class="mt-5"
+                      label="Shipping Weight (kg)"
+                      v-model="product.shippingWeight"
+                      prepend-icon="mdi-weight-kilogram"
+                      :rules="[(v) => !!v || 'Shipping Weight is required']"
+                      readonly
+                    ></v-text-field>
+                  </div>
+                </div>
+              </v-card-text>
+            </v-card>
+          </div>
+        </div>
+      </div>
+      <!-- <div style="background-color: white" class="w-100 text-end">
+        <v-progress-circular
+          v-if="saving"
+          :size="20"
+          indeterminate
+          color="primary"
+        ></v-progress-circular>
+        <v-btn
+          v-if="type === 'staged' && !saving"
+          color="green"
+          @click="saveProductInfo()"
+          :disabled="!edit"
+        >
+          <span style="color: white">Save Product Information</span>
+        </v-btn>
+      </div> -->
     </div>
     <v-snackbar v-model="snackbar" outlined color="success" :timeout="timeout">
       {{ snackBarText }}
@@ -210,6 +405,9 @@ export default {
       snackBarText: "My timeout is set to 2000.",
       timeout: 2000,
       certificates: null,
+      newImage: null,
+      certificates: [],
+      isSelecting: false,
     };
   },
   mounted() {},
@@ -352,7 +550,6 @@ export default {
     async compareProduct() {
       // Check if there is any difference between original and saved product
       const logs = productMixin.methods.createProductLogs(this.product, this.originalProduct);
-      console.log('logs', logs)
       // Save the logs
       for (let i = 0; i < logs.length; i++) {
         const logCreateResponse = await this.$store.dispatch("dataGate", {
@@ -362,7 +559,51 @@ export default {
           entity: logs[i]
         });
       }
-    }
+    },
+    async onNewFileUpload(e) {
+      this.newImage = e.target.files[0];
+      const fileReader = new FileReader();
+      const self = this;
+      // Determine the name
+      let fileName = this.newImage.name.split('.')[0];
+      fileName = fileName.replaceAll(' ', '');
+      fileReader.onload = async function() {
+        const response = await self.$store.dispatch("callMiddlewareRoute", {
+          route: "aws/uploadFile",
+          fileName,
+          contentType: 'image/jpeg',
+          file: fileReader.result,
+          folder: 'images'
+        });
+        if (response) {
+          // Save image
+          const newImageToSave = self.product
+          newImageToSave.imageSrc = response
+          
+          const updateScrapedProductResponse = await self.$store.dispatch("dataGate", {
+            primaryKey: "id",
+            tableName: "scrapedProducts",
+            operation: "update",
+            entity: newImageToSave
+          });
+          if (updateScrapedProductResponse && updateScrapedProductResponse.data) {
+            self.product = updateScrapedProductResponse.data
+          }
+        }
+      },
+      fileReader.readAsDataURL(this.newImage)
+    },
+    handleFileImport() {
+      this.isSelecting = true;
+
+      // After obtaining the focus when closing the FilePicker, return the button state to normal
+      window.addEventListener('focus', () => {
+        this.isSelecting = false
+      }, { once: true });
+
+      // Trigger click on the FileInput
+      this.$refs.uploader.click();
+    },
   },
 };
 </script>

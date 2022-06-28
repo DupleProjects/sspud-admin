@@ -17,7 +17,7 @@
     <div class="row">
       <div class="col">
         <div class="row">
-          <div class="col-5">
+          <div class="col-4">
             <h3>Scraped Brands</h3>
           </div>
           <div class="col-3">
@@ -38,8 +38,17 @@
               v-model="shop"
             ></v-select>
           </div>
+        <!-- <div class="col-2">
+          <v-btn
+            color="red"
+            v-on:click="linkAllBrands()"
+          >
+            Link All
+          </v-btn>
+        </div> -->
         </div>
         <export-modal :exportTableName="'scrapedBrands'" :exportSheetName="'Scraped Brands'" :products="scarapedBrands" />
+            
 
         <div class="fancy-table">
           <table>
@@ -528,8 +537,6 @@ export default {
           }
       }
 
-      console.log("this.sortObject2",this.sortObject2);
-
 
       const brandResponse = await this.$store.dispatch("dataGate", {
         tableName: "mappedBrands",
@@ -549,6 +556,80 @@ export default {
 
       this.loading = false;
       
+    },
+    async linkAllBrands(){
+
+      var unlinkedBrands = []
+
+      this.scarapedBrands.forEach(scrapedBrand => {
+        if(!scrapedBrand.mappedBrandId){
+          unlinkedBrands.push(scrapedBrand);
+        }
+      })
+
+      for(let i = 0; i < unlinkedBrands.length; i++){
+        var thisBrand = this.allMappedBrands.find( brand => brand.name == unlinkedBrands[i].name);
+        if(!thisBrand){
+          var createdBrand = {
+            name: unlinkedBrands[i].name
+          }
+          // Create new mapped brand
+          const createBrandResponse = await this.$store.dispatch("dataGate", {
+            primaryKey: "id",
+            entity: createdBrand,
+            tableName: "mappedBrands",
+            operation: "create",
+          });
+
+          // If valid response is received after creating the new mapped brand
+          if(createBrandResponse.response && createBrandResponse.success){
+            var linkBrand = {
+              id: unlinkedBrands[i].id,
+              name: unlinkedBrands[i].name,
+              mappedBrandId: createBrandResponse.response.id,
+              shopId: unlinkedBrands[i].shopId
+            } 
+            // Link the current scraped brand with the new mapped brand
+            const linkBrandResponse = await this.$store.dispatch("dataGate", {
+              primaryKey: "id",
+              entity: linkBrand,
+              tableName: "scrapedBrands",
+              operation: "update",
+            });
+            // If valid response after linking the scraped brand with the mapped brand
+            if (linkBrandResponse && linkBrandResponse.success) {
+              // Link staged products
+              const stagedProductBrandLinkResponse = await this.$store.dispatch("callMiddlewareRoute", {
+                brand: linkBrand,
+                route: 'brands/linkBrand'
+              });
+            }
+          }
+        }else{
+          var linkBrand = {
+              id: unlinkedBrands[i].id,
+              name: unlinkedBrands[i].name,
+              mappedBrandId: thisBrand.id,
+              shopId: unlinkedBrands[i].shopId
+            } 
+            // Link the current scraped brand with the new mapped brand
+            const linkBrandResponse = await this.$store.dispatch("dataGate", {
+              primaryKey: "id",
+              entity: linkBrand,
+              tableName: "scrapedBrands",
+              operation: "update",
+            });
+            // If valid response after linking the scraped brand with the mapped brand
+            if (linkBrandResponse && linkBrandResponse.success) {
+              // Link staged products
+              const stagedProductBrandLinkResponse = await this.$store.dispatch("callMiddlewareRoute", {
+                brand: linkBrand,
+                route: 'brands/linkBrand'
+              });
+            }
+        }
+      }      
+
     }
   },
 };

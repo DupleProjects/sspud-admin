@@ -38,7 +38,7 @@
         :type="'scraped'" 
       />
       <!--Table-->
-      <products-product-list :type="'scraped'" :products="products" :canDelete="false" :sortCallback="sortCallback" />
+      <products-product-list :type="'scraped'" :products="products" :canDelete="false" :sortCallback="sortCallback"  :shops="allShops"  />
       <!--Pagination-->
       <template>
         <div class="text-end">
@@ -73,6 +73,7 @@ export default {
       sortCriteria: {},
       filter: {},
       criteria: {},
+      allShops: []
     }
   },
   watch: {
@@ -91,6 +92,15 @@ export default {
       const pageInfo = breadcrumbMixin.methods.getPage('scrapedList')
       this.page = pageInfo.page
       await this.loadProducts()
+
+      const shopsReturn = await this.$store.dispatch('dataGate', {
+        tableName: 'shops',
+        operation: 'read',
+      });
+
+      if(shopsReturn.data){
+        this.allShops = shopsReturn.data
+      }
     })
   },
   unmounted() {

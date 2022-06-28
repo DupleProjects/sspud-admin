@@ -52,7 +52,8 @@
             ref="uploader"
             class="d-none"
             type="file"
-            @change="onNewFileUpload">
+            @change="onNewFileUpload"
+            accept=".pdf">
       </div>
       <v-card-text>
       <hr class="mt-n5">
