@@ -62,67 +62,22 @@
                   v-model="order.sspudOrder.status"
                   :items="['Awaiting Payment', 'Payment Received', 'Queued', 'Order Placed At Providers', 'Review Required', 'Processing At TH', 'In Transit To Depot', 'At Depot', 'n Transit To Customer', 'Order Complete']"
                   label="Order Status"
-                  class="mb-2"
+                  class="my-5"
+                  :hide-details="true"
+                  dense
+              ></v-select>
+              <v-select
+                  v-model="order.sspudOrder.paymentStatus"
+                  :items="['Awaiting Payment', 'Payment Received', 'Payment Cancelled']"
+                  label="Payment Status"
+                  class="my-5"
                   :hide-details="true"
                   dense
               ></v-select>
               <p><strong>Customer Note</strong> {{order.wooCommerceOrder.customer_note}}</p>
             </div>
             <div v-for="(shop, index) of order.sspudOrderReferences" :key="index" class="order-shop-reference">
-              <div class="confluence-card p-3">
-                <h3>{{getShopName(shop.shopId)}}</h3>
-                <div class="d-flex">
-                  <v-text-field
-                      style="flex: 1"
-                      class="category-fields px-2"
-                      prepend-icon="mdi-card-account-details-outline"
-                      v-model="shop.reference"
-                      hint="The order reference of the shop"
-                      label="Shop Reference Number"
-                  ></v-text-field>
-                  <v-select
-                      style="flex: 1"
-                      class="px-2"
-                      v-model="shop.status"
-                      :items="['Queued', 'Order Placed', 'Review Required']"
-                      prepend-icon="mdi-card-account-details-outline"
-                      label="Order Status"
-                      hint="The status of the order at the shop"
-                  ></v-select>
-                  <div>
-                    <button
-                        @click="saveShopReference(shop)"
-                        class="btn btn-primary">Save</button>
-                  </div>
-                </div>
-                <div class="table-responsive">
-                  <table class="table">
-                    <thead>
-                    <tr>
-                      <th scope="col">Product</th>
-                      <th scope="col">Quantity</th>
-                      <th scope="col">Price</th>
-                    </tr>
-                    </thead>
-                    <tbody class="table-group-divider">
-                    <tr
-                        v-for="(product, index) of shop.products" :key="index"
-                        class="order-list-item">
-                      <th scope="row">{{product.name}}</th>
-                      <td>{{product.quantity}}</td>
-                      <td>P {{product.price * product.quantity}}</td>
-                    </tr>
-                    </tbody>
-                    <tfoot>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td>P {{shop.total}}</td>
-                    </tr>
-                    </tfoot>
-                  </table>
-                </div>
-              </div>
+              <orders-shop-order-component :shopOrder="shop" :shops="shops" :callBack="shopOrderUpdateCallBack" />
             </div>
             <div class="confluence-card p-3">
               <p class="lead">Payment Breakdown</p>
@@ -185,6 +140,8 @@
 <script>
 import baseMixin from "@/mixins/baseMixin.js";
 export default {
+  components: {},
+
   mixins: [baseMixin],
   data() {
     return {
@@ -236,23 +193,30 @@ export default {
       sum += Number(this.order.wooCommerceOrder.shipping_total);
       return sum;
     },
-    async saveShopReference(reference) {
-      console.log('reference', reference)
-      const clone = baseMixin.methods.clone(reference);
-      delete clone.products;
-      const response = await this.$store.dispatch("dataGate", {
-        primaryKey: "id",
-        entity: clone,
-        tableName: "orderShopReferences",
-        operation: "update",
-      });
-    },
-    getShopName(shopId) {
-      const shop = baseMixin.methods.getObjectsWhereKeysHaveValues(this.shops, {id: shopId}, true);
-      if (shop) {
-        return shop.name;
+    async shopOrderUpdateCallBack(shopOrder) {
+      // Check if the status is order placed.
+      if (shopOrder.status === 'Order Placed') {
+        // If it is then check the other shop orders and if all are
+        // 'order placed' then the overall order should be set to order placed
+        let ordersPlaced = true;
+        for (let i = 0; i < this.order.sspudOrderReferences.length; i++) {
+          if (this.order.sspudOrderReferences[i].status !== 'Order Placed') {
+            ordersPlaced = false;
+            break;
+          }
+        }
+        // Now check if the order status is not something that should not be reverted
+        if (ordersPlaced &&
+            (this.order.sspudOrder.status === 'Review Required' || this.order.sspudOrder.status === 'Queued')) {
+          this.order.sspudOrder.status = 'Order Placed At Providers';
+          const response = await this.$store.dispatch("dataGate", {
+            primaryKey: "id",
+            entity: {id: this.order.sspudOrder.id, status: 'Order Placed At Providers'},
+            tableName: "orders",
+            operation: "update",
+          });
+        }
       }
-      return "";
     }
   },
 };
