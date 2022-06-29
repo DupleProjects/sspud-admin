@@ -1,8 +1,8 @@
 <template>
-  <div class="p-3" style="border-radius: 20px !important;">
+  <div class="p-3" style="border-radius: 20px !important;height:75vh; overflow-y:auto; overflow-x: hidden;">
     <div class="fancy-table">
       <table>
-        <thead class="py-10">
+        <thead class="py-10"  style="position:sticky; top: 0; z-index: 1;">
         <tr class="fancy-heading-row">
           <th class="info-column" scope="col" v-on:click="sort('name')">Name <v-icon v-if="nameSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="nameSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
           <th class="info-column" scope="col" v-on:click="sort('surname')">Surname <v-icon v-if="surnameSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="surnameSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>

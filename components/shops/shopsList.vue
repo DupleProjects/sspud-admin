@@ -1,8 +1,8 @@
 <template>
-  <div class="p-3" style="border-radius: 20px !important;">
+  <div class="p-3" style="border-radius: 20px !important;height:75vh; overflow-y:auto; overflow-x: hidden;">
     <div class="fancy-table">
       <table>
-        <thead class="py-10">
+        <thead class="py-10" style="position:sticky; top: 0; z-index: 1;">
         <tr class="fancy-heading-row">
           <th class="info-column" scope="col" v-on:click="sort('name')">Name</th>
           <th class="info-column" scope="col" v-on:click="sort('active')">Status</th>

@@ -38,7 +38,7 @@
         :type="'scraped'" 
       />
       <!--Table-->
-      <products-product-list :type="'scraped'" :products="products" :canDelete="false" :sortCallback="sortCallback"  :shops="allShops"  />
+      <products-product-list :type="'scraped'" :products="products" :canDelete="false" :sortCallback="sortCallback"  :shops="allShops" :tableStyle="'height:60vh; overflow-y:auto; overflow-x: hidden;'" />
       <!--Pagination-->
       <template>
         <div class="text-end">

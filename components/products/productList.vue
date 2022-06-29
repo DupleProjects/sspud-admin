@@ -8,8 +8,8 @@
           ></v-progress-circular>
           <h1>Sorting Products</h1>
     </v-overlay>
-    <div class="fancy-table">
-      <div class="fancy-heading-row">
+    <div class="fancy-table" :style="tableStyle">
+      <div class="fancy-heading-row" style="position:sticky; top: 0; z-index: 1;">
         <div  v-bind:class="{ 'inner-fancy-heading-row': type === 'scraped', 'inner-fancy-heading-row-staged': type === 'staged' || type === 'published'}">
           <div v-on:click="sort('name','name')">Name <v-icon v-if="sortingOrders.nameSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.nameSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
           <div v-if="type === 'staged' || type === 'published'" v-on:click="sort('hasStock','hasStock')">Has Stock <v-icon v-if="sortingOrders.hasStockSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.hasStockSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
@@ -209,7 +209,8 @@ export default {
     deleteProductCallBack: null,
     sortCallback: null,
     sortCallbackStaged: null,
-    shops: []
+    shops: [],
+    tableStyle: ''
   },
   data() {
     return {
