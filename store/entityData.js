@@ -41,7 +41,7 @@ export const entityDataStore = {
     },
     async callMiddlewareRoute({ commit }, data) {
       console.log(data.route, data);
-      headers.Authorization = 'Bearer ' + data.token
+      // headers.Authorization = 'Bearer ' + data.token
       if (data.hasOwnProperty("route")) {
         const response = await axios({
           method: "post",

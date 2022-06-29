@@ -263,9 +263,11 @@ export default {
   },
   beforeMount() {
     this.$nextTick(async function () {
-      await this.$store.dispatch("setToken", {
-        token: this.$store.state.auth.user.token
-      });
+      if (this.$store.state.auth.user) {
+        await this.$store.dispatch("setToken", {
+          token: this.$store.state.auth.user.token
+        });
+      }
     });
   },
   computed: {
