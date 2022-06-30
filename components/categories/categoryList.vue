@@ -1,8 +1,8 @@
 <template>
-  <div class="p-3" style="border-radius: 20px !important;">
+  <div class="pb-3 px-3" style="border-radius: 20px !important;  height:80vh; overflow-y:auto; overflow-x: hidden;">
     <div class="fancy-table" :style="tableStyle">
-      <table class="table" id="sortTable">
-        <thead class="py-10">
+      <table  id="sortTable" style="border-collapse: collapse; width: 100%;">
+        <thead class="py-10" style="position:sticky; top: 0; z-index: 1;">
           <tr class="fancy-heading-row">
             <th v-on:click="sort('name')">Name <v-icon v-if="nameSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="nameSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
             <th v-on:click="sort('parentId')">Parent <v-icon v-if="parentSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="parentSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
@@ -201,6 +201,7 @@ export default {
 
 .fancy-heading-row {
   position: relative;
+  /* position:sticky; top: 0; z-index: 1; */
   background-color: #5268fa;
   border-radius: 0px;
   box-shadow: none;

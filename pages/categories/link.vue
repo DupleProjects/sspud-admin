@@ -19,10 +19,10 @@
           ></v-progress-circular>
           <h1>Sorting Categories</h1>
     </v-overlay>
-    <div class="p-3" style="border-radius: 20px !important">
+    <div class="p-3" style="border-radius: 20px !important; height:80vh; overflow-y:auto; overflow-x: hidden;">
       <div class="fancy-table">
         <table>
-          <thead>
+          <thead style="position:sticky; top: 0; z-index: 1;">
           <tr class="fancy-heading-row">
             <th v-on:click="sort('name')">Name <v-icon v-if="nameSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="nameSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
             <th v-on:click="sort('shopId')">Shop <v-icon v-if="shopSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="shopSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>

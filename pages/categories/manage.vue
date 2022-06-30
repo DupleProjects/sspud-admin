@@ -46,7 +46,7 @@ export default {
       loading: false,
       page: 1,
       search: '',
-      numberPerPage: 20,
+      numberPerPage: 15,
       categoryCount: 0,
       categories: [],
       filteredCategories: [],

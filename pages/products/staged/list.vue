@@ -47,6 +47,7 @@
         :allBrands="allBrands"
         :deleteProductCallBack="deleteProductCallBack"
         :sortCallbackStaged="sortCallback"
+        :tableStyle="'height:60vh; overflow-y:auto; overflow-x: hidden;'"
       />
       <!--Pagination-->
       <template>
