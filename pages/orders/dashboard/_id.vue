@@ -57,12 +57,19 @@
           <div class="order-detail-grid">
             <div class="confluence-card p-3">
               <p class="lead"><strong>Order</strong> #{{order.wooCommerceOrder.id}}</p>
+              <v-alert
+                  v-if="order.sspudOrder.status === 'Review Required'"
+                  dense
+                  text
+                  type="error">
+                {{order.sspudOrder.reviewReason}}
+              </v-alert>
               <hr class="mt-0">
               <v-select
                   v-model="order.sspudOrder.status"
                   :items="['Awaiting Payment', 'Payment Received', 'Queued', 'Order Placed At Providers', 'Review Required', 'Processing At TH', 'In Transit To Depot', 'At Depot', 'n Transit To Customer', 'Order Complete']"
                   label="Order Status"
-                  class="my-5"
+                  class="my-8"
                   :hide-details="true"
                   dense
               ></v-select>
@@ -70,7 +77,7 @@
                   v-model="order.sspudOrder.paymentStatus"
                   :items="['Awaiting Payment', 'Payment Received', 'Payment Cancelled']"
                   label="Payment Status"
-                  class="my-5"
+                  class="my-8"
                   :hide-details="true"
                   dense
               ></v-select>

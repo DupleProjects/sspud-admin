@@ -17,7 +17,7 @@
     <div class="row">
       <div class="col">
         <div class="row">
-          <div class="col-4">
+          <div class="col-5">
             <h3>Scraped Brands</h3>
           </div>
           <div class="col-3">
@@ -27,7 +27,7 @@
               style="padding-top: 0px"
             ></v-text-field>
           </div>
-          <div class="col-3">
+          <div class="col-2">
             <v-select
               style="padding-top: 0px"
               label="Shop"
@@ -38,6 +38,9 @@
               v-model="shop"
             ></v-select>
           </div>
+          <div class="col-2">
+            <export-modal :exportTableName="'scrapedBrands'" :exportSheetName="'Scraped Brands'" :products="scarapedBrands" />
+          </div>
         <!-- <div class="col-2">
           <v-btn
             color="red"
@@ -47,12 +50,11 @@
           </v-btn>
         </div> -->
         </div>
-        <export-modal :exportTableName="'scrapedBrands'" :exportSheetName="'Scraped Brands'" :products="scarapedBrands" />
             
 
-        <div class="fancy-table">
+        <div class="fancy-table"  style="height:67vh; overflow-y:auto; overflow-x: hidden;">
           <table>
-            <thead>
+            <thead style="position:sticky; top: 0; z-index: 1;">
               <tr class="fancy-heading-row">
                 <th scope="col" v-on:click="sortScraped('name')">Name <v-icon v-if="nameSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="nameSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
                 <th scope="col" v-on:click="sortScraped('mappedBrandId')">Link <v-icon v-if="linkedSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="linkedSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
@@ -114,11 +116,14 @@
               v-model="searchBrands"
             ></v-text-field>
           </div>
-        </div>
+          <div class="col-2">
         <export-modal :exportTableName="'mappedBrands'" :exportSheetName="'BambaZonke Brands'" :products="brands" />
-        <div class="fancy-table">
+
+          </div>
+        </div>
+        <div class="fancy-table" style="height:67vh; overflow-y:auto; overflow-x: hidden;">
           <table>
-            <thead>
+            <thead style="position:sticky; top: 0; z-index: 1;">
               <tr class="fancy-heading-row">
                 <th scope="col" v-on:click="sort('name')">Name <v-icon v-if="nameSort2 == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="nameSort2 == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
                 <th scope="col" v-on:click="sort('publish')">Published <v-icon v-if="publishSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="publishSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>

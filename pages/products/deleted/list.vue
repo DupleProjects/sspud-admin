@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pa-3">
     <client-only>
       <v-overlay
         style="height: 80vh; margin-top: -60px"
@@ -30,6 +30,7 @@
         :allBrands="allBrands"
         :deleteProductCallBack="deleteProductCallBack"
         :sortCallbackStaged="sortCallback"
+        :tableStyle="'height:75vh; overflow-y:auto; overflow-x: hidden;'"
       />
       <!--Pagination-->
       <template>

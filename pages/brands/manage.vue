@@ -29,9 +29,9 @@
       </div>
     </div>
     <!--Table-->
-    <div class="fancy-table">
+    <div class="fancy-table"  style="height:75vh; overflow-y:auto; overflow-x: hidden;">
       <table>
-        <thead>
+        <thead style="position:sticky; top: 0; z-index: 1;">
           <tr class="fancy-heading-row">
             <th v-on:click="sort('name')">Name <v-icon v-if="nameSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="nameSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
             <th v-on:click="sort('publish')">Published <v-icon v-if="publishSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="publishSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>

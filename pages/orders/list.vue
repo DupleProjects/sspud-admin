@@ -30,10 +30,10 @@
     
     </div>
     <!--Table-->
-    <div v-if="!loading" class="p-3" style="border-radius: 20px !important;">
+    <div v-if="!loading" class="p-3" style="border-radius: 20px !important;height:80vh; overflow-y:auto; overflow-x: hidden;">
     <div class="fancy-table">
       <table>
-          <thead>
+          <thead style="position:sticky; top: 0; z-index: 1;">
           <tr class="fancy-heading-row">
             <th scope="col" v-on:click="sort('wooCommerceId')">Order ID <v-icon v-if="wooIdSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="wooIdSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>
             <th scope="col" v-on:click="sort('customerName')">Customer <v-icon v-if="customerSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="customerSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></th>

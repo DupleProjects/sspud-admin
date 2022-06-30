@@ -80,7 +80,6 @@ export default {
     },
     async filterSubcategories(category){
       this.filteredSubcategories = [];
-      console.log("⚡👉🔥👇",category);
 
       const subcategoriesResponse = await this.$store.dispatch('dataGate', {
         tableName: 'mappedCategories',

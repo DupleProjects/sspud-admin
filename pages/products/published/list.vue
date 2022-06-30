@@ -42,7 +42,8 @@
           :allCategories="allCategories"
           :allBrands="allBrands"
           :products="products"
-          :sortCallbackStaged="sortCallback" />
+          :sortCallbackStaged="sortCallback"
+          :tableStyle="'height:60vh; overflow-y:auto; overflow-x: hidden;'" />
       <!--Pagination-->
       <template>
         <div class="text-end">

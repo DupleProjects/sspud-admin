@@ -4,7 +4,23 @@
       <div class="col-3" v-if="product">
         <v-card class="mt-12"   style="height:85vh;">
           <div class="m-2 fadeInUp animated animatedFadeInUp">
-          <img class="card-img-top" :src="product.imageSrc" alt="image" style="width:100%; text-align:auto">
+          <img v-if="product.imageSrc && product.imageSrc != 'null'" class="card-img-top" :src="product.imageSrc" alt="image" style="width:100%; text-align:auto">
+          <v-btn
+            color="primary"
+            rounded
+            dark
+            :loading="isSelecting"
+            @click="handleFileImport"
+            class="mt-5"
+            style="margin-left:auto; margin-right:auto;">
+          Upload Product Image
+        </v-btn>
+        <!-- Create a File Input that will be hidden but triggered with JavaScript -->
+        <input
+            ref="uploader"
+            class="d-none"
+            type="file"
+            @change="onNewFileUpload">
           <div class="card-body">
             <v-card class="mt-2">
               <v-alert
@@ -108,6 +124,9 @@ export default {
       ],
       product: null,
       loading: false,
+      isSelecting: false,
+      newImage: null,
+      certificates: [],
     };
   },
   beforeMount() {
@@ -136,7 +155,53 @@ export default {
   unmounted() {
     this.$nextTick(async function () {});
   },
-  methods: {},
+  methods: {
+    async onNewFileUpload(e) {
+      this.newImage = e.target.files[0];
+      const fileReader = new FileReader();
+      const self = this;
+      // Determine the name
+      let fileName = this.newImage.name.split('.')[0];
+      fileName = fileName.replaceAll(' ', '');
+      fileReader.onload = async function() {
+        console.log("result:",fileReader.result);
+        const response = await self.$store.dispatch("callMiddlewareRoute", {
+          route: "aws/uploadFile",
+          fileName,
+          contentType: 'image/jpeg',
+          file: fileReader.result,
+          folder: 'images'
+        });
+        if (response) {
+          // Save image
+          const newImageToSave = self.product
+          newImageToSave.imageSrc = response
+          
+          const updateStagedProductResponse = await self.$store.dispatch("dataGate", {
+            primaryKey: "id",
+            tableName: "stagedProducts",
+            operation: "update",
+            entity: newImageToSave
+          });
+          if (updateStagedProductResponse && updateStagedProductResponse.data) {
+            self.product = updateStagedProductResponse.data
+          }
+        }
+      },
+      fileReader.readAsDataURL(this.newImage)
+    },
+    handleFileImport() {
+      this.isSelecting = true;
+
+      // After obtaining the focus when closing the FilePicker, return the button state to normal
+      window.addEventListener('focus', () => {
+        this.isSelecting = false
+      }, { once: true });
+
+      // Trigger click on the FileInput
+      this.$refs.uploader.click();
+    },
+  },
 };
 </script>
 

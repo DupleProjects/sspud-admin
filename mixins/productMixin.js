@@ -95,11 +95,19 @@ export default {
             }
             // Check each relevant property
             if (product[property] !== originalProduct[property]) {
+                var thisFromValue = ''
+                if(originalProduct[property] != null){
+                    thisFromValue = originalProduct[property];
+                }
+                var thisToValue = ''
+                if(product[property] != null){
+                    thisToValue = product[property];
+                }
                 const newLog = {
                     stagedProductId: product.id,
                     property,
-                    fromValue: originalProduct[property],
-                    toValue: product[property]
+                    fromValue: thisFromValue,
+                    toValue: thisToValue
                 }
                 logs.push(newLog);
             }
