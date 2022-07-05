@@ -38,7 +38,9 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(processLog, index) of processLogs" :key="index">
+            <tr
+                v-on:click="goToProcessDashboard(processLog)"
+                v-for="(processLog, index) of processLogs" :key="index">
               <td>{{ processLog.name }}</td>
               <td>{{ (processLog.duration / 1000 / 60).toFixed(2) }} minutes</td>
               <td> <base-date :date="processLog.dateTime"/></td>
@@ -107,7 +109,16 @@ export default {
       this.processLogs = await this.$store.dispatch("callMiddlewareRoute", {
         route: 'processLogs/latestProcessLogs',
       });
-    }
+    },
+    goToProcessDashboard(processLog) {
+      console.log('processLog', processLog)
+      this.$router.push(
+          {
+            name: 'analytics-dashboard-name',
+            params: {name: processLog.name}
+          }
+      )
+    },
   },
 };
 </script>

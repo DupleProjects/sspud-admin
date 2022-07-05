@@ -215,7 +215,7 @@
 
  
 <script>
-import BarChart from '~/components/barChart/BarChart.vue';
+import BarChart from '~/components/charts/BarChart.vue';
 // import BarChart2 from '~/components/barChart/BarChart2.vue';
 
 export default {
