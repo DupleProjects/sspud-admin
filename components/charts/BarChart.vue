@@ -2,7 +2,6 @@
 import { Bar } from 'vue-chartjs'
 
 export default {
-  name:"",
   extends: Bar,
   props: {
     chartdata: {

@@ -66,9 +66,12 @@ export default {
       this.$store.dispatch('login', {
         email: this.email,
         password: this.password
-      }).then(result => {
+      }).then(async result => {
+        await this.$store.dispatch("setToken", {
+          token: result.data.token
+        });
         this.loading = false;
-        this.$router.push("/");
+        await this.$router.push("/");
       }).catch(error => {
         this.loading = false
         if (error.response && error.response.data) {
