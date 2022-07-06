@@ -2,6 +2,13 @@
   <div class="confluence-card p-3"
        v-bind:class="{ reviewRequired : shopOrder.status === 'Review Required', orderPlaced: shopOrder.status === 'Order Placed' }">
     <h3>{{getShopName(shopOrder.shopId)}}</h3>
+    <v-alert
+        v-if="shopOrder.status === 'Review Required'"
+        dense
+        text
+        type="error">
+      {{shopOrder.reviewReason}}
+    </v-alert>
     <v-form
         ref="shopForm"
         v-model="validShopForm"

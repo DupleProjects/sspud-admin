@@ -65,9 +65,9 @@ export const authStore = {
       })
       console.log('logInUser', logInUser)
       console.log('logged in user: ', logInUser.data);
-      await commit('set_user', logInUser.data.user)
+      await commit('set_user', logInUser.data.user);
       // await setAuthToken(logInUser.data.token)
-      cookies.set('sspud-access-token', logInUser.data.token, { expires: 7 })
+      cookies.set('sspud-access-token', logInUser.data.token, { expires: 7 });
       return logInUser
     },
     async setState({ commit }, data) {
