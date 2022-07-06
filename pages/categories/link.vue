@@ -73,7 +73,7 @@
                   :scrapedCategory="scrapedCategory"
               />
               <!-- Opens Linked Categories Dialog -->
-              <linked-categories-modal :category="scrapedCategory" :subCategories="allScrapedCategories" />
+              <linked-categories-modal :categories="categories" :category="scrapedCategory" :subCategories="allScrapedCategories" />
             </td>
           </tr>
           </tbody>

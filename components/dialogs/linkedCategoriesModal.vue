@@ -45,10 +45,22 @@
                     category.name
                   }}</v-list-item-title>
                 </v-list-item-content> -->
-                <v-list-item-content :style="getMainCategoryStyle(category)">
-                  <v-list-item-title class="main-category">{{
-                    category.name
-                  }}</v-list-item-title>
+                <v-list-item-content class="mt-1"  :style="getMainCategoryStyle(category)">
+                  <v-list-item-title class="main-category">
+                    <v-row>
+                      <v-col cols="10">
+                        {{
+                          category.name
+                        }}  
+                      </v-col>
+                      <v-col cols="2">
+                        <categories-link-scraped-category-dialog
+                          :categories="categories"
+                          :scrapedCategory="category"
+                        />
+                      </v-col>
+                    </v-row>
+                  </v-list-item-title>
                 </v-list-item-content>
               </template>
 
@@ -65,10 +77,22 @@
                 :key="index"
               >
                 <template v-slot:activator>
-                  <v-list-item-content :style="getSubCategoryStyle(subcat)">
-                    <v-list-item-title class="sub-category-title">{{
-                      subcat.name
-                    }}</v-list-item-title>
+                  <v-list-item-content class="mt-1"  v-on:click="logCategory(subcat)" :style="getSubCategoryStyle(subcat)">
+                    <v-list-item-title class="sub-category-title">
+                      <v-row>
+                        <v-col cols="10">
+                          {{
+                            subcat.name
+                          }}
+                        </v-col>
+                        <v-col cols="2">
+                          <categories-link-scraped-category-dialog
+                            :categories="categories"
+                            :scrapedCategory="subcat"
+                          />
+                        </v-col>
+                      </v-row>
+                    </v-list-item-title>
                   </v-list-item-content>
                   <!-- <v-list-item-content v-else :style="backgroundLinked">
                     <v-list-item-title class="sub-category-title">{{
@@ -91,10 +115,22 @@
                       subSubCat.name
                     }}</v-list-item-title>
                   </v-list-item-content> -->
-                  <v-list-item-content :style="getSubSubCategoryStyle(subSubCat)">
-                    <v-list-item-title class="sub-sub-category-title">{{
-                      subSubCat.name
-                    }}</v-list-item-title>
+                  <v-list-item-content class="mt-1"  v-on:click="logCategory(subSubCat)" :style="getSubSubCategoryStyle(subSubCat)">
+                    <v-list-item-title class="sub-sub-category-title" >
+                      <v-row>
+                        <v-col cols="10">
+                          {{
+                            subSubCat.name
+                          }}
+                        </v-col>
+                        <v-col cols="2">
+                          <categories-link-scraped-category-dialog
+                            :categories="categories"
+                            :scrapedCategory="subSubCat"
+                          />
+                        </v-col>
+                      </v-row>
+                   </v-list-item-title>                    
                   </v-list-item-content>
                 </v-list-item>
               </v-list-group>
@@ -119,6 +155,7 @@ export default {
     category: [],
     subCategories: [],
     subSubCategories: [],
+    categories: []
   },
   data() {
     return {
@@ -184,6 +221,7 @@ export default {
           return 'background-color:#fcab38; border-radius:10px;'
         }else{
           var counter2 = 0;
+          if(this.filteredArray){
             this.filteredArray.forEach(subSub => {
                 // result = inventory.find( subSubCat  => subSubCat.parentId === subSub.id );
                 this.subCategories.forEach(element => {
@@ -192,6 +230,7 @@ export default {
                   }
                 })
             })
+          }            
             if(counter2 > 0){
               return 'background-color:#fcab38; border-radius:10px;'
             }else{
@@ -225,6 +264,9 @@ export default {
         }else{
           return 'background-color:#31a857; border-radius:10px;'
         }
+    },
+    logCategory(obj){
+      console.log("👉OBJECT", obj);
     }
   },
 };
