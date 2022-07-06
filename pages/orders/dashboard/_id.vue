@@ -20,8 +20,98 @@
       </div>
     </div>
     <div v-if="order && !loading">
-      <div class="confluence-page-layout">
-        <div class="confluence-left-column" v-if="order.wooCommerceOrder">
+      <div class="row m-0" v-if="order.wooCommerceOrder">
+        <div class="col-2">
+          <!-- Order overview -->
+          <div class="confluence-card p-3">
+            <p class="lead"><strong>Order</strong> #{{order.wooCommerceOrder.id}}</p>
+            <v-alert
+                v-if="order.sspudOrder.status === 'Review Required'"
+                dense
+                text
+                type="error">
+              {{order.sspudOrder.reviewReason}}
+            </v-alert>
+            <hr class="mt-0">
+            <v-select
+                v-model="order.sspudOrder.status"
+                :items="['Awaiting Payment', 'Payment Received', 'Queued', 'Order Placed At Providers', 'Review Required', 'Processing At TH', 'In Transit To Depot', 'At Depot', 'n Transit To Customer', 'Order Complete']"
+                label="Order Status"
+                class="my-8"
+                :hide-details="true"
+                dense
+            ></v-select>
+            <v-select
+                v-model="order.sspudOrder.paymentStatus"
+                :items="['Awaiting Payment', 'Payment Received', 'Payment Cancelled']"
+                label="Payment Status"
+                class="my-8"
+                :hide-details="true"
+                dense
+            ></v-select>
+            <p><strong>Customer Note</strong> {{order.wooCommerceOrder.customer_note}}</p>
+          </div>
+          <orders-order-log class="my-3" :order="order" :shops="shops" />
+        </div>
+        <div class="col-8">
+          <!-- Shops -->
+          <div v-for="(shop, index) of order.sspudOrderReferences" :key="index" class="order-shop-reference mb-3">
+            <orders-shop-order-component :shopOrder="shop" :shops="shops" :callBack="shopOrderUpdateCallBack" />
+          </div>
+          <!-- Price breakdown -->
+          <div class="confluence-card p-3">
+            <p class="lead">Payment Breakdown</p>
+            <div class="d-flex">
+              <div class="px-3">
+                <p><strong>Date Paid</strong></p>
+                <p><base-date :date="order.wooCommerceOrder.date_paid" /></p>
+              </div>
+              <div class="px-3">
+                <p><strong>Payment Method</strong></p>
+                <p>{{order.wooCommerceOrder.payment_method}}</p>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                <tr>
+                  <th scope="col">Payment</th>
+                  <th scope="col">Amount</th>
+                </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                <tr v-for="(shop, index) of order.sspudOrderReferences" :key="index">
+                  <th scope="row">Shop {{shop.shopId}}</th>
+                  <td>P {{shop.total}}</td>
+                </tr>
+                <tr v-for="(fee_line, index) of order.wooCommerceOrder.fee_lines" :key="fee_line.id">
+                  <th scope="row">{{fee_line.name}}</th>
+                  <td>P {{fee_line.amount}}</td>
+                </tr>
+                <tr class="order-list-item">
+                  <th scope="row">Cart Tax</th>
+                  <td>P {{order.wooCommerceOrder.cart_tax}}</td>
+                </tr>
+                <tr class="order-list-item">
+                  <th scope="row">Shipping Tax</th>
+                  <td>P {{order.wooCommerceOrder.shipping_tax}}</td>
+                </tr>
+                <tr class="order-list-item">
+                  <th scope="row">Shipping Total</th>
+                  <td>P {{order.wooCommerceOrder.shipping_total}}</td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                  <td>Total</td>
+                  <td>P {{getPaymentSum()}}</td>
+                </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-2">
           <div class="confluence-card p-2 mb-2">
             <p class="lead">
               Customer
@@ -51,92 +141,6 @@
             <p>{{order.wooCommerceOrder.shipping.state}}</p>
             <p>{{order.wooCommerceOrder.shipping.country}}</p>
             <p>{{order.wooCommerceOrder.shipping.postcode}}</p>
-          </div>
-        </div>
-        <div class="order-main-section" v-if="order.wooCommerceOrder">
-          <div class="order-detail-grid">
-            <div class="confluence-card p-3">
-              <p class="lead"><strong>Order</strong> #{{order.wooCommerceOrder.id}}</p>
-              <v-alert
-                  v-if="order.sspudOrder.status === 'Review Required'"
-                  dense
-                  text
-                  type="error">
-                {{order.sspudOrder.reviewReason}}
-              </v-alert>
-              <hr class="mt-0">
-              <v-select
-                  v-model="order.sspudOrder.status"
-                  :items="['Awaiting Payment', 'Payment Received', 'Queued', 'Order Placed At Providers', 'Review Required', 'Processing At TH', 'In Transit To Depot', 'At Depot', 'n Transit To Customer', 'Order Complete']"
-                  label="Order Status"
-                  class="my-8"
-                  :hide-details="true"
-                  dense
-              ></v-select>
-              <v-select
-                  v-model="order.sspudOrder.paymentStatus"
-                  :items="['Awaiting Payment', 'Payment Received', 'Payment Cancelled']"
-                  label="Payment Status"
-                  class="my-8"
-                  :hide-details="true"
-                  dense
-              ></v-select>
-              <p><strong>Customer Note</strong> {{order.wooCommerceOrder.customer_note}}</p>
-            </div>
-            <div v-for="(shop, index) of order.sspudOrderReferences" :key="index" class="order-shop-reference">
-              <orders-shop-order-component :shopOrder="shop" :shops="shops" :callBack="shopOrderUpdateCallBack" />
-            </div>
-            <div class="confluence-card p-3">
-              <p class="lead">Payment Breakdown</p>
-              <div class="d-flex">
-                <div class="px-3">
-                  <p><strong>Date Paid</strong></p>
-                  <p><base-date :date="order.wooCommerceOrder.date_paid" /></p>
-                </div>
-                <div class="px-3">
-                  <p><strong>Payment Method</strong></p>
-                  <p>{{order.wooCommerceOrder.payment_method}}</p>
-                </div>
-              </div>
-              <div class="table-responsive">
-                <table class="table">
-                  <thead>
-                  <tr>
-                    <th scope="col">Payment</th>
-                    <th scope="col">Amount</th>
-                  </tr>
-                  </thead>
-                  <tbody class="table-group-divider">
-                  <tr v-for="(shop, index) of order.sspudOrderReferences" :key="index">
-                    <th scope="row">Shop {{shop.shopId}}</th>
-                    <td>P {{shop.total}}</td>
-                  </tr>
-                  <tr v-for="(fee_line, index) of order.wooCommerceOrder.fee_lines" :key="fee_line.id">
-                    <th scope="row">{{fee_line.name}}</th>
-                    <td>P {{fee_line.amount}}</td>
-                  </tr>
-                  <tr class="order-list-item">
-                    <th scope="row">Cart Tax</th>
-                    <td>P {{order.wooCommerceOrder.cart_tax}}</td>
-                  </tr>
-                  <tr class="order-list-item">
-                    <th scope="row">Shipping Tax</th>
-                    <td>P {{order.wooCommerceOrder.shipping_tax}}</td>
-                  </tr>
-                  <tr class="order-list-item">
-                    <th scope="row">Shipping Total</th>
-                    <td>P {{order.wooCommerceOrder.shipping_total}}</td>
-                  </tr>
-                  </tbody>
-                  <tfoot>
-                  <tr>
-                    <td>Total</td>
-                    <td>P {{getPaymentSum()}}</td>
-                  </tr>
-                  </tfoot>
-                </table>
-              </div>
-            </div>
           </div>
         </div>
       </div>
