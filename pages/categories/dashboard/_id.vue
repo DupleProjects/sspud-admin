@@ -77,6 +77,17 @@
                           :value="0"
                       ></v-radio>
                     </v-radio-group>
+                    <p>Is this category alcohol?</p>
+                    <v-radio-group v-model="category.isAlcohol">
+                      <v-radio
+                          :label="`Yes`"
+                          :value="1"
+                      ></v-radio>
+                      <v-radio
+                          :label="`No`"
+                          :value="0"
+                      ></v-radio>
+                    </v-radio-group>
                   </v-card-text>
                 </v-card>
               </v-col>
@@ -142,6 +153,7 @@ export default {
       validCategoryForm: true,
       linkedCategories: [],
       linkedScrapedCategories: [],
+      isAlcohol: false
     };
   },
   watch: {
