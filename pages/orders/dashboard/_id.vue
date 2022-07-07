@@ -21,7 +21,7 @@
     </div>
     <div v-if="order && !loading">
       <div class="row m-0" v-if="order.wooCommerceOrder">
-        <div class="col-2">
+        <div class="col-3">
           <!-- Order overview -->
           <div class="confluence-card p-3">
             <p class="lead"><strong>Order</strong> #{{order.wooCommerceOrder.id}}</p>
@@ -53,7 +53,7 @@
           </div>
           <orders-order-log v-if="showLogs" class="my-3" :order="order" :shops="shops" />
         </div>
-        <div class="col-8">
+        <div class="col-7">
           <!-- Transport -->
           <orders-transport-component :order="order.sspudOrder" />
           <!-- Shops -->
@@ -61,14 +61,14 @@
             <orders-shop-order-component :shopOrder="shop" :shops="shops" :callBack="shopOrderUpdateCallBack" />
           </div>
           <!-- Price breakdown -->
-          <orders-payment-breakdown :order="order" />
+          <orders-payment-breakdown :order="order" :shops="shops" />
         </div>
         <div class="col-2">
           <div class="confluence-card p-2 mb-2">
-            <p class="lead mb-0">
+            <p class="lead">
               Customer
             </p>
-            <div>
+            <div class="">
               <p class="mb-0">{{order.wooCommerceOrder.billing.first_name}} {{order.wooCommerceOrder.billing.last_name}}</p>
               <p class="mb-0">{{order.wooCommerceOrder.billing.email}}</p>
               <p class="mb-0">{{order.wooCommerceOrder.billing.phone}}</p>
@@ -76,25 +76,16 @@
           </div>
           <div class="confluence-card p-2 my-2">
             <p class="lead">
-              Billing
-            </p>
-            <p>{{order.wooCommerceOrder.billing.address_1}}</p>
-            <p v-if="order.wooCommerceOrder.billing.address_2 !== ''">{{order.wooCommerceOrder.billing.address_2}}</p>
-            <p>{{order.wooCommerceOrder.billing.city}}</p>
-            <p>{{order.wooCommerceOrder.billing.state}}</p>
-            <p>{{order.wooCommerceOrder.billing.country}}</p>
-            <p>{{order.wooCommerceOrder.billing.postcode}}</p>
-          </div>
-          <div class="confluence-card p-2 my-2">
-            <p class="lead">
               Shipping
             </p>
-            <p>{{order.wooCommerceOrder.shipping.address_1}}</p>
-            <p v-if="order.wooCommerceOrder.shipping.address_2 !== ''">{{order.wooCommerceOrder.shipping.address_2}}</p>
-            <p>{{order.wooCommerceOrder.shipping.city}}</p>
-            <p>{{order.wooCommerceOrder.shipping.state}}</p>
-            <p>{{order.wooCommerceOrder.shipping.country}}</p>
-            <p>{{order.wooCommerceOrder.shipping.postcode}}</p>
+            <div class="">
+              <p class="mb-0">{{order.wooCommerceOrder.shipping.address_1}}</p>
+              <p class="mb-0" v-if="order.wooCommerceOrder.shipping.address_2 !== ''">{{order.wooCommerceOrder.shipping.address_2}}</p>
+              <p class="mb-0">{{order.wooCommerceOrder.shipping.city}}</p>
+              <p class="mb-0">{{order.wooCommerceOrder.shipping.state}}</p>
+              <p class="mb-0">{{order.wooCommerceOrder.shipping.country}}</p>
+              <p class="mb-0">{{order.wooCommerceOrder.shipping.postcode}}</p>
+            </div>
           </div>
         </div>
       </div>

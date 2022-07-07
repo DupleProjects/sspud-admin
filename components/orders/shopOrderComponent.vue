@@ -1,7 +1,7 @@
 <template>
   <div class="confluence-card p-3"
        v-bind:class="{ reviewRequired : shopOrder.status === 'Review Required', orderPlaced: shopOrder.status === 'Order Placed'}">
-    <h3>{{getShopName(shopOrder.shopId)}}</h3>
+    <h3>{{getShop(shopOrder.shopId).name}}</h3>
     <v-alert
         v-if="shopOrder.status === 'Review Required'"
         dense
@@ -71,14 +71,20 @@
             class="order-list-item">
           <th scope="row">{{product.name}}</th>
           <td>{{product.quantity}}</td>
-          <td>P {{product.price * product.quantity}}</td>
+          <td>R {{product.originalPrice * product.quantity}}</td>
+        </tr>
+        <tr
+            class="order-list-item">
+          <th scope="row">Delivery Cost</th>
+          <td>1</td>
+          <td>R {{getShop(shopOrder.shopId).deliveryCost}}</td>
         </tr>
         </tbody>
         <tfoot>
         <tr>
+          <td>Total</td>
           <td></td>
-          <td></td>
-          <td>P {{shopOrder.total}}</td>
+          <td>R {{shopOrder.total + getShop(shopOrder.shopId).deliveryCost}}</td>
         </tr>
         </tfoot>
       </table>
@@ -136,12 +142,13 @@ export default {
         this.shopOrderProducts = shopOrderProducts;
       }
     },
-    getShopName(shopId) {
+    getShop(shopId) {
       const shop = baseMixin.methods.getObjectsWhereKeysHaveValues(this.shops, {id: shopId}, true);
+      console.log('shop', shop)
       if (shop) {
-        return shop.name;
+        return shop;
       }
-      return "";
+      return {name: ''};
     },
     async saveShopReference(reference) {
       // Save the shop order if the form is valid

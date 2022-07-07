@@ -488,7 +488,7 @@ export default {
   border-left: 1px solid rgb(223, 225, 230);
   color: white;
   border-image: initial;
-  border-bottom: none;
+  border-bottom: 1px solid rgb(223, 225, 230);
 }
 .fancy-row {
   position: relative;
