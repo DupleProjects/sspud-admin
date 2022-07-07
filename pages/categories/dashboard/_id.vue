@@ -110,6 +110,7 @@
           :title="'Linked Categories'"
           :allCategories="categories"
           :location="'dashboard'"
+          :sortCallBack="sortCallBack"
         />
       </v-card-text>
     </v-card>
@@ -209,7 +210,37 @@ export default {
       }
       this.loading = false;
     },
+    async sortCallBack(crit) {
+      this.linkedCategories = []
+      const categoriesResponse = await this.$store.dispatch('dataGate', {
+        tableName: 'mappedCategories',
+        operation: 'read',
+        sortCriteria: crit
+      });
+      // this.categories = categoriesResponse.data
+
+      if (categoriesResponse.data) {
+          this.categories = categoriesResponse.data;
+          // Get the actual category and the linked ones
+          for (let i = 0; i < this.categories.length; i++) {
+            if (this.categories[i].id === Number(this.$route.params.id)) {
+              // console.log('this.category', this.category)
+              this.category = this.categories[i];
+            } else if (
+              this.categories[i].parentId === Number(this.$route.params.id)
+            ) {
+              console.log("👉👉",this.categories[i]);
+              this.linkedCategories.push(this.categories[i]);
+            }
+          }
+      this.linkedCategories = this.linkedCategories 
+      // const pageInfo = breadcrumbMixin.methods.getPage('mappedCategoryList')
+      // this.page = pageInfo.page
+      // this.setPage();
+      }
+    },
   },
+  
 };
 </script>
 
