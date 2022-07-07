@@ -1,15 +1,8 @@
 <template>
   <div class="confluence-card p-3">
-    <p class="lead">Payment Breakdown</p>
-    <div class="d-flex">
-      <div class="px-3">
-        <p><strong>Date Paid</strong></p>
-        <p><base-date :date="order.wooCommerceOrder.date_paid" /></p>
-      </div>
-      <div class="px-3">
-        <p><strong>Payment Method</strong></p>
-        <p>{{order.wooCommerceOrder.payment_method}}</p>
-      </div>
+    <div class="d-flex justify-content-between">
+      <p class="lead">Payment Breakdown</p>
+      <base-date :date="order.wooCommerceOrder.date_paid" />
     </div>
     <div class="table-responsive">
       <table class="table">
@@ -20,9 +13,9 @@
         </tr>
         </thead>
         <tbody class="table-group-divider">
-        <tr v-for="(shop, index) of order.sspudOrderReferences" :key="index">
-          <th scope="row">Shop {{shop.shopId}}</th>
-          <td>P {{shop.total}}</td>
+        <tr>
+          <th scope="row">Products</th>
+          <td>P {{getProductSum()}}</td>
         </tr>
         <tr v-for="(fee_line, index) of order.wooCommerceOrder.fee_lines" :key="fee_line.id">
           <th scope="row">{{fee_line.name}}</th>
@@ -44,7 +37,7 @@
         <tfoot>
         <tr>
           <td>Total</td>
-          <td>P {{getPaymentSum()}}</td>
+          <td>P {{order.wooCommerceOrder.total}}</td>
         </tr>
         </tfoot>
       </table>
@@ -75,12 +68,8 @@ export default {
 
   },
   methods: {
-    getPaymentSum() {
+    getProductSum() {
       let sum = 0;
-      // Add shop totals
-      for (let i = 0; i < this.order.sspudOrderReferences.length; i++) {
-        sum += Number(this.order.sspudOrderReferences[i].total);
-      }
       // Add fee lines
       for (let j = 0; j < this.order.wooCommerceOrder.fee_lines.length; j++) {
         sum += Number(this.order.wooCommerceOrder.fee_lines[j].amount);
@@ -88,9 +77,16 @@ export default {
       sum += Number(this.order.wooCommerceOrder.cart_tax);
       sum += Number(this.order.wooCommerceOrder.shipping_tax);
       sum += Number(this.order.wooCommerceOrder.shipping_total);
+      sum = Number(this.order.wooCommerceOrder.total) - sum;
       return sum;
     },
-
+    getShopName(shopId) {
+      const shop = baseMixin.methods.getObjectsWhereKeysHaveValues(this.shops, {id: shopId}, true);
+      if (shop) {
+        return shop.name;
+      }
+      return "";
+    },
   },
 };
 </script>

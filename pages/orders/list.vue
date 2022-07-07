@@ -1,14 +1,13 @@
 <template>
   <div>
-    
     <!--Header-->
     <div
-        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-      <h1 class="h2">Orders</h1>
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center p-3 mb-3 border-bottom">
+      <h1 class="h2 mb-0">Orders</h1>
       <v-text-field
           v-model="search"
-          label="Search"
-          class="px-5"
+          label="Search Customer"
+          class="px-5 py-0"
           hide-details
       ></v-text-field>
       <div class="btn-toolbar mb-2 mb-md-0">
@@ -304,7 +303,7 @@ export default {
   border-right: 1px solid rgb(223, 225, 230);
   border-left: 1px solid rgb(223, 225, 230);
   border-image: initial;
-  border-bottom: none;
+  border-bottom: 1px solid rgb(223, 225, 230);
 }
 
 .fancy-row:hover {

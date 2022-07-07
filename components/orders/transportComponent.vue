@@ -1,5 +1,5 @@
 <template>
-  <div class="confluence-card p-3 my-3 orderReceived transport-card">
+  <div class="confluence-card p-3 mb-3 orderReceived transport-card">
     <p class="lead">Transport</p>
     <v-form
         ref="waybillForm"
