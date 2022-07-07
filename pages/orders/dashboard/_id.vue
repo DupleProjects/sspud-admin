@@ -35,7 +35,7 @@
             <hr class="mt-0">
             <v-select
                 v-model="order.sspudOrder.status"
-                :items="['Awaiting Payment', 'Payment Received', 'Queued', 'Order Placed At Providers', 'Review Required', 'Processing At TH', 'In Transit To Depot', 'At Depot', 'n Transit To Customer', 'Order Complete']"
+                :items="['Queued', 'Order Placed At Providers', 'Processing At Transport Holdings', 'Review Required', 'In Transit To Depot', 'At Depot', 'n Transit To Customer', 'Order Complete']"
                 label="Order Status"
                 class="my-8"
                 :hide-details="true"
@@ -49,76 +49,30 @@
                 :hide-details="true"
                 dense
             ></v-select>
-            <p><strong>Customer Note</strong> {{order.wooCommerceOrder.customer_note}}</p>
+            <p v-if="order.wooCommerceOrder.customer_note"><strong>Customer Note</strong> {{order.wooCommerceOrder.customer_note}}</p>
           </div>
-          <orders-order-log class="my-3" :order="order" :shops="shops" />
+          <orders-order-log v-if="showLogs" class="my-3" :order="order" :shops="shops" />
         </div>
         <div class="col-8">
+          <!-- Transport -->
+          <orders-transport-component :order="order.sspudOrder" />
           <!-- Shops -->
           <div v-for="(shop, index) of order.sspudOrderReferences" :key="index" class="order-shop-reference mb-3">
             <orders-shop-order-component :shopOrder="shop" :shops="shops" :callBack="shopOrderUpdateCallBack" />
           </div>
           <!-- Price breakdown -->
-          <div class="confluence-card p-3">
-            <p class="lead">Payment Breakdown</p>
-            <div class="d-flex">
-              <div class="px-3">
-                <p><strong>Date Paid</strong></p>
-                <p><base-date :date="order.wooCommerceOrder.date_paid" /></p>
-              </div>
-              <div class="px-3">
-                <p><strong>Payment Method</strong></p>
-                <p>{{order.wooCommerceOrder.payment_method}}</p>
-              </div>
-            </div>
-            <div class="table-responsive">
-              <table class="table">
-                <thead>
-                <tr>
-                  <th scope="col">Payment</th>
-                  <th scope="col">Amount</th>
-                </tr>
-                </thead>
-                <tbody class="table-group-divider">
-                <tr v-for="(shop, index) of order.sspudOrderReferences" :key="index">
-                  <th scope="row">Shop {{shop.shopId}}</th>
-                  <td>P {{shop.total}}</td>
-                </tr>
-                <tr v-for="(fee_line, index) of order.wooCommerceOrder.fee_lines" :key="fee_line.id">
-                  <th scope="row">{{fee_line.name}}</th>
-                  <td>P {{fee_line.amount}}</td>
-                </tr>
-                <tr class="order-list-item">
-                  <th scope="row">Cart Tax</th>
-                  <td>P {{order.wooCommerceOrder.cart_tax}}</td>
-                </tr>
-                <tr class="order-list-item">
-                  <th scope="row">Shipping Tax</th>
-                  <td>P {{order.wooCommerceOrder.shipping_tax}}</td>
-                </tr>
-                <tr class="order-list-item">
-                  <th scope="row">Shipping Total</th>
-                  <td>P {{order.wooCommerceOrder.shipping_total}}</td>
-                </tr>
-                </tbody>
-                <tfoot>
-                <tr>
-                  <td>Total</td>
-                  <td>P {{getPaymentSum()}}</td>
-                </tr>
-                </tfoot>
-              </table>
-            </div>
-          </div>
+          <orders-payment-breakdown :order="order" />
         </div>
         <div class="col-2">
           <div class="confluence-card p-2 mb-2">
-            <p class="lead">
+            <p class="lead mb-0">
               Customer
             </p>
-            <p>{{order.wooCommerceOrder.billing.first_name}} {{order.wooCommerceOrder.billing.last_name}}</p>
-            <p>{{order.wooCommerceOrder.billing.email}}</p>
-            <p>{{order.wooCommerceOrder.billing.phone}}</p>
+            <div>
+              <p class="mb-0">{{order.wooCommerceOrder.billing.first_name}} {{order.wooCommerceOrder.billing.last_name}}</p>
+              <p class="mb-0">{{order.wooCommerceOrder.billing.email}}</p>
+              <p class="mb-0">{{order.wooCommerceOrder.billing.phone}}</p>
+            </div>
           </div>
           <div class="confluence-card p-2 my-2">
             <p class="lead">
@@ -158,7 +112,8 @@ export default {
     return {
       order: null,
       loading: false,
-      shops: []
+      shops: [],
+      showLogs: true,
     };
   },
   beforeMount() {
@@ -227,8 +182,53 @@ export default {
             operation: "update",
           });
         }
+        const shopName = this.getShopName(shopOrder.shopId)
+        const response = await this.$store.dispatch("dataGate", {
+          primaryKey: "id",
+          entity: {orderId: this.order.sspudOrder.id, event: 'Order Placed At ' + shopName, status: 1},
+          tableName: "orderLogs",
+          operation: "create",
+        });
+      } else if (shopOrder.status === 'Order Received') {
+
+        // If it is then check the other shop orders and if all are
+        // 'order received' then the overall order should be set to order received
+        let ordersReceived = true;
+        for (let i = 0; i < this.order.sspudOrderReferences.length; i++) {
+          if (this.order.sspudOrderReferences[i].status !== 'Order Received') {
+            ordersReceived = false;
+            break;
+          }
+        }
+        // Now check if the order status is not something that should not be reverted
+        if (ordersReceived &&
+            (this.order.sspudOrder.status === 'Order Placed At Providers')) {
+          this.order.sspudOrder.status = 'Processing At Transport Holdings';
+          const response = await this.$store.dispatch("dataGate", {
+            primaryKey: "id",
+            entity: {id: this.order.sspudOrder.id, status: 'Processing At Transport Holdings'},
+            tableName: "orders",
+            operation: "update",
+          });
+        }
+        const shopName = this.getShopName(shopOrder.shopId)
+        const response = await this.$store.dispatch("dataGate", {
+          primaryKey: "id",
+          entity: {orderId: this.order.sspudOrder.id, event: 'Order Received From ' + shopName, status: 1},
+          tableName: "orderLogs",
+          operation: "create",
+        });
       }
-    }
+      this.showLogs = false;
+      this.showLogs = true;
+    },
+    getShopName(shopId) {
+      const shop = baseMixin.methods.getObjectsWhereKeysHaveValues(this.shops, {id: shopId}, true);
+      if (shop) {
+        return shop.name;
+      }
+      return "";
+    },
   },
 };
 </script>

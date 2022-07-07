@@ -2,10 +2,13 @@
   <div class="confluence-card p-3">
     <p class="lead">Order Log</p>
     <div v-for="(log, index) of orderLogs" :key="index" class="">
-      <div class="d-flex">
+      <div class="d-flex mb-3 align-center">
         <span class="dot mr-3"
-              v-bind:class="{ 'success-dot' : log.status === 1, 'danger-dot': log.status === 2, 'dot': log.status === 3  }"></span>
-        <p>{{log.event}}</p>
+              v-bind:class="{ 'success-dot' : log.status === 1, 'danger-dot': log.status === 0, 'dot': log.status === 2  }"></span>
+        <div>
+          <p class="mb-0">{{log.event}}</p>
+          <p class="text-muted small mb-0">{{formatDate(log.dateTime)}}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -51,6 +54,9 @@ export default {
         return shop.name;
       }
       return "";
+    },
+    formatDate(date) {
+      return baseMixin.methods.formatDateTime(date, false);
     }
   },
 };
