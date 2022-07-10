@@ -95,6 +95,7 @@
             <product-linked-entities :product="product" class="fadeInUp animated animatedFadeInUp"/>
           </v-tab-item>
           <v-tab-item  class="p-3">
+            <products-product-price-breakdown :product="product" />
             <products-product-publish :product="product" />
           </v-tab-item>
           <v-tab-item class="p-3">

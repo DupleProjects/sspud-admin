@@ -51,6 +51,14 @@
             ></v-select>
             <p v-if="order.wooCommerceOrder.customer_note"><strong>Customer Note</strong> {{order.wooCommerceOrder.customer_note}}</p>
           </div>
+          <div class="confluence-card p-3 mt-3">
+            <a target="_blank" :href="getTrackingUrl()">
+              <v-icon
+                medium
+                class="mr-3"
+                color="blue darken-2">mdi-truck</v-icon>Tracking Link</a>
+          </div>
+
           <orders-order-log v-if="showLogs" class="my-3" :order="order" :shops="shops" />
         </div>
         <div class="col-7">
@@ -220,6 +228,9 @@ export default {
       }
       return "";
     },
+    getTrackingUrl() {
+      return process.env.apiURL + '/orders/tracking/' + this.order.sspudOrder.wooCommerceId
+    }
   },
 };
 </script>
