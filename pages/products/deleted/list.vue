@@ -20,9 +20,26 @@
         </div>
       </v-overlay>
     </client-only>
+    <!--Header-->
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mx-3">
+      <h1 class="h2">Deleted Products</h1>
+      <!--Search would be here-->
+
+      <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+          <export-modal :products="products" :exportTableName="'stagedProducts'" :exportSheetName="'Staged Products'" :exportCriteria="null" />
+        </div>
+      </div>
+    </div>
+    <hr class="mt-0 mb-2 mx-3">
     <div v-if="!loading">
+      <!--Filter-->
+      <products-product-list-filter
+          :filterChangeCallBack="filterChangeCallBack"
+          :filter="filter"
+          :type="'staged'"
+      />
       <!--Table-->
-      <h2>Deleted Products</h2>
       <products-product-list
         :type="'staged'"
         :products="products"
@@ -30,7 +47,7 @@
         :allBrands="allBrands"
         :deleteProductCallBack="deleteProductCallBack"
         :sortCallbackStaged="sortCallback"
-        :tableStyle="'height:75vh; overflow-y:auto; overflow-x: hidden;'"
+        :tableStyle="'height:65vh; overflow-y:auto; overflow-x: hidden;'"
       />
       <!--Pagination-->
       <template>
@@ -50,35 +67,42 @@
 <script>
 import baseMixin from "@/mixins/baseMixin.js";
 import breadcrumbMixin from "@/mixins/breadcrumbMixin.js";
+import exportModal from "@/components/dialogs/exportModal";
 export default {
+  components: { exportModal },
   mixins: [baseMixin,breadcrumbMixin],
   data() {
     return {
       loading: false,
       page: 1,
       numberPerPage: 20,
+      filter: {},
       productCount: 0,
       products: [],
       allCategories: [],
+      criteria: { deleted: 1 },
       allBrands: [],
       sortCriteria: {},
+      activeFilter: null
     };
   },
   watch: {
     page(val) {
       this.loadProducts();
-      breadcrumbMixin.methods.savePage('deletedList', this.page)
+      breadcrumbMixin.methods.savePageAndFilter('deletedList', {page: this.page, filter: this.activeFilter, sort: this.sortCriteria});
     },
     search(val) {},
   },
   beforeMount() {
     this.$nextTick(async function () {
       this.loading = true;
-      // var loggedInUser = this.$store.state.auth.user
-      // Load Products
       const pageInfo = breadcrumbMixin.methods.getPage('deletedList')
-      this.page = pageInfo.page
-      await this.loadProducts();
+      this.page = pageInfo.pagination.page;
+      this.activeFilter = pageInfo.filter;
+      this.filter = pageInfo.filter;
+      this.sortCriteria = pageInfo.sort;
+      // Load Products
+      await this.loadProducts(this.activeFilter, this.sortCriteria);
       await this.loadCategoriesAndBrands();
       this.loading = false;
     });
@@ -88,20 +112,25 @@ export default {
   },
   methods: {
     // Loading stuff
-    async loadProducts(crit) {
+    async loadProducts(criteria, sortCriteria) {
+      if (!criteria) {
+        criteria = this.criteria;
+      } else {
+        this.criteria = criteria;
+      }
       // Load the products
 
-      if (!crit) {
-        crit = this.sortCriteria;
+      if (!sortCriteria) {
+        sortCriteria = this.sortCriteria;
       } else {
-        this.sortCriteria = crit;
+        this.sortCriteria = sortCriteria;
       }
 
       const deletedProducts = await this.$store.dispatch("dataGate", {
         tableName: "stagedProducts",
         operation: "read",
-        whereCriteria: {deleted: 1},
-        sortCriteria: crit ? crit : {},
+        whereCriteria: criteria ? criteria : { deleted: 1 },
+        sortCriteria: sortCriteria ? sortCriteria : {},
         page: this.page,
         numberPerPage: this.numberPerPage,
       });
@@ -134,10 +163,23 @@ export default {
     async deleteProductCallBack() {
       await this.loadProducts();
     },
+    async filterChangeCallBack(filter) {
+      // Build the where clause
+      if (filter) {
+        this.activeFilter = filter;
+        breadcrumbMixin.methods.savePageAndFilter('deletedList', {page: this.page, filter: this.activeFilter, sort: this.sortCriteria});
+        await this.loadProducts(filter);
+      }
+    },
     async sortCallback(crit) {
       // Build the where clause
       if (crit) {
-        await this.loadProducts(crit);
+        if (this.activeFilter) {
+          breadcrumbMixin.methods.savePageAndFilter('deletedList', {page: this.page, filter: this.activeFilter, sort: crit});
+          await this.loadProducts(this.activeFilter, crit);
+        } else {
+          await this.loadProducts(null, crit);
+        }
       }
     },
   },

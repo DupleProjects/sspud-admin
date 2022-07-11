@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pa-3">
     <client-only>
       <v-overlay
         style="height: 80vh; margin-top: -60px"
@@ -91,19 +91,20 @@ export default {
   watch: {
     page(val) {
       this.loadProducts();
-      breadcrumbMixin.methods.savePage('stagedList', this.page)
+      breadcrumbMixin.methods.savePageAndFilter('stagedList', {page: this.page, filter: this.activeFilter, sort: this.sortCriteria});
     },
   },
   beforeMount() {
     this.$nextTick(async function () {
       this.loading = true;
-      var loggedInUser = this.$store.state.auth.user;
-      console.log("loggedInUser", loggedInUser);
+      // Set page and filter from session
+      const pageInfo = breadcrumbMixin.methods.getPage('stagedList');
+      this.page = pageInfo.pagination.page;
+      this.activeFilter = pageInfo.filter;
+      this.filter = pageInfo.filter;
+      this.sortCriteria = pageInfo.sort;
       // Load Products
-      
-      const pageInfo = breadcrumbMixin.methods.getPage('stagedList')
-      this.page = pageInfo.page
-      await this.loadProducts();
+      await this.loadProducts(this.activeFilter, this.sortCriteria);
       await this.loadCategoriesAndBrands();
       this.loading = false;
     });
@@ -167,15 +168,17 @@ export default {
       // Build the where clause
       if (filter) {
         this.activeFilter = filter;
+        breadcrumbMixin.methods.savePageAndFilter('stagedList', {page: this.page, filter: this.activeFilter, sort: this.sortCriteria});
         await this.loadProducts(filter);
       }
     },
     async sortCallback(crit) {
       // Build the where clause
       if (crit) {
-        if(this.activeFilter){
+        if (this.activeFilter) {
+          breadcrumbMixin.methods.savePageAndFilter('stagedList', {page: this.page, filter: this.activeFilter, sort: crit});
           await this.loadProducts(this.activeFilter, crit);
-        }else{
+        } else {
           await this.loadProducts(null, crit);
         }
       }
