@@ -1,12 +1,11 @@
 <template>
-  <div class="px-3">
+  <div class="px-3 pt-3">
     <div class="d-flex" v-if="filter">
+      <h4 class="mb-0">{{heading}}</h4>
       <v-text-field
           v-model="search"
           label="Search"
-          dense
-          solo-inverted
-          class="px-3"
+          class="px-3 pt-0 mt-0"
       ></v-text-field>
     </div>
     <div class="d-flex" v-if="filter">
@@ -125,7 +124,8 @@ export default {
   props: {
     filter: null,
     type: '',
-    filterChangeCallBack: null
+    filterChangeCallBack: null,
+    heading: ''
   },
   data() {
     return {

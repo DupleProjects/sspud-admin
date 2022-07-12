@@ -11,19 +11,59 @@
     <div class="fancy-table" :style="tableStyle">
       <div class="fancy-heading-row" style="position:sticky; top: 0; z-index: 1;">
         <div  v-bind:class="{ 'inner-fancy-heading-row': type === 'scraped', 'inner-fancy-heading-row-staged': type === 'staged' || type === 'published'}">
-          <div v-on:click="sort('name','name')">Name <v-icon v-if="sortingOrders.nameSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.nameSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
-          <div v-if="type === 'staged' || type === 'published'" v-on:click="sort('hasStock','hasStock')">Has Stock <v-icon v-if="sortingOrders.hasStockSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.hasStockSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
-          <div v-on:click="sort('price','price')">Price <v-icon v-if="sortingOrders.priceSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.priceSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
-          <div v-on:click="sort('subCategoryName','subCategoryId')">Subcategory <v-icon v-if="sortingOrders.subCategorySort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.subCategorySort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
-          <div v-on:click="sort('brand','brandId')">Brand <v-icon v-if="sortingOrders.brandSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.brandSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
-          <div v-if="type === 'scraped'" v-on:click="sort('shopId',null)">Shop <v-icon v-if="sortingOrders.shopSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.shopSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
-          <div v-if="type === 'staged' || type === 'published'" class="text-center" v-on:click="sort(null,'publish')">Published <v-icon v-if="sortingOrders.publishSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.publishSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
-          <div v-if="type === 'staged' || type === 'published'" class="text-center" v-on:click="sort(null,'reviewRequired')">Review Required <v-icon v-if="sortingOrders.reviewSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon><v-icon v-if="sortingOrders.reviewSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon></div>
+          <div class="sort-heading" v-if="type === 'staged' || type === 'published'" v-on:click="sort('hasStock','hasStock')">
+            Stock
+            <v-icon v-if="sortingOrders.hasStockSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon>
+            <v-icon v-if="sortingOrders.hasStockSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon>
+          </div>
+          <div class="sort-heading" v-on:click="sort('name','name')">
+            Name
+            <v-icon v-if="sortingOrders.nameSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon>
+            <v-icon v-if="sortingOrders.nameSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon>
+          </div>
+          <div
+              class="sort-heading"
+              v-on:click="sort('price','price')">
+            Price
+            <v-icon v-if="sortingOrders.priceSort === 'ASC'" color="white" small>mdi-arrow-up</v-icon>
+            <v-icon v-if="sortingOrders.priceSort === 'DESC'" color="white" small>mdi-arrow-down</v-icon>
+          </div>
+          <div class="sort-heading" v-on:click="sort('subCategoryName','subCategoryId')">
+            Sub Category
+            <v-icon v-if="sortingOrders.subCategorySort == 'ASC'" color="white" small>mdi-arrow-up</v-icon>
+            <v-icon v-if="sortingOrders.subCategorySort == 'DESC'" color="white" small>mdi-arrow-down</v-icon>
+          </div>
+          <div class="sort-heading" v-on:click="sort('brand','brandId')">
+            Brand
+            <v-icon v-if="sortingOrders.brandSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon>
+            <v-icon v-if="sortingOrders.brandSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon>
+          </div>
+          <div v-if="type === 'scraped'" v-on:click="sort('shopId',null)">
+            Shop
+            <v-icon v-if="sortingOrders.shopSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon>
+            <v-icon v-if="sortingOrders.shopSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon>
+          </div>
+          <div v-if="type === 'staged' || type === 'published'" class="text-center sort-heading" v-on:click="sort(null,'reviewRequired')">
+            Status
+            <v-icon v-if="sortingOrders.reviewSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon>
+            <v-icon v-if="sortingOrders.reviewSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon>
+          </div>
         </div>
       </div>
       <div class="product-list">
         <div class="fancy-row" v-for="(product, index) of products" :key="index">
           <div class="" v-bind:class="{ 'inner-fancy-row': type === 'scraped', 'inner-fancy-row-staged': type === 'staged' || type === 'published'}">
+            <!--Has Stock-->
+            <div v-if="type === 'staged' || type === 'published'" class="column-1">
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon
+                      v-bind="attrs"
+                      v-on="on" :color="product.hasStock ? 'green' : 'orange'" medium>mdi-package</v-icon>
+                </template>
+                <span>{{product.hasStock ? 'In Stock' : 'Out of Stock'}}</span>
+              </v-tooltip>
+            </div>
             <div class="column-1 pr-2">
               <div class="name-column">
                 {{ product.name }}
@@ -35,69 +75,59 @@
                 {{ getCategoryName(product.categoryId)}}
               </p>
             </div>
-            <div v-if="type === 'staged' || type === 'published'" class="column-1">
-              <v-tooltip top>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-icon
-                      v-bind="attrs"
-                      v-on="on" :color="product.hasStock ? 'green' : 'orange'" medium>mdi-package</v-icon>
-                </template>
-                <span>{{product.hasStock ? 'In Stock' : 'Out of Stock'}}</span>
-              </v-tooltip>
-            </div>
+            <!--Price-->
             <div class="column-1">
               P {{ product.price }}
             </div>
             <div v-if="type === 'scraped'" class="column-1">
               {{ product.subCategoryName }}
             </div>
-            <div v-if="type === 'staged' || type === 'published'" class="column-1">
+            <div
+                v-bind:style="{ color: product.subCategoryId ? '#000000' : '#ff8000' }"
+                v-if="type === 'staged' || type === 'published'"
+                class="column-1">
               {{ getCategoryName(product.subCategoryId) }}
             </div>
             <div v-if="type === 'scraped'" class="column-1">
               {{ product.brand }}
             </div>
+            <!--Shop-->
             <div v-if="type === 'scraped'" class="column-1">
               {{ getShop(product.shopId) }}
             </div>
-            <div v-if="type === 'staged' || type === 'published'" class="column-1">
+            <!--Brand-->
+            <div
+                v-bind:style="{ color: product.brandId ? '#000000' : '#ff8000' }"
+                v-if="type === 'staged' || type === 'published'"
+                class="column-1">
               {{getBrandName(product.brandId)}}
             </div>
+            <!--Review Required-->
             <div v-if="type === 'staged' || type === 'published'" class="column-1 text-center">
-              <v-tooltip v-if="product.publish" top>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-icon
-                      v-bind="attrs"
-                      v-on="on" color="green" medium>mdi-check-circle</v-icon>
-                </template>
-                <span>Published</span>
-              </v-tooltip>
-              <v-tooltip v-if="!product.publish" top>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-icon
-                      v-bind="attrs"
-                      v-on="on" color="orange" medium>mdi-close-circle</v-icon>
-                </template>
-                <span>UnPublished</span>
-              </v-tooltip>
-            </div>
-            <div v-if="type === 'staged' || type === 'published'" class="column-1 text-center">
-              <v-tooltip v-if="!product.reviewRequired" top>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-icon
-                      v-bind="attrs"
-                      v-on="on" color="green" medium>mdi-file-document</v-icon>
-                </template>
-                <span>Reviewed</span>
-              </v-tooltip>
-              <v-tooltip v-if="product.reviewRequired" top>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-icon
-                      v-bind="attrs"
-                      v-on="on" color="red" medium>mdi-text-box-search</v-icon>
-                </template>
-                <span>Review Required</span>
-              </v-tooltip>
+              <v-alert
+                  v-if="product.publish"
+                  style="font-size: small; margin-bottom: 0 !important;"
+                  dense
+                  color="primary"
+                  text>
+                Published
+              </v-alert>
+              <v-alert
+                  v-if="!product.reviewRequired && !product.publish"
+                  style="font-size: small; margin-bottom: 0 !important;"
+                  dense
+                  color="success"
+                  text>
+                Ready to Publish
+              </v-alert>
+              <v-alert
+                  v-if="product.reviewRequired && !product.publish"
+                  style="font-size: small; margin-bottom: 0 !important;"
+                  dense
+                  color="error"
+                  text>
+                Review Required
+              </v-alert>
             </div>
             <div class="actions-column">
               <!-- Edit button -->
@@ -136,7 +166,7 @@
                 </template>
                 <span>View</span>
               </v-tooltip>
-              <!-- View Button -->
+              <!-- Delete Button -->
               <v-tooltip top>
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
@@ -197,7 +227,6 @@
     </v-dialog>
   </div>
 </template>
-
 
 <script>
 export default {
@@ -274,7 +303,7 @@ export default {
           return brand.name;
         }
       }
-      return 'Brand Not Found';
+      return 'No Brand Linked';
     },
     getCategoryName(categoryId) {
       if (this.allCategories) {
@@ -283,7 +312,7 @@ export default {
           return category.name;
         }
       }
-      return 'Category Not Found';
+      return 'No Category Linked';
     },
     async deleteThisProduct() {
       //delete the product from scrapedProducts
@@ -463,6 +492,9 @@ export default {
 </script>
 
 <style scoped>
+.sort-heading {
+  cursor: pointer;
+}
 .actions-column {
   display: none;
 }
@@ -521,7 +553,7 @@ export default {
   min-width: 0px;
   padding: 8px 16px;
   display: grid;
-  grid-template-columns: 1.5fr 0.5fr 0.5fr 1fr 0.5fr 0.5fr 0.5fr 0.5fr;
+  grid-template-columns: 0.2fr 1.5fr 0.5fr 1fr 0.5fr 0.5fr 0.5fr;
   -webkit-box-align: center;
   align-items: center;
 }
@@ -537,7 +569,7 @@ export default {
   min-width: 0px;
   padding: 8px 16px;
   display: grid;
-  grid-template-columns: 1.5fr 0.5fr 0.5fr 1fr 0.5fr 0.5fr 0.5fr 0.5fr;
+  grid-template-columns: 0.2fr 1.5fr 0.5fr 1fr 0.5fr 0.5fr 0.5fr;
   -webkit-box-align: center;
   align-items: center;
 }

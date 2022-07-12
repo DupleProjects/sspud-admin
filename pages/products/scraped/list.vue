@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pa-3">
     <client-only>
       <v-overlay
           style="height: 80vh; margin-top: -60px"
@@ -19,35 +19,27 @@
         </div>
       </v-overlay>
     </client-only>
-    <!--Header-->
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mx-3">
-      <h1 class="h2">Scraped Products</h1>
-      <!--Search would be here-->
-
-      <div class="btn-toolbar mb-2 mb-md-0">
-        <div class="btn-group me-2">
-          <export-modal :products="products" :exportTableName="'scrapedProducts'" :exportSheetName="'Scraped Products'" />
-        </div>
-      </div>
-    </div>
-    <hr class="my-0 mx-3">
+    <!--Filter-->
     <div v-if="!loading">
       <product-list-filter
-        :filter="filter" 
-        :filterChangeCallBack="filterChangeCallBackScraped" 
-        :type="'scraped'" 
+        :filter="filter"
+        :filterChangeCallBack="filterChangeCallBackScraped"
+        :type="'scraped'"
+        :heading="'Scraped Products'"
       />
       <!--Table-->
-      <products-product-list :type="'scraped'" :products="products" :canDelete="false" :sortCallback="sortCallback"  :shops="allShops" :tableStyle="'height:60vh; overflow-y:auto; overflow-x: hidden;'" />
+      <products-product-list :type="'scraped'" :products="products" :canDelete="false" :sortCallback="sortCallback"  :shops="allShops" :tableStyle="'height:72vh; overflow-y:auto; overflow-x: hidden;'" />
       <!--Pagination-->
       <template>
-        <div class="text-end">
+        <div class="d-flex justify-content-between">
+          <div></div>
           <v-pagination
               color="primary"
               v-model="page"
               :length="Math.ceil(this.productCount / this.numberPerPage)"
               :total-visible="7"
           ></v-pagination>
+          <export-modal :products="products" :exportTableName="'scrapedProducts'" :exportSheetName="'Scraped Products'" />
         </div>
       </template>
     </div>
@@ -89,9 +81,18 @@ export default {
     this.$nextTick(async function () {
       // var loggedInUser = this.$store.state.auth.user
       // Load Products
-      const pageInfo = breadcrumbMixin.methods.getPage('scrapedList')
-      this.page = pageInfo.page
-      await this.loadProducts()
+      const pageInfo = breadcrumbMixin.methods.getPageWithSort('scrapedList');
+      if (pageInfo.pagination) {
+        this.page = pageInfo.pagination.page;
+      }
+      if (pageInfo.filter) {
+        this.activeFilter = pageInfo.filter;
+        this.filter = pageInfo.filter;
+      }
+      if (pageInfo.sort) {
+        this.sortCriteria = pageInfo.sort;
+      }
+      await this.loadProducts(this.sortCriteria, this.activeFilter)
 
       const shopsReturn = await this.$store.dispatch('dataGate', {
         tableName: 'shops',

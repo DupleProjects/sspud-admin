@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pa-3">
     <client-only>
       <v-overlay
           style="height: 80vh; margin-top: -60px"
@@ -20,21 +20,11 @@
       </v-overlay>
     </client-only>
     <!--Header-->
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mx-3">
-      <h1 class="h2">Published Products</h1>
-      <!--Search would be here-->
-
-      <div class="btn-toolbar mb-2 mb-md-0">
-        <div class="btn-group me-2">
-          <export-modal :products="products" :exportTableName="'stagedProducts'" :exportSheetName="'Published Products'" :exportCriteria="{publish:1,deleted:0}" />
-        </div>
-      </div>
-    </div>
-    <hr class="my-0 mx-3">
     <div v-if="!loading">
       <product-list-filter
         :filterChangeCallBack="filterChangeCallBack"
         :filter="filter"
+        :heading="'Published Products'"
         :type="'staged'"
       />
       <products-product-list
@@ -43,16 +33,18 @@
           :allBrands="allBrands"
           :products="products"
           :sortCallbackStaged="sortCallback"
-          :tableStyle="'height:60vh; overflow-y:auto; overflow-x: hidden;'" />
+          :tableStyle="'height:70vh; overflow-y:auto; overflow-x: hidden;'" />
       <!--Pagination-->
       <template>
-        <div class="text-end">
+        <div class="d-flex justify-content-between">
+          <div></div>
           <v-pagination
               color="primary"
               v-model="page"
               :length="Math.ceil(this.productCount / this.numberPerPage)"
               :total-visible="7"
           ></v-pagination>
+          <export-modal :products="products" :exportTableName="'stagedProducts'" :exportSheetName="'Published Products'" :exportCriteria="{publish:1,deleted:0}" />
         </div>
       </template>
     </div>
@@ -84,7 +76,7 @@ export default {
   watch: {
     page(val) {
       this.loadProducts()
-      breadcrumbMixin.methods.savePage('publishedList', this.page)
+      breadcrumbMixin.methods.savePageAndFilter('publishedList', {page: this.page, filter: this.activeFilter, sort: this.sortCriteria});
     },
     search(val) {
 
@@ -93,11 +85,14 @@ export default {
   beforeMount() {
     this.$nextTick(async function () {
       this.loading = true;
-      // var loggedInUser = this.$store.state.auth.user
+      // Set page and filter from session
+      const pageInfo = breadcrumbMixin.methods.getPageWithSort('publishedList');
+      this.page = pageInfo.pagination.page;
+      this.activeFilter = pageInfo.filter;
+      this.filter = pageInfo.filter;
+      this.sortCriteria = pageInfo.sort;
       // Load Products
-      const pageInfo = breadcrumbMixin.methods.getPage('publishedList')
-      this.page = pageInfo.page
-      await this.loadProducts();
+      await this.loadProducts(this.activeFilter, this.sortCriteria);
       await this.loadCategoriesAndBrands();
       this.loading = false;
     })
@@ -159,23 +154,8 @@ export default {
     async filterChangeCallBack(filter) {
       // Build the where clause
       if (filter) {
-        const criteria = {
-          deleted: 0, publish: 0
-        }
-        if (filter.name) {
-          criteria.name = { like: filter.name }
-        }
-        if (filter.categoryId === null) {
-          delete filter.categoryId;
-        }
-        if (filter.subCategoryId === null) {
-          delete filter.subCategoryId;
-        }
-        if (filter.brandId === null) {
-          delete filter.brandId;
-        }
-        this.criteria = criteria;
         this.activeFilter = filter;
+        breadcrumbMixin.methods.savePageAndFilter('publishedList', {page: this.page, filter: this.activeFilter, sort: this.sortCriteria});
         await this.loadProducts(filter);
       }
     },
@@ -183,6 +163,7 @@ export default {
       // Build the where clause
       if (crit) {
         if(this.activeFilter){
+          breadcrumbMixin.methods.savePageAndFilter('publishedList', {page: this.page, filter: this.activeFilter, sort: crit});
           await this.loadProducts(this.activeFilter, crit);
         }else{
           await this.loadProducts(null, crit);

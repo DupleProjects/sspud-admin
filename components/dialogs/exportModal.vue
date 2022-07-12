@@ -1,16 +1,10 @@
 <template>
   <div class="">
-    <v-tooltip top>
-      <template v-slot:activator="{ on, attrs }">
-        <button
-            @click="showModal()"
-            type="button"
-            class="btn btn-sm btn-outline-secondary">
-          Export
-        </button>
-      </template>
-      <span>Export</span>
-    </v-tooltip>
+    <v-btn
+        color="primary"
+        @click="showModal()">
+      Export
+    </v-btn>
     <!--New Category Dialog-->
     <v-dialog style="z-index: 10000" v-model="exportModal" max-width="500">
       <v-card>
