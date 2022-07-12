@@ -82,7 +82,10 @@
             <div v-if="type === 'scraped'" class="column-1">
               {{ product.subCategoryName }}
             </div>
-            <div v-if="type === 'staged' || type === 'published'" class="column-1">
+            <div
+                v-bind:style="{ color: product.subCategoryId ? '#000000' : '#ff8000' }"
+                v-if="type === 'staged' || type === 'published'"
+                class="column-1">
               {{ getCategoryName(product.subCategoryId) }}
             </div>
             <div v-if="type === 'scraped'" class="column-1">
@@ -93,7 +96,10 @@
               {{ getShop(product.shopId) }}
             </div>
             <!--Brand-->
-            <div v-if="type === 'staged' || type === 'published'" class="column-1">
+            <div
+                v-bind:style="{ color: product.brandId ? '#000000' : '#ff8000' }"
+                v-if="type === 'staged' || type === 'published'"
+                class="column-1">
               {{getBrandName(product.brandId)}}
             </div>
             <!--Review Required-->
