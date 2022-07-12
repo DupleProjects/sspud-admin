@@ -46,6 +46,20 @@ export default {
         }
       }
       return {
+        page: 1,
+        pagePosition: 0
+      };
+    },
+    getPageWithSort(pageName) {
+      let pageHistory = window.sessionStorage.getItem('pageHistory');
+      if (pageHistory && (typeof pageHistory === 'string' || pageHistory instanceof String)) {
+        pageHistory = JSON.parse(pageHistory);
+        if (pageHistory.hasOwnProperty(pageName)) {
+          window.scrollTo(0, pageHistory[pageName].pagePosition)
+          return pageHistory[pageName]
+        }
+      }
+      return {
         pagination: {
           page: 1,
           pagePosition: 0

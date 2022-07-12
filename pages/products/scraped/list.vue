@@ -81,7 +81,7 @@ export default {
     this.$nextTick(async function () {
       // var loggedInUser = this.$store.state.auth.user
       // Load Products
-      const pageInfo = breadcrumbMixin.methods.getPage('scrapedList');
+      const pageInfo = breadcrumbMixin.methods.getPageWithSort('scrapedList');
       if (pageInfo.pagination) {
         this.page = pageInfo.pagination.page;
       }

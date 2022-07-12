@@ -87,7 +87,7 @@ export default {
   beforeMount() {
     this.$nextTick(async function () {
       this.loading = true;
-      const pageInfo = breadcrumbMixin.methods.getPage('deletedList')
+      const pageInfo = breadcrumbMixin.methods.getPageWithSort('deletedList')
       this.page = pageInfo.pagination.page;
       this.activeFilter = pageInfo.filter;
       this.filter = pageInfo.filter;

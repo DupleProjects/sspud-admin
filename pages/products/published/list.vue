@@ -86,7 +86,7 @@ export default {
     this.$nextTick(async function () {
       this.loading = true;
       // Set page and filter from session
-      const pageInfo = breadcrumbMixin.methods.getPage('publishedList');
+      const pageInfo = breadcrumbMixin.methods.getPageWithSort('publishedList');
       this.page = pageInfo.pagination.page;
       this.activeFilter = pageInfo.filter;
       this.filter = pageInfo.filter;

@@ -142,7 +142,9 @@ export default {
         this.brands = brandsResponse.data;
         this.filteredBrands = this.brands;
         const pageInfo = breadcrumbMixin.methods.getPage('mappedBrandsList')
-      this.page = pageInfo.page
+        if (pageInfo.page) {
+          this.page = pageInfo.page
+        }
         this.setPage();
       }
       this.loading = false;
