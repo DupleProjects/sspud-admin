@@ -303,7 +303,7 @@ export default {
           return brand.name;
         }
       }
-      return 'Brand Not Found';
+      return 'No Brand Linked';
     },
     getCategoryName(categoryId) {
       if (this.allCategories) {
@@ -312,7 +312,7 @@ export default {
           return category.name;
         }
       }
-      return 'Category Not Found';
+      return 'No Category Linked';
     },
     async deleteThisProduct() {
       //delete the product from scrapedProducts
