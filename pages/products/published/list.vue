@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pa-3">
     <client-only>
       <v-overlay
           style="height: 80vh; margin-top: -60px"
@@ -20,21 +20,11 @@
       </v-overlay>
     </client-only>
     <!--Header-->
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mx-3">
-      <h1 class="h2">Published Products</h1>
-      <!--Search would be here-->
-
-      <div class="btn-toolbar mb-2 mb-md-0">
-        <div class="btn-group me-2">
-          <export-modal :products="products" :exportTableName="'stagedProducts'" :exportSheetName="'Published Products'" :exportCriteria="{publish:1,deleted:0}" />
-        </div>
-      </div>
-    </div>
-    <hr class="my-0 mx-3">
     <div v-if="!loading">
       <product-list-filter
         :filterChangeCallBack="filterChangeCallBack"
         :filter="filter"
+        :heading="'Published Products'"
         :type="'staged'"
       />
       <products-product-list
@@ -43,16 +33,18 @@
           :allBrands="allBrands"
           :products="products"
           :sortCallbackStaged="sortCallback"
-          :tableStyle="'height:60vh; overflow-y:auto; overflow-x: hidden;'" />
+          :tableStyle="'height:70vh; overflow-y:auto; overflow-x: hidden;'" />
       <!--Pagination-->
       <template>
-        <div class="text-end">
+        <div class="d-flex justify-content-between">
+          <div></div>
           <v-pagination
               color="primary"
               v-model="page"
               :length="Math.ceil(this.productCount / this.numberPerPage)"
               :total-visible="7"
           ></v-pagination>
+          <export-modal :products="products" :exportTableName="'stagedProducts'" :exportSheetName="'Published Products'" :exportCriteria="{publish:1,deleted:0}" />
         </div>
       </template>
     </div>

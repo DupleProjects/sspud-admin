@@ -2,74 +2,91 @@
   <div class="p-2">
     <div class="row" v-if="!loading">
       <div class="col-3" v-if="product">
-        <v-card class="mt-12"   style="height:85vh;">
-          <div class="m-2 fadeInUp animated animatedFadeInUp">
-          <img v-if="product.imageSrc && product.imageSrc != 'null'" class="card-img-top" :src="product.imageSrc" alt="image" style="width:100%; text-align:auto">
-          <v-btn
+        <v-btn
+            class="ma-2 mb-1"
+            outlined
+            x-small
+            fab
             color="primary"
-            rounded
-            dark
-            :loading="isSelecting"
-            @click="handleFileImport"
-            class="mt-5"
-            style="margin-left:auto; margin-right:auto;">
-          Upload Product Image
+            @click="$router.go(-1)">
+          <v-icon>mdi-arrow-left-bold</v-icon>
         </v-btn>
-        <!-- Create a File Input that will be hidden but triggered with JavaScript -->
-        <input
-            ref="uploader"
-            class="d-none"
-            type="file"
-            @change="onNewFileUpload">
-          <div class="card-body">
-            <v-card class="mt-2">
-              <v-alert
-                border="right"
-                colored-border
-                dense
-                :type="product.hasStock ? 'success' : 'error'"
-                elevation="2">
-              Has Stock
-            </v-alert>
-            </v-card>
-            
-            <v-card>
-              <v-alert
-                border="right"
-                colored-border
-                dense
-                :type="product.special ? 'success' : 'error'"
-                elevation="2">
-              Special
-            </v-alert>
-            </v-card>
-            
-            <v-card>
-              <v-alert
-                border="right"
-                colored-border
-                dense
-                :type="'info'"
-                elevation="2">
-              <a target="_blank" :href="product.href">Shop Link</a>
-            </v-alert>
-            </v-card>
-            
-            <v-card>
-              <v-alert
-                border="right"
-                colored-border
-                dense
-                :type="'info'"
-                :to="'../../products/scraped/' + product.scrapedProductId"
-                router
-                elevation="2">
-              <a :href="'../../../products/scraped/dashboard/' + product.scrapedProductId">Scraped Product</a>
-            </v-alert>
-            </v-card>
-            
+        <v-card class="" style="height:85vh;">
+          <div class="m-2 fadeInUp animated animatedFadeInUp">
+            <img v-if="product.imageSrc && product.imageSrc !== 'null'" class="card-img-top" :src="product.imageSrc"
+                 alt="image" style="width:100%">
+            <div class="text-center">
+              <v-btn
+                  color="primary"
+                  small
+                  :loading="isSelecting"
+                  @click="handleFileImport"
+                  class="mt-5"
+                  style="margin-left:auto; margin-right:auto;">
+                Upload Product Image
+              </v-btn>
+              <!-- Create a File Input that will be hidden but triggered with JavaScript -->
+              <input
+                  ref="uploader"
+                  class="d-none"
+                  type="file"
+                  @change="onNewFileUpload">
+            </div>
+            <div class="card-body">
+              <hr>
+              <!-- Review required -->
+              <div class="d-flex justify-content-between p-1">
+                <p class="mb-0">{{ product.reviewRequired ? 'Requires Review' : 'Reviewed' }}</p>
+                <v-icon
+                    v-if="product.reviewRequired"
+                    style="color:red;">mdi-text-box-search
+                </v-icon>
+                <v-icon
+                    v-if="!product.reviewRequired"
+                    style="color:#53fd00;">mdi-file-document
+                </v-icon>
+              </div>
+              <!-- Stock -->
+              <div class="d-flex justify-content-between p-1">
+                <p class="mb-0">{{ product.hasStock ? 'In Stock' : 'Out Of Stock' }}</p>
+                <v-icon
+                    v-if="!product.hasStock"
+                    style="color:red;">mdi-package
+                </v-icon>
+                <v-icon
+                    v-if="product.hasStock"
+                    style="color:#53fd00;">mdi-package
+                </v-icon>
+              </div>
+              <!-- Special -->
+              <div class="d-flex justify-content-between p-1">
+                <p class="mb-0">{{ product.special ? 'On Special' : 'Not On Special' }}</p>
+                <v-icon
+                    v-if="!product.special"
+                    style="color:red;">mdi-star-circle
+                </v-icon>
+                <v-icon
+                    v-if="product.special"
+                    style="color:#53fd00;">mdi-star-circle
+                </v-icon>
+              </div>
+              <!-- Shop Link -->
+              <div class="d-flex justify-content-between p-1">
+                <a target="_blank" :href="product.href">Shop Link</a>
+                <v-icon
+                    style="color:#007ffd;">mdi-web
+                </v-icon>
+              </div>
+              <!-- Scraped Product -->
+              <div class="d-flex justify-content-between p-1">
+                <a target="_blank" :href="'../../../products/scraped/dashboard/' + product.scrapedProductId">Scraped
+                  Product</a>
+                <v-icon
+                    style="color:#007ffd;">mdi-link-variant
+                </v-icon>
+              </div>
+            </div>
           </div>
-        </div>
         </v-card>
         
       </div>
@@ -93,9 +110,9 @@
           </v-tab-item>
           <v-tab-item class="p-3">
             <product-linked-entities :product="product" class="fadeInUp animated animatedFadeInUp"/>
+            <products-product-price-breakdown :product="product" />
           </v-tab-item>
           <v-tab-item  class="p-3">
-            <products-product-price-breakdown :product="product" />
             <products-product-publish :product="product" />
           </v-tab-item>
           <v-tab-item class="p-3">
@@ -121,7 +138,7 @@ export default {
     return {
       tab: null,
       items: [
-        'details', 'linked entities', 'publish', 'log'
+        'details', 'meta', 'publish', 'log'
       ],
       product: null,
       loading: false,

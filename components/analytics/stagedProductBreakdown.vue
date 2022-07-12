@@ -108,6 +108,7 @@ export default {
         page: 1,
         numberPerPage: 1,
       });
+      console.log('stagedProductsCountResponse', stagedProductsCountResponse)
       if (stagedProductsCountResponse && stagedProductsCountResponse.data) {
         this.nonDeletedStagedProducts = stagedProductsCountResponse.count;
       }

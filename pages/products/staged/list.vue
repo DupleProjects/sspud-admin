@@ -20,23 +20,13 @@
         </div>
       </v-overlay>
     </client-only>
-    <!--Header-->
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mx-3">
-      <h1 class="h2">Staged Products</h1>
-      <!--Search would be here-->
-
-      <div class="btn-toolbar mb-2 mb-md-0">
-        <div class="btn-group me-2">
-          <export-modal :products="products" :exportTableName="'stagedProducts'" :exportSheetName="'Staged Products'" :exportCriteria="null" />
-        </div>
-      </div>
-    </div>
-    <hr class="mt-0 mb-2 mx-3">
+    <!--Filter-->
     <div v-if="!loading">
       <!--Filter-->
       <products-product-list-filter
         :filterChangeCallBack="filterChangeCallBack"
         :filter="filter"
+        :heading="'Staged Products'"
         :type="'staged'"
       />
       <!--Table-->
@@ -47,17 +37,19 @@
         :allBrands="allBrands"
         :deleteProductCallBack="deleteProductCallBack"
         :sortCallbackStaged="sortCallback"
-        :tableStyle="'height:60vh; overflow-y:auto; overflow-x: hidden;'"
+        :tableStyle="'height:73vh; overflow-y:auto; overflow-x: hidden;'"
       />
       <!--Pagination-->
       <template>
-        <div class="text-end">
+        <div class="d-flex justify-content-between">
+          <div></div>
           <v-pagination
             color="primary"
             v-model="page"
             :length="Math.ceil(this.productCount / this.numberPerPage)"
             :total-visible="7"
           ></v-pagination>
+          <export-modal :products="products" :exportTableName="'stagedProducts'" :exportSheetName="'Staged Products'" :exportCriteria="null" />
         </div>
       </template>
     </div>
