@@ -21,13 +21,28 @@
       </v-overlay>
     </client-only>
     <div v-if="!loading">
-      <!--Filter-->
-      <products-product-list-filter
-          :filterChangeCallBack="filterChangeCallBack"
-          :filter="filter"
-          :heading="'Deleted Products'"
-          :type="'staged'"
-      />
+      <!--Header-->
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mx-3">
+        <h4 class="">
+          Deleted Products
+          <v-chip
+              class="ma-2"
+              color="primary"
+              label>
+            <v-icon left>
+              mdi-counter
+            </v-icon>
+            {{productCount}}
+          </v-chip>
+        </h4>
+        <!--Filter-->
+        <products-product-list-filter
+            v-if="filter"
+            :filterChangeCallBack="filterChangeCallBack"
+            :filter="filter"
+            :type="'staged'"/>
+      </div>
+      <hr class="mt-0 mb-2 mx-3">
       <!--Table-->
       <products-product-list
         :type="'staged'"
@@ -36,7 +51,7 @@
         :allBrands="allBrands"
         :deleteProductCallBack="deleteProductCallBack"
         :sortCallbackStaged="sortCallback"
-        :tableStyle="'height:70vh; overflow-y:auto; overflow-x: hidden;'"
+        :tableStyle="'height:80vh; overflow-y:auto; overflow-x: hidden;'"
       />
       <!--Pagination-->
       <template>
@@ -87,11 +102,17 @@ export default {
   beforeMount() {
     this.$nextTick(async function () {
       this.loading = true;
-      const pageInfo = breadcrumbMixin.methods.getPageWithSort('deletedList')
-      this.page = pageInfo.pagination.page;
-      this.activeFilter = pageInfo.filter;
-      this.filter = pageInfo.filter;
-      this.sortCriteria = pageInfo.sort;
+      const pageInfo = breadcrumbMixin.methods.getPageWithSort('deletedList');
+      if (pageInfo.pagination) {
+        this.page = pageInfo.pagination.page;
+      }
+      if (pageInfo.filter) {
+        this.filter = pageInfo.filter;
+        this.activeFilter = pageInfo.filter;
+      }
+      if (pageInfo.sort) {
+        this.sortCriteria = pageInfo.sort;
+      }
       // Load Products
       await this.loadProducts(this.activeFilter, this.sortCriteria);
       await this.loadCategoriesAndBrands();

@@ -83,16 +83,16 @@ export default {
   data() {
     return {
       // Variables
-      noCategoryProductValue: 0,
-      noSubCategoryProductValue: 0,
-      reviewProductValue: 0,
+      noCategoryProductValue: null,
+      noSubCategoryProductValue: null,
+      reviewProductValue: null,
       publishedProductValue: null,
-      nonDeletedStagedProducts: 0,
-      publishedProducts: 0,
-      reviewRequiredProducts: 0,
-      noCategoryProducts: 0,
-      noSubCategoryProducts: 0,
-      deletedProducts: 0,
+      nonDeletedStagedProducts: null,
+      publishedProducts: null,
+      reviewRequiredProducts: null,
+      noCategoryProducts: null,
+      noSubCategoryProducts: null,
+      deletedProducts: null,
     };
   },
   mounted() {
