@@ -84,6 +84,7 @@ export default {
       page: 1,
       numberPerPage: 15,
       filter: {},
+      activeFilter: null,
       productCount: 0,
       products: [],
       allCategories: [],
@@ -91,14 +92,13 @@ export default {
       // Current criteria
       criteria: { deleted: 0, publish: 0 },
       sortCriteria: {},
-      href: "",
-      activeFilter: null
+      href: ""
     };
   },
   watch: {
     page(val) {
       this.loadProducts();
-      breadcrumbMixin.methods.savePageAndFilter('stagedList', {page: this.page, filter: this.activeFilter, sort: this.sortCriteria});
+      breadcrumbMixin.methods.savePageAndFilter('stagedList', {page: this.page, filter: this.filter, sort: this.sortCriteria});
     },
   },
   beforeMount() {
@@ -143,7 +143,7 @@ export default {
       const stagedProducts = await this.$store.dispatch("dataGate", {
         tableName: "stagedProducts",
         operation: "read",
-        whereCriteria: criteria ? criteria : { deleted: 0 },
+        whereCriteria: criteria ? {...criteria, deleted: 0, publish: 0 } : { deleted: 0 },
         sortCriteria: sortCrit ? sortCrit : {},
         page: this.page,
         numberPerPage: this.numberPerPage,

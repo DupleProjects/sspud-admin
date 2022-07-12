@@ -141,7 +141,7 @@ export default {
       const deletedProducts = await this.$store.dispatch("dataGate", {
         tableName: "stagedProducts",
         operation: "read",
-        whereCriteria: criteria ? criteria : { deleted: 1 },
+        whereCriteria: criteria ? {...criteria, deleted: 1 } : { deleted: 1 },
         sortCriteria: sortCriteria ? sortCriteria : {},
         page: this.page,
         numberPerPage: this.numberPerPage,

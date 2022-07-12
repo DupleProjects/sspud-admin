@@ -142,7 +142,7 @@ export default {
       const scrapedProducts = await this.$store.dispatch('dataGate', {
         tableName: 'stagedProducts',
         operation: 'read',
-        whereCriteria: criteria ? criteria : {deleted: 0, publish: 1},
+        whereCriteria: criteria ? {...criteria, deleted: 0, publish: 1 } : {deleted: 0, publish: 1},
         sortCriteria: sortCrit ? sortCrit : {},
         page: this.page,
         numberPerPage: this.numberPerPage
@@ -174,7 +174,7 @@ export default {
       }
     },
     async filterChangeCallBack(filter) {
-      // Build the where clause
+      // Build the where clauses
       if (filter) {
         this.activeFilter = filter;
         breadcrumbMixin.methods.savePageAndFilter('publishedList', {page: this.page, filter: this.activeFilter, sort: this.sortCriteria});

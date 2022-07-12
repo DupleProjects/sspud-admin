@@ -198,11 +198,12 @@ export default {
     this.$nextTick(async function () {
       this.loading = true;
       // Check if we have saved filter. If so then we should set the name
-      if (this.filter.hasOwnProperty('name') && this.filter.name.hasOwnProperty('like')) {
-        this.search = this.filter.name.like;
-        this.filter.name = this.filter.name.like;
+      if (this.filter) {
+        if (this.filter.hasOwnProperty('name') && this.filter.name.hasOwnProperty('like')) {
+          this.search = this.filter.name.like;
+          this.filter.name = this.filter.name.like;
+        }
       }
-      console.log('this.filter', this.filter)
       await this.loadDate();
       // Update category
       this.onCategoryChange(false, true);
@@ -248,7 +249,7 @@ export default {
             if (!category.parentId) {
               this.categories.push(category);
             }
-            if (this.filter.categoryId) {
+            if (this.filter && this.filter.categoryId) {
               this.subCategories = baseMixin.methods.getObjectsWhereKeysHaveValues(
                   this.allCategories, {parentId: this.filter.categoryId}, false
               );
@@ -266,16 +267,18 @@ export default {
       this.loading = false;
     },
     async onCategoryChange(sub, initialise) {
-      if (this.type === 'staged' && this.filter.categoryId) {
+      if (this.type === 'staged' && this.filter) {
         if (!sub) {
           if (!initialise) {
             this.filter.subCategoryId = null;
           }
           this.subCategories = baseMixin.methods.getObjectsWhereKeysHaveValues(this.allCategories, {parentId: this.filter.categoryId}, false);
         }
-        await this.updateFilter()
+        if (!initialise) {
+          await this.updateFilter()
+        }
       }
-      if (this.type === "scraped" && this.filter.categoryName) {
+      if (this.type === "scraped" && this.filter) {
         if (!sub) {
           if (!initialise) {
             this.filter.scrapedSubCategoryId = null;
@@ -285,7 +288,9 @@ export default {
             this.subCategories = baseMixin.methods.getObjectsWhereKeysHaveValues(this.scrapedCategories, {parentId: mainCategory.id}, false);
           }
         }
-        await this.updateFilter();
+        if (!initialise) {
+          await this.updateFilter()
+        }
       }
       
     },
@@ -298,20 +303,18 @@ export default {
       }
     },
     updateFilter() {
-      if(this.type == 'staged'){
-        const criteria = {
-          deleted: 0, publish: 0
-        }
+      if (this.type === 'staged') {
+        const criteria = {}
         if (this.filter.name) {
           criteria.name = { like: this.filter.name }
         }
-        if (this.filter.categoryId !== null) {
+        if (this.filter.categoryId) {
           criteria.categoryId = this.filter.categoryId;
         }
-        if (this.filter.subCategoryId !== null) {
+        if (this.filter.subCategoryId) {
           criteria.subCategoryId = this.filter.subCategoryId;
         }
-        if (this.filter.brandId !== null) {
+        if (this.filter.brandId) {
           criteria.brandId = this.filter.brandId;
         }
         if (this.filter.reviewRequired) {
@@ -334,8 +337,6 @@ export default {
         if (this.filter.brandName) {
           criteria.brand = this.filter.brandName;
         }
-        console.log('criteria', criteria)
-        debugger;
         this.filterChangeCallBack(criteria);
       }
       
