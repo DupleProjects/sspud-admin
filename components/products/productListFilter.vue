@@ -1,14 +1,42 @@
 <template>
-  <div class="px-3 pt-3">
+  <div class="flex-grow-1">
     <div class="d-flex" v-if="filter">
-      <h4 class="mb-0">{{heading}}</h4>
       <v-text-field
           v-model="search"
           label="Search"
+          hide-details
           class="px-3 pt-0 mt-0"
       ></v-text-field>
+      <v-btn
+          :color=" filterInUse() ? 'success' : 'primary' "
+          dark
+          @click.stop="drawer = !drawer">
+        <v-icon dark>
+          mdi-filter
+        </v-icon>
+      </v-btn>
     </div>
-    <div class="d-flex" v-if="filter">
+    <v-navigation-drawer
+        v-if="filter"
+        v-model="drawer"
+        absolute
+        right
+        temporary>
+      <v-list-item>
+        <v-list-item-avatar>
+          <v-icon
+              :color=" filterInUse() ? 'success' : 'primary' "
+              class="icon-style hide-on-desktop"
+              dark>
+            mdi-filter
+          </v-icon>
+        </v-list-item-avatar>
+
+        <v-list-item-content>
+          <v-list-item-title>Advance Filter</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <v-divider class="mt-0"></v-divider>
       <!--Review Required-->
       <v-select
           v-if="type === 'staged'"
@@ -20,8 +48,6 @@
           :hide-details="true"
           class="px-3"
           clearable
-          dense
-          solo-inverted
       ></v-select>
       <!--Category-->
       <v-autocomplete
@@ -35,8 +61,6 @@
           label="Category"
           class="px-3"
           clearable
-          dense
-          solo-inverted
       ></v-autocomplete>
       <v-autocomplete
           v-if="type === 'scraped'"
@@ -49,10 +73,7 @@
           label="Category"
           class="px-3"
           clearable
-          dense
-          solo-inverted
       ></v-autocomplete>
-      
       <!--Sub Category-->
       <v-autocomplete
           v-if="type === 'staged'"
@@ -65,13 +86,11 @@
           :hide-details="true"
           class="px-3"
           clearable
-          dense
-          solo-inverted
-          :disabled="!filter.categoryId"
+          :disabled="!filter.categoryId || subCategories.length === 0"
       ></v-autocomplete>
       <v-autocomplete
           v-if="type === 'scraped'"
-          v-model="filter.scrapedSubCategoryId"
+          v-model="filter.subCategoryName"
           v-on:change="onCategoryChange(true)"
           :items="subCategories"
           :item-value="'name'"
@@ -80,9 +99,7 @@
           :hide-details="true"
           class="px-3"
           clearable
-          dense
-          solo-inverted
-          :disabled="!filter.categoryName"
+          :disabled="!filter.categoryName || subCategories.length === 0"
       ></v-autocomplete>
       <!--Brand-->
       <v-autocomplete
@@ -96,8 +113,6 @@
           class="px-3"
           label="Brand"
           clearable
-          dense
-          solo-inverted
       ></v-autocomplete>
       <v-autocomplete
           v-if="type === 'scraped'"
@@ -110,10 +125,21 @@
           class="px-3"
           label="Brand"
           clearable
-          dense
-          solo-inverted
       ></v-autocomplete>
-    </div>
+      <template v-slot:append>
+        <div class="text-center py-2">
+          <v-btn
+              color="error"
+              dark
+              @click.stop="drawer = !drawer">
+            <v-icon dark>
+              mdi-close-circle-outline
+            </v-icon>
+            Close
+          </v-btn>
+        </div>
+      </template>
+    </v-navigation-drawer>
   </div>
 </template>
 
@@ -136,13 +162,18 @@ export default {
       brands: [],
       categories: [],
       subCategories: [],
-      scrapedCategories: []
+      scrapedCategories: [],
+      drawer: null,
+      items: [
+        { title: 'Home', icon: 'mdi-view-dashboard' },
+        { title: 'About', icon: 'mdi-forum' },
+      ],
     }
   },
   watch: {
     search(val) {
       this.filter.name = val;
-      this.updateFilter()
+      this.updateFilter();
     },
     reviewRequired(val) {
       if (val !== null) {
@@ -163,12 +194,23 @@ export default {
       }
     }
   },
-  mounted() {
-
-  },
   beforeMount() {
     this.$nextTick(async function () {
       this.loading = true;
+      // Check if we have saved filter. If so then we should set the name
+      if (this.filter) {
+        if (this.filter.hasOwnProperty('name') && this.filter.name.hasOwnProperty('like')) {
+          this.search = this.filter.name.like;
+          this.filter.name = this.filter.name.like;
+        }
+      }
+      await this.loadDate();
+      // Update category
+      this.onCategoryChange(false, true);
+    });
+  },
+  methods: {
+    async loadDate() {
       if (this.type === 'scraped') {
         const categories = await this.$store.dispatch("dataGate", {
           tableName: "scrapedCategories",
@@ -196,7 +238,6 @@ export default {
             this.brands.push(brand)
           })
         }
-
       } else if (this.type === 'staged') {
         const categories = await this.$store.dispatch("dataGate", {
           tableName: "mappedCategories",
@@ -208,13 +249,12 @@ export default {
             if (!category.parentId) {
               this.categories.push(category);
             }
-            if (this.filter.categoryId) {
+            if (this.filter && this.filter.categoryId) {
               this.subCategories = baseMixin.methods.getObjectsWhereKeysHaveValues(
                   this.allCategories, {parentId: this.filter.categoryId}, false
               );
             }
           });
-
         }
         const brandsResponse = await this.$store.dispatch("dataGate", {
           tableName: "mappedBrands",
@@ -225,30 +265,32 @@ export default {
         }
       }
       this.loading = false;
-    });
-  },
-  methods: {
-    async onCategoryChange(sub) {
-      if(this.type == 'staged'){
+    },
+    async onCategoryChange(sub, initialise) {
+      if (this.type === 'staged' && this.filter) {
         if (!sub) {
-          this.filter.subCategoryId = null;
+          if (!initialise) {
+            this.filter.subCategoryId = null;
+          }
           this.subCategories = baseMixin.methods.getObjectsWhereKeysHaveValues(this.allCategories, {parentId: this.filter.categoryId}, false);
         }
-        await this.updateFilter()
-      }
-      if(this.type == "scraped"){
-        if (!sub) {
-          this.filter.subCategoryId = null;
-          const mainCategory = baseMixin.methods.getObjectsWhereKeysHaveValues(this.scrapedCategories, {name: this.filter.categoryName}, false);
-
-          if(this.mainCategory){
-            console.log("👉",mainCategory[0].id);
-            this.subCategories = baseMixin.methods.getObjectsWhereKeysHaveValues(this.scrapedCategories, {parentId: mainCategory[0].id}, false);
-          }
-          
+        if (!initialise) {
+          await this.updateFilter()
         }
-        await this.updateFilter()
-        console.log("Scraped filter");
+      }
+      if (this.type === "scraped" && this.filter) {
+        if (!sub) {
+          if (!initialise) {
+            this.filter.scrapedSubCategoryId = null;
+          }
+          const mainCategory = baseMixin.methods.getObjectsWhereKeysHaveValues(this.scrapedCategories, {name: this.filter.categoryName}, true);
+          if (mainCategory) {
+            this.subCategories = baseMixin.methods.getObjectsWhereKeysHaveValues(this.scrapedCategories, {parentId: mainCategory.id}, false);
+          }
+        }
+        if (!initialise) {
+          await this.updateFilter()
+        }
       }
       
     },
@@ -261,45 +303,81 @@ export default {
       }
     },
     updateFilter() {
-      if(this.type == 'staged'){
-        const criteria = {
-          deleted: 0, publish: 0
-        }
+      if (this.type === 'staged') {
+        const criteria = {}
         if (this.filter.name) {
           criteria.name = { like: this.filter.name }
         }
-        if (this.filter.categoryId !== null) {
+        if (this.filter.categoryId) {
           criteria.categoryId = this.filter.categoryId;
         }
-        if (this.filter.subCategoryId !== null) {
+        if (this.filter.subCategoryId) {
           criteria.subCategoryId = this.filter.subCategoryId;
         }
-        if (this.filter.brandId !== null) {
+        if (this.filter.brandId) {
           criteria.brandId = this.filter.brandId;
         }
         if (this.filter.reviewRequired) {
           criteria.reviewRequired = this.filter.reviewRequired;
         }
         this.filterChangeCallBack(criteria);
-
       }
-      if(this.type == 'scraped'){
+      if (this.type === 'scraped') {
         const criteria = {}
         if (this.filter.name) {
           criteria.name = { like: this.filter.name }
         }
-        if (this.filter.categoryName !== null) {
+        if (this.filter.categoryName) {
           criteria.categoryName = this.filter.categoryName;
         }
-        if (this.filter.scrapedSubCategoryId !== null) {
-          criteria.subCategoryName = this.filter.scrapedSubCategoryId;
+        if (this.filter.subCategoryName) {
+          criteria.subCategoryName = this.filter.subCategoryName;
         }
-        if (this.filter.brandName !== null) {
+        if (this.filter.brandName) {
           criteria.brand = this.filter.brandName;
         }
         this.filterChangeCallBack(criteria);
       }
       
+    },
+    // Checks if the filter is being used to change the colour
+    filterInUse() {
+      if (this.type === 'staged') {
+        const criteria = {}
+        if (this.filter.name) {
+          criteria.name = { like: this.filter.name }
+        }
+        if (this.filter.categoryId) {
+          criteria.categoryId = this.filter.categoryId;
+        }
+        if (this.filter.subCategoryId) {
+          criteria.subCategoryId = this.filter.subCategoryId;
+        }
+        if (this.filter.brandId) {
+          criteria.brandId = this.filter.brandId;
+        }
+        if (this.filter.reviewRequired) {
+          criteria.reviewRequired = this.filter.reviewRequired;
+        }
+        return Object.keys(criteria).length;
+      }
+      if (this.type === 'scraped') {
+        const criteria = {}
+        if (this.filter.name) {
+          criteria.name = { like: this.filter.name }
+        }
+        if (this.filter.categoryName) {
+          criteria.categoryName = this.filter.categoryName;
+        }
+        if (this.filter.subCategoryName) {
+          criteria.subCategoryName = this.filter.subCategoryName;
+        }
+        if (this.filter.brandName) {
+          criteria.brand = this.filter.brandName;
+        }
+        return Object.keys(criteria).length;
+      }
+
     }
   }
 }

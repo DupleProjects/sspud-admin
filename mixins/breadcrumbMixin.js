@@ -64,8 +64,8 @@ export default {
           page: 1,
           pagePosition: 0
         },
-        filter: {},
-        sort: {}
+        filter: null,
+        sort: null
       }
     },
     clear() {

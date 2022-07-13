@@ -1,5 +1,5 @@
 <template>
-  <div class="p-3">
+  <div class="pb-3 px-3">
     <v-overlay :value="loading" style="text-align:center;">
     <v-progress-circular
             :size="100"
@@ -12,41 +12,48 @@
       <div class="fancy-heading-row" style="position:sticky; top: 0; z-index: 1;">
         <div  v-bind:class="{ 'inner-fancy-heading-row': type === 'scraped', 'inner-fancy-heading-row-staged': type === 'staged' || type === 'published'}">
           <div class="sort-heading" v-if="type === 'staged' || type === 'published'" v-on:click="sort('hasStock','hasStock')">
-            Stock
+            <v-icon v-if="!sortingOrders.hasStockSort" color="white" small>mdi-arrow-up-down</v-icon>
             <v-icon v-if="sortingOrders.hasStockSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon>
             <v-icon v-if="sortingOrders.hasStockSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon>
+            Stock
           </div>
           <div class="sort-heading" v-on:click="sort('name','name')">
-            Name
+            <v-icon v-if="!sortingOrders.nameSort" color="white" small>mdi-arrow-up-down</v-icon>
             <v-icon v-if="sortingOrders.nameSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon>
             <v-icon v-if="sortingOrders.nameSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon>
+            Name
           </div>
           <div
               class="sort-heading"
               v-on:click="sort('price','price')">
-            Price
+            <v-icon v-if="!sortingOrders.priceSort" color="white" small>mdi-arrow-up-down</v-icon>
             <v-icon v-if="sortingOrders.priceSort === 'ASC'" color="white" small>mdi-arrow-up</v-icon>
             <v-icon v-if="sortingOrders.priceSort === 'DESC'" color="white" small>mdi-arrow-down</v-icon>
+            Price
           </div>
           <div class="sort-heading" v-on:click="sort('subCategoryName','subCategoryId')">
-            Sub Category
+            <v-icon v-if="!sortingOrders.subCategorySort" color="white" small>mdi-arrow-up-down</v-icon>
             <v-icon v-if="sortingOrders.subCategorySort == 'ASC'" color="white" small>mdi-arrow-up</v-icon>
             <v-icon v-if="sortingOrders.subCategorySort == 'DESC'" color="white" small>mdi-arrow-down</v-icon>
+            Sub Category
           </div>
           <div class="sort-heading" v-on:click="sort('brand','brandId')">
-            Brand
+            <v-icon v-if="!sortingOrders.brandSort" color="white" small>mdi-arrow-up-down</v-icon>
             <v-icon v-if="sortingOrders.brandSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon>
             <v-icon v-if="sortingOrders.brandSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon>
+            Brand
           </div>
           <div v-if="type === 'scraped'" v-on:click="sort('shopId',null)">
-            Shop
+            <v-icon v-if="!sortingOrders.shopSort" color="white" small>mdi-arrow-up-down</v-icon>
             <v-icon v-if="sortingOrders.shopSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon>
             <v-icon v-if="sortingOrders.shopSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon>
+            Shop
           </div>
-          <div v-if="type === 'staged' || type === 'published'" class="text-center sort-heading" v-on:click="sort(null,'reviewRequired')">
-            Status
+          <div v-if="type === 'staged' || type === 'published'" class="sort-heading" v-on:click="sort(null,'reviewRequired')">
+            <v-icon v-if="!sortingOrders.reviewSort" color="white" small>mdi-arrow-up-down</v-icon>
             <v-icon v-if="sortingOrders.reviewSort == 'ASC'" color="white" small>mdi-arrow-up</v-icon>
             <v-icon v-if="sortingOrders.reviewSort == 'DESC'" color="white" small>mdi-arrow-down</v-icon>
+            Status
           </div>
         </div>
       </div>
@@ -510,9 +517,9 @@ export default {
   min-width: 600px;
 }
 .fancy-heading-row {
+  border-radius: 10px 10px 0 0;
   position: relative;
-  background-color: #5268fa;
-  border-radius: 0px;
+  background-color: #1976d2;
   box-shadow: none;
   --show-action: 0;
   border-top: 1px solid rgb(223, 225, 230);
@@ -591,7 +598,7 @@ export default {
 }
 
 .product-list {
-  height: 65vh;
+  /*height: 65vh;*/
   overflow: auto;
 }
 /* .button-style{
