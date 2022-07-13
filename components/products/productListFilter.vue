@@ -8,7 +8,7 @@
           class="px-3 pt-0 mt-0"
       ></v-text-field>
       <v-btn
-          color="primary"
+          :color=" filterInUse() ? 'success' : 'primary' "
           dark
           @click.stop="drawer = !drawer">
         <v-icon dark>
@@ -25,7 +25,7 @@
       <v-list-item>
         <v-list-item-avatar>
           <v-icon
-              color="primary"
+              :color=" filterInUse() ? 'success' : 'primary' "
               class="icon-style hide-on-desktop"
               dark>
             mdi-filter
@@ -321,7 +321,6 @@ export default {
           criteria.reviewRequired = this.filter.reviewRequired;
         }
         this.filterChangeCallBack(criteria);
-
       }
       if (this.type === 'scraped') {
         const criteria = {}
@@ -340,6 +339,45 @@ export default {
         this.filterChangeCallBack(criteria);
       }
       
+    },
+    // Checks if the filter is being used to change the colour
+    filterInUse() {
+      if (this.type === 'staged') {
+        const criteria = {}
+        if (this.filter.name) {
+          criteria.name = { like: this.filter.name }
+        }
+        if (this.filter.categoryId) {
+          criteria.categoryId = this.filter.categoryId;
+        }
+        if (this.filter.subCategoryId) {
+          criteria.subCategoryId = this.filter.subCategoryId;
+        }
+        if (this.filter.brandId) {
+          criteria.brandId = this.filter.brandId;
+        }
+        if (this.filter.reviewRequired) {
+          criteria.reviewRequired = this.filter.reviewRequired;
+        }
+        return Object.keys(criteria).length;
+      }
+      if (this.type === 'scraped') {
+        const criteria = {}
+        if (this.filter.name) {
+          criteria.name = { like: this.filter.name }
+        }
+        if (this.filter.categoryName) {
+          criteria.categoryName = this.filter.categoryName;
+        }
+        if (this.filter.subCategoryName) {
+          criteria.subCategoryName = this.filter.subCategoryName;
+        }
+        if (this.filter.brandName) {
+          criteria.brand = this.filter.brandName;
+        }
+        return Object.keys(criteria).length;
+      }
+
     }
   }
 }

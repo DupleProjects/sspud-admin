@@ -1,0 +1,28 @@
+<script>
+import { Pie } from 'vue-chartjs'
+
+export default {
+  extends: Pie,
+  props: {
+    chartdata: {
+      type: Object,
+      default: null
+    },
+    options: {
+      type: Object,
+      default: null
+    },
+    width: {
+      type: Number,
+      default: 400
+    },
+    height: {
+      type: Number,
+      default: 400
+    },
+  },
+  mounted () {
+    this.renderChart(this.chartdata, this.options)
+  },
+}
+</script>

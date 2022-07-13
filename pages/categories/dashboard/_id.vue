@@ -10,12 +10,12 @@
         pb-2
         mb-3
         border-bottom
-      "
-    >
+      ">
     <h2>Category Dashboard</h2>
     </div>
     <!--Detail Section-->
     <div v-if="category">
+      <analytics-category-breakdown :categoryId="category.id" :linkedCategories="linkedCategories" />
       <v-card class="linked-components">
           <v-card-title class="card-title-style py-1">
             Category Details

@@ -3,8 +3,7 @@
     <v-tooltip top>
       <template v-slot:activator="{ on, attrs }">
         <v-icon v-bind="attrs" v-on="on" color="blue" medium @click="openDialog()"
-          >mdi-link-variant</v-icon
-        >
+          >mdi-link-variant</v-icon>
       </template>
       <span>Link</span>
     </v-tooltip>
@@ -12,15 +11,28 @@
     <v-dialog style="z-index: 10000" v-model="linkCategoryDialog" max-width="800">
       <v-card v-if="scrapedCategory">
         <v-card-title>
-          Link Scraped Category to BambaZonke Category
+          {{scrapedCategory.name}}
         </v-card-title>
+        <v-card-subtitle>
+          Link Scraped Category to BambaZonke Category
+        </v-card-subtitle>
         <v-card-text class="pb-0">
+          <v-radio-group v-model="linkToNew">
+            <v-radio
+                :label="`Create New Category`"
+                :value="true"
+            ></v-radio>
+            <v-radio
+                :label="`Link to Existing Category`"
+                :value="false"
+            ></v-radio>
+          </v-radio-group>
           <v-form
               ref="validLinkedCategoryForm"
               v-model="validLinkedCategoryForm"
               lazy-validation>
-            <h3>{{scrapedCategory.name}}</h3>
             <v-autocomplete
+                v-if="!linkToNew"
                 v-model="scrapedCategory.mappedCategoryId"
                 :items="categories"
                 :item-value="'id'"
@@ -34,6 +46,14 @@
                 :rules="[(v) => !!v || 'A linked category is required']"
                 :messages="['Choose a BambaZonke category for this scraped category to be linked to']"
             ></v-autocomplete>
+            <v-text-field
+                v-if="linkToNew"
+                v-model="newCategoryName"
+                required
+                prepend-icon="mdi-card-account-details-outline"
+                :messages="['Create a new category to link the scraped category to.']"
+                label="Create a new category"
+            ></v-text-field>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -73,8 +93,10 @@ export default {
   data() {
     return {
       loading: false,
+      linkToNew: false,
       validLinkedCategoryForm: true,
       linkCategoryDialog: false,
+      newCategoryName: null,
     }
   },
   mounted() {
@@ -87,6 +109,26 @@ export default {
     async linkToCategory() {
       if (this.$refs.validLinkedCategoryForm.validate()) {
         this.loading = true;
+        if (this.newCategoryName) {
+          const response = await this.$store.dispatch("dataGate", {
+            primaryKey: "id",
+            entity: {name: this.newCategoryName},
+            tableName: "mappedCategories",
+            operation: "create",
+          });
+          // If valid response return value
+          if (response && response.response) {
+            this.scrapedCategory.mappedCategoryId = response.response.id;
+                this.saveCallBack(this.category);
+            const responseInsertToWC = await this.$store.dispatch(
+                "callMiddlewareRoute",
+                {
+                  category: this.category,
+                  route: "categories/insertCategoryToWC",
+                }
+            );
+          }
+        }
         const scrapedCategoriesResponse = await this.$store.dispatch('dataGate', {
           primaryKey: 'id',
           entity: this.scrapedCategory,

@@ -16,14 +16,14 @@ export const entityDataStore = {
     },
     async dataGate({ commit }, data) {
       const body = data;
-      console.log("dataGate " + data.tableName + " request data", data);
+      // console.log("dataGate " + data.tableName + " request data", data);
       const response = await axios({
         method: "post",
         url: process.env.apiURL + "/dataGate",
         headers,
         data: body,
       });
-      console.log(data.tableName + " response", response);
+      // console.log(data.tableName + " response", response);
       // We know what will be returned so can do all this stuff here
       if (data.operation === "read") {
         if (response.data) {
