@@ -163,16 +163,20 @@ export default {
 
       // this.loading = false
     },
-    async sortCallback(crit) {
+    async sortCallback(sortCriteria) {
       // Build the where clause
-      if (crit) {
-        breadcrumbMixin.methods.savePageAndFilter('scrapedList', {page: this.page, filter: this.filter, sort: crit});
-        await this.loadProducts(crit);
+      if (sortCriteria) {
+        // Reset page
+        this.page = 1;
+        breadcrumbMixin.methods.savePageAndFilter('scrapedList', {page: this.page, filter: this.filter, sort: sortCriteria});
+        await this.loadProducts(sortCriteria);
       }
     },
     async filterChangeCallBackScraped(filter) {
       // Build the where clause
       if (filter) {
+        // Reset page
+        this.page = 1;
         this.filter = filter;
         breadcrumbMixin.methods.savePageAndFilter('scrapedList', {page: this.page, filter: this.filter, sort: this.sortCriteria});
         await this.loadProducts(null,filter);
