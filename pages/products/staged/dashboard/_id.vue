@@ -138,7 +138,7 @@ export default {
     return {
       tab: null,
       items: [
-        'details', 'meta', 'publish', 'log'
+        'details', 'meta', 'publish', 'history'
       ],
       product: null,
       loading: false,
