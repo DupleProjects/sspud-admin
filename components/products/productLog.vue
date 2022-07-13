@@ -4,7 +4,14 @@
     <hr />
     <div class="confluence-card p-3" v-for="(history, index) of prodHistory" :key="index">
       <div class="d-flex justify-content-between">
-        <p><strong>{{getUserName(history.createdBy)}}</strong> updated the <strong>{{history.property}}</strong></p>
+        <div class="d-flex align-center mb-2">
+          <img
+              :src="require(`assets/images/${ history.createdBy ? 'blankAvatar' : 'hacker'}.png`)"
+              alt="image"
+              class="avatar-image mr-2"
+          />
+          <p class="mb-0"><strong>{{getUserName(history.createdBy)}}</strong> updated the <strong>{{history.property}}</strong></p>
+        </div>
         <p><small>{{history.createdAt}}</small></p>
       </div>
       <div class="d-flex justify-content-between">
@@ -93,5 +100,10 @@ export default {
 .logs-container {
   max-height: 80vh;
   overflow: auto;
+}
+.avatar-image {
+  width: auto;
+  vertical-align: middle;
+  height: 30px;
 }
 </style>
