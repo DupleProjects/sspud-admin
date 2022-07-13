@@ -176,19 +176,23 @@ export default {
     async filterChangeCallBack(filter) {
       // Build the where clauses
       if (filter) {
+        // Reset page
+        this.page = 1;
         this.activeFilter = filter;
         breadcrumbMixin.methods.savePageAndFilter('publishedList', {page: this.page, filter: this.activeFilter, sort: this.sortCriteria});
         await this.loadProducts(filter);
       }
     },
-    async sortCallback(crit) {
+    async sortCallback(sortCriteria) {
       // Build the where clause
-      if (crit) {
-        if(this.activeFilter){
-          breadcrumbMixin.methods.savePageAndFilter('publishedList', {page: this.page, filter: this.activeFilter, sort: crit});
-          await this.loadProducts(this.activeFilter, crit);
-        }else{
-          await this.loadProducts(null, crit);
+      if (sortCriteria) {
+        // Reset page
+        this.page = 1;
+        if (this.activeFilter) {
+          breadcrumbMixin.methods.savePageAndFilter('publishedList', {page: this.page, filter: this.activeFilter, sort: sortCriteria});
+          await this.loadProducts(this.activeFilter, sortCriteria);
+        } else {
+          await this.loadProducts(null, sortCriteria);
         }
       }
     },

@@ -180,6 +180,8 @@ export default {
     async filterChangeCallBack(filter) {
       // Build the where clause
       if (filter) {
+        // Reset page
+        this.page = 1;
         this.activeFilter = filter;
         breadcrumbMixin.methods.savePageAndFilter('stagedList', {page: this.page, filter: this.activeFilter, sort: this.sortCriteria});
         await this.loadProducts(filter);
@@ -189,6 +191,8 @@ export default {
       // Build the where clause
       if (crit) {
         if (this.activeFilter) {
+          // Reset page
+          this.page = 1;
           breadcrumbMixin.methods.savePageAndFilter('stagedList', {page: this.page, filter: this.activeFilter, sort: crit});
           await this.loadProducts(this.activeFilter, crit);
         } else {

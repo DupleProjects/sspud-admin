@@ -3,7 +3,7 @@
     <p class="lead">History</p>
     <hr />
     <div class="confluence-card p-3" v-for="(history, index) of prodHistory" :key="index">
-      <div class="d-flex justify-content-between">
+      <div class="d-flex justify-content-between px-3">
         <div class="d-flex align-center mb-2">
           <img
               :src="require(`assets/images/${ history.createdBy ? 'blankAvatar' : 'hacker'}.png`)"
@@ -15,7 +15,7 @@
         <p><small>{{history.createdAt}}</small></p>
       </div>
       <div class="d-flex justify-content-between">
-        <div class="from-container p-2">
+        <div class="from-container p-3">
           <p class="mb-0">{{history.fromValue ? history.fromValue : 'None'}}</p>
         </div>
         <div class="align-self-center px-3">
@@ -23,7 +23,7 @@
             mdi-arrow-right
           </v-icon>
         </div>
-        <div class="to-container p-2">
+        <div class="to-container p-3">
           <p class="mb-0">{{history.toValue}}</p>
         </div>
       </div>
@@ -80,7 +80,7 @@ export default {
       if (user) {
         return user.name + ' ' + user.surname;
       }
-      return 'Not Captured';
+      return 'Anonymous';
     }
   }
 };
