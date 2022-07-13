@@ -159,6 +159,7 @@
 
 <script>
 import productMixin from "@/mixins/productMixin.js";
+import baseMixin from "@/mixins/baseMixin";
 
 export default {
   props: {
@@ -183,14 +184,17 @@ export default {
       netCertificateRequired: false,
       allBrands: [],
       allScrapedBrands: [],
-      unlinkedEntities: false
+      unlinkedEntities: false,
+      // Used to compare at the end
+      originalProduct: null,
     }
   },
   beforeMount() {
     this.$nextTick(async function () {
+      // Clone the product to compare later
+      this.originalProduct = baseMixin.methods.clone(this.product);
       await this.loadCertificates();
-      
-      
+
       // BZ Category Details
       const categories = await this.$store.dispatch("dataGate", {
         tableName: "mappedCategories",
@@ -365,7 +369,8 @@ export default {
         if (response.success) {
           // Remove review required if we are publishing
           this.product.reviewRequired = false;
-          this.product.publish = !this.product.publish;
+          this.product.publish = true;
+          await this.compareProduct();
           this.snackBarText = "Product Successfully Published!";
           this.snackbar = true;
         } else {
@@ -445,6 +450,23 @@ export default {
         this.snackbar = true;
       }
       this.saving = false;
+    },
+    async compareProduct() {
+      // Check if there is any difference between original and saved product
+      const logs = productMixin.methods.createProductLogs(this.product, this.originalProduct, this.$store.state.auth.user);
+      console.log('logs', logs)
+      // Save the logs
+      for (let i = 0; i < logs.length; i++) {
+        // Only handle the publish and review required property here
+        if (logs[i].property === 'publish' || logs[i].property === 'reviewRequired') {
+          const logCreateResponse = await this.$store.dispatch("dataGate", {
+            tableName: "stagedProductLogs",
+            operation: "create",
+            primaryKey: 'id',
+            entity: logs[i]
+          });
+        }
+      }
     },
     async saveProduct() {
       const response = await this.$store.dispatch("dataGate", {
