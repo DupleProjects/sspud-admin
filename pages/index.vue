@@ -1,6 +1,7 @@
 <template>
   <div>
     <analytics-staged-product-breakdown />
+    <analytics-woo-commerce-sync-status />
   </div>
 
 </template>

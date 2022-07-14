@@ -370,6 +370,7 @@ export default {
         if (response.success) {
           // Remove review required if we are publishing
           this.product.reviewRequired = false;
+          this.product.wooCommerceId = response.wooCommerceId;
           this.product.publish = true;
           await this.compareProduct();
           this.snackBarText = "Product Successfully Published!";
@@ -459,7 +460,7 @@ export default {
       // Save the logs
       for (let i = 0; i < logs.length; i++) {
         // Only handle the publish and review required property here
-        if (logs[i].property === 'publish' || logs[i].property === 'reviewRequired') {
+        if (logs[i].property === 'publish' || logs[i].property === 'reviewRequired' || logs[i].property === 'wooCommerceId') {
           const logCreateResponse = await this.$store.dispatch("dataGate", {
             tableName: "stagedProductLogs",
             operation: "create",

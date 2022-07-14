@@ -143,6 +143,8 @@ export default {
             this.createProductLogForProperty(product, originalProduct, 'publish', logs, true,  user);
             // review required
             this.createProductLogForProperty(product, originalProduct, 'reviewRequired', logs, true,  user);
+            // woo commerce id
+            this.createProductLogForProperty(product, originalProduct, 'wooCommerceId', logs, true,  user);
             return logs;
         }
     }
