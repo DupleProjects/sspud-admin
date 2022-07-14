@@ -119,7 +119,9 @@ export default {
           // If valid response return value
           if (response && response.response) {
             this.scrapedCategory.mappedCategoryId = response.response.id;
-                this.saveCallBack(this.category);
+            if (this.saveCallBack) {
+              this.saveCallBack(this.category);
+            }
             const responseInsertToWC = await this.$store.dispatch(
                 "callMiddlewareRoute",
                 {

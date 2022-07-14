@@ -65,18 +65,26 @@
               <p style="color: Red" v-if="type == 'scraped'">
                 Brand:<u> {{ product.brand }}</u>
               </p>
-              <v-autocomplete
-                  v-if="type === 'staged'"
-                  v-model="product.brandId"
-                  :items="brands"
-                  :item-value="'id'"
-                  :item-text="'name'"
-                  :disabled="!edit"
-                  label="Brand"
-                  prepend-icon="mdi-watermark"
-                  :rules="[(v) => !!v || 'A brand is required']"
-                  :messages="['Choose a BambaZonke Brand for this product']"
-              ></v-autocomplete>
+              <div class="d-flex align-center"
+                   v-if="type === 'staged'">
+                <v-autocomplete
+                    v-model="product.brandId"
+                    :items="brands"
+                    :item-value="'id'"
+                    :item-text="'name'"
+                    :disabled="!edit"
+                    label="Brand"
+                    prepend-icon="mdi-watermark"
+                    :rules="[(v) => !!v || 'A brand is required']"
+                    :messages="['Choose a BambaZonke Brand for this product']"
+                ></v-autocomplete>
+                <brands-create-brand-dialog
+                    class="ml-2"
+                    :brandCreateCallBack="brandCreateCallBack"
+                    :brands="brands"
+                />
+
+              </div>
             </div>
             <div class="col-6">
               <!--Category-->
@@ -397,7 +405,6 @@ export default {
       // Clone the product to compare later
       this.originalProduct = baseMixin.methods.clone(this.product);
       await this.getData();
-      this.showDetail = true;
       this.loading = true;
       if (this.type === "staged") {
         const categories = await this.$store.dispatch("dataGate", {
@@ -456,6 +463,8 @@ export default {
           operation: "update",
         });
         await this.compareProduct();
+        // Clone the product to compare later
+        this.originalProduct = baseMixin.methods.clone(this.product);
         this.snackBarText = "Product Successfully Saved";
         this.snackbar = true;
         this.saving = false;
@@ -584,6 +593,14 @@ export default {
 
       // Trigger click on the FileInput
       this.$refs.uploader.click();
+    },
+    brandCreateCallBack(newBrand) {
+      if (newBrand) {
+        // Add to list
+        this.brands.push(newBrand);
+        // Assign to product
+        this.product.brandId = newBrand.id;
+      }
     },
   },
 };
