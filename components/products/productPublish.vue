@@ -63,6 +63,7 @@
                   color="primary"
                   small
                   dark
+                  :disabled="saving"
                   :loading="isSelecting"
                   @click="handleFileImport"
                   class="">
