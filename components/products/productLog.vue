@@ -16,7 +16,11 @@
       </div>
       <div class="d-flex justify-content-between">
         <div class="from-container p-3">
-          <p class="mb-0">{{history.fromValue ? history.fromValue : 'None'}}</p>
+          <p class="mb-0" v-if="history.property === 'reviewRequired'">{{history.fromValue === '0' ? 'Review Not Required' : 'Review Required'}}</p>
+          <p class="mb-0" v-if="history.property === 'publish'">{{history.fromValue === '1' ? 'Published' : 'Not Published'}}</p>
+          <p
+              v-if="history.property !== 'reviewRequired' && history.property !== 'publish'"
+              class="mb-0">{{history.fromValue ? history.fromValue : 'None'}}</p>
         </div>
         <div class="align-self-center px-3">
           <v-icon color="black" width="40" height="40" class="icon me-2" light>
@@ -24,7 +28,11 @@
           </v-icon>
         </div>
         <div class="to-container p-3">
-          <p class="mb-0">{{history.toValue}}</p>
+          <p class="mb-0" v-if="history.property === 'reviewRequired'">{{history.toValue === '0' ? 'Review Not Required' : 'Review Required'}}</p>
+          <p class="mb-0" v-if="history.property === 'publish'">{{history.toValue === '1' ? 'Published' : 'Not Published'}}</p>
+          <p
+              v-if="history.property !== 'reviewRequired' && history.property !== 'publish'"
+              class="mb-0">{{history.toValue ? history.toValue : 'None'}}</p>
         </div>
       </div>
     </div>
