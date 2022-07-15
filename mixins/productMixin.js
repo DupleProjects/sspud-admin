@@ -96,11 +96,11 @@ export default {
             // Check each relevant property
             if (product[property] !== originalProduct[property]) {
                 var thisFromValue = ''
-                if(originalProduct[property] != null){
+                if (originalProduct[property] != null) {
                     thisFromValue = originalProduct[property];
                 }
                 var thisToValue = ''
-                if(product[property] != null){
+                if (product[property] != null) {
                     thisToValue = product[property];
                 }
                 const newLog = {
@@ -144,7 +144,7 @@ export default {
             // review required
             this.createProductLogForProperty(product, originalProduct, 'reviewRequired', logs, true,  user);
             // woo commerce id
-            this.createProductLogForProperty(product, originalProduct, 'wooCommerceId', logs, true,  user);
+            this.createProductLogForProperty(product, originalProduct, 'wooCommerceId', logs, false,  user);
             return logs;
         }
     }

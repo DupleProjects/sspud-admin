@@ -1,14 +1,53 @@
 <template>
   <div class="p-3">
     <div class="confluence-card p-3">
-      <p class="lead mb-0">Category Breakdown</p>
+      <p class="lead mb-0">Woo Commerce Sync Status</p>
       <hr>
-      <div class="d-flex justify-content-between">
-        <div class="chart-container">
-          <charts-pie-chart  v-if="productChartData.datasets[0].data.length > 0" :chartdata="productChartData" :options="productChartOptions" :name="'Products'" />
+      <div class="d-flex justify-content-between" v-if="!loading">
+        <div
+            v-bind:class="{ 'error-warning' : stagedProductsCount !== wcProductsCount}"
+            class="chart-container">
+          <div class="text-center m-3">
+            <img
+                v-if="stagedProductsCount !== wcProductsCount"
+                :src="require(`assets/images/alarm.png`)"
+                alt="image"
+                class="alarm-image"
+            />
+          </div>
+          <charts-pie-chart
+              v-if="productChartData.datasets[0].data.length > 0"
+              :chartdata="productChartData"
+              :options="productChartOptions"
+              :name="'Products'" />
+          <div class="text-center mt-2">
+            <v-alert
+                v-if="stagedProductsCount !== wcProductsCount"
+                style="font-size: small; margin-bottom: 0 !important;"
+                dense
+                color="error"
+                text>
+              <strong>Warning!</strong> The amount of published products on SSPUD and those on the Woo Commerce site do not match
+            </v-alert>
+          </div>
         </div>
-        <div class="chart-container">
-          <charts-pie-chart  v-if="categoryChartData.datasets[0].data.length > 0" :chartdata="categoryChartData" :options="categoryChartOptions" :name="'Products'" />
+        <div
+            class="chart-container">
+          <charts-pie-chart
+              v-if="categoryChartData.datasets[0].data.length > 0"
+              :chartdata="categoryChartData"
+              :options="categoryChartOptions"
+              :name="'Products'" />
+        </div>
+      </div>
+      <div class="d-flex flex-column justify-content-center" v-if="loading">
+        <div class="d-flex justify-content-center">
+          <v-progress-circular
+              :size="50"
+              indeterminate
+              color="primary"
+          ></v-progress-circular>
+          <h2>Loading</h2>
         </div>
       </div>
     </div>
@@ -24,13 +63,10 @@ export default {
   },
   data() {
     return {
-      category: null,
+      loading: true,
       stagedProductsCount: null,
-      stagedPublishProductsCount: null,
-      stagedDeletedProductsCount: null,
-      stagedPublishProductsFraction: null,
-      stagedProductsFraction: null,
-      deletedProductsFraction: null,
+      wcProductsCount: null,
+      productPublishDifferenceCount: null,
       categoryChartData: {
         labels: ['SSPUD Published', 'Woo Commerce'],
         datasets: [
@@ -62,23 +98,17 @@ export default {
     };
   },
   async mounted() {
-    await this.loadProductCategory();
     await this.loadProductData();
-    await this.loadLinkedData();
+    this.loading = false;
   },
   methods: {
-    async loadProductCategory() {
-      // Load category
-      const categoryResponse = await this.$store.dispatch("dataGate", {
-        tableName: "mappedCategories",
-        operation: "read",
-        whereCriteria: { id: this.categoryId },
-      });
-      if (categoryResponse && categoryResponse.data) {
-        this.category = categoryResponse.data[0];
-      }
-    },
     async loadProductData() {
+      const wooCommerceResponse = await this.$store.dispatch("callMiddlewareRoute", {
+        route: 'products/wooCommerceProductReport'
+      });
+      console.log('wooCommerceResponse', wooCommerceResponse)
+      this.productPublishDifferenceCount = wooCommerceResponse.wcDifferenceIds.length;
+      this.wcProductsCount = wooCommerceResponse.wcProductCount;
       // All category staged products
       const stagedProductsCountResponse = await this.$store.dispatch("dataGate", {
         whereCriteria: { deleted: 0, publish: 1 },
@@ -87,58 +117,24 @@ export default {
         page: 1,
         numberPerPage: 1,
       });
+      console.log('stagedProductsCountResponse', stagedProductsCountResponse)
       if (stagedProductsCountResponse && stagedProductsCountResponse.data) {
         this.stagedProductsCount = stagedProductsCountResponse.count;
       }
-      const wooCommerceResponse = await this.$store.dispatch("callMiddlewareRoute", {
-        route: 'products/wooCommerceProductReport'
-      });
-      console.log('wooCommerceResponse', wooCommerceResponse)
-    },
-    async loadLinkedData() {
-      if (this.category) {
-        //
-        const data = [];
-        for (let i = 0; i < this.linkedCategories.length; i++) {
-          // All linked categories
-          const stagedProductsCountResponse = await this.$store.dispatch("dataGate", {
-            whereCriteria: this.linkedCategories[i].parentId ? { subCategoryId: this.linkedCategories[i].id, deleted: 0 } : { categoryId: this.linkedCategories[i].id, publish: 0 },
-            tableName: "stagedProducts",
-            operation: "read",
-            page: 1,
-            numberPerPage: 1,
-          });
-          if (stagedProductsCountResponse && stagedProductsCountResponse.data) {
-            const fraction = (stagedProductsCountResponse.count / this.totalProducts * 100).toFixed(2);
-            data.push(
-                {
-                  name: this.linkedCategories[i].name,
-                  count: stagedProductsCountResponse.count,
-                  fraction
-                }
-            )
-          }
-        }
-        console.log('data', data)
-        this.progressData = data;
-      }
+      // Add to chart
+      this.productChartData.datasets[0].data = [this.stagedProductsCount, this.wcProductsCount];
     },
   },
 };
 </script>
 
 <style scoped>
-.progress-label {
-  flex: 1;
+.error-warning {
+  color: red !important;
+  box-shadow: rgb(211 18 18 / 55%) 0px 1px 5px 2px !important;
 }
-.breakdown-progress {
-  flex: 4;
-}
-.chart-container {
-  flex: 1;
-}
-.progress-container {
-  flex: 1;
-
+.alarm-image {
+  height: 40px;
+  width: auto;
 }
 </style>
