@@ -51,11 +51,24 @@
             colored-border
             type="error"
             elevation="2">
-          This Product requires a certificates
+          This product requires a certificate
         </v-alert>
         <!-- Heading -->
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap pt-5">
-          <p class="lead">Documents <small v-if="product.certificateRequired" class="text-muted">(Required)</small></p>
+          <p class="lead">
+            <v-row>
+              <v-col cols="auto">Documents </v-col>
+              <v-col cols="auto">
+                <v-switch
+                  v-model="product.certificateRequired"
+                  :label="`${getLabel(product.certificateRequired)}`"
+                  class="mt-0"
+                ></v-switch>
+              </v-col>
+            </v-row>
+            
+            
+            <!-- <small v-if="product.certificateRequired" class="text-muted">(Required)</small></p> -->
           <!--Search would be here-->
           <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group me-2">
@@ -411,9 +424,9 @@ export default {
         if (!returnedDetails.productDetails.validPrice) {
           this.invalidItems.push("Invalid Price");
         }
-        if (!returnedDetails.productDetails.validStock) {
-          this.invalidItems.push("Invalid Stock");
-        }
+        // if (!returnedDetails.productDetails.validStock) {
+        //   this.invalidItems.push("Invalid Stock");
+        // }
         if (!returnedDetails.productDetails.validSubCategory) {
           this.invalidItems.push("Invalid Subcategory");
         }
@@ -556,6 +569,13 @@ export default {
       });
       await this.loadCertificates();
       this.saving = false;
+    },
+    getLabel(required){
+      if(required){
+        return "Required"
+      }else{
+        return "Not Required"
+      }
     }
   }
 }
