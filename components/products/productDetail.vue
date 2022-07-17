@@ -1,16 +1,16 @@
 <template>
   <div style="height: 100%; overflow-y: auto; overflow-x: hidden">
     <div
-      v-if="loading"
-      class="d-flex flex-column justify-content-center loader"
+        v-if="loading"
+        class="d-flex flex-column justify-content-center loader"
     >
       <div class="d-flex flex-row justify-content-center">
         <div class="text-center">
           <v-progress-circular
-            :size="70"
-            :width="7"
-            color="purple"
-            indeterminate
+              :size="70"
+              :width="7"
+              color="purple"
+              indeterminate
           ></v-progress-circular>
           <h1>Loading</h1>
         </div>
@@ -19,35 +19,35 @@
     <div v-if="product && !loading">
       <!-- Staged Products -->
       <v-form
-        ref="validProductForm"
-        v-if="type == 'staged'"
-        v-model="validProductForm"
-        lazy-validation
+          ref="validProductForm"
+          v-if="type === 'staged'"
+          v-model="validProductForm"
+          lazy-validation
       >
         <div
-          class="row"
-          style="height: 75vh; overflow-y: auto; overflow-x: hidden"
+            class="row"
+            style="height: 75vh; overflow-y: auto; overflow-x: hidden"
         >
           <!--Name-->
           <div class="col-12">
             <v-text-field
-              class="mb-0"
-              label="Name"
-              v-model="product.name"
-              :rules="[(v) => !!v || 'A name is required']"
-              :disabled="!edit"
+                class="mb-0"
+                label="Name"
+                v-model="product.name"
+                :rules="[(v) => !!v || 'A name is required']"
+                :disabled="!edit"
             >
             </v-text-field>
           </div>
           <!--Description-->
           <div class="col-12">
             <v-textarea
-              rows="2"
-              class="pt-0 mt-0"
-              label="Description"
-              v-model="product.description"
-              :rules="[(v) => !!v || 'A description is required']"
-              :disabled="!edit"
+                rows="2"
+                class="pt-0 mt-0"
+                label="Description"
+                v-model="product.description"
+                :rules="[(v) => !!v || 'A description is required']"
+                :disabled="!edit"
             ></v-textarea>
           </div>
           <div class="row mt-n7">
@@ -55,28 +55,36 @@
             <div class="col-6">
               <!--Price-->
               <v-text-field
-                label="Price"
-                v-model="product.price"
-                prepend-icon="mdi-alpha-p-box-outline"
-                :rules="[(v) => !!v || 'A price is required']"
-                :disabled="!edit"
+                  label="Price"
+                  v-model="product.price"
+                  prepend-icon="mdi-alpha-p-box-outline"
+                  :rules="[(v) => !!v || 'A price is required']"
+                  :disabled="!edit"
               ></v-text-field>
               <!--Brand-->
               <p style="color: Red" v-if="type == 'scraped'">
                 Brand:<u> {{ product.brand }}</u>
               </p>
-              <v-autocomplete
-                v-if="type === 'staged'"
-                v-model="product.brandId"
-                :items="brands"
-                :item-value="'id'"
-                :item-text="'name'"
-                :disabled="!edit"
-                label="Brand"
-                prepend-icon="mdi-watermark"
-                :rules="[(v) => !!v || 'A brand is required']"
-                :messages="['Choose a BambaZonke Brand for this product']"
-              ></v-autocomplete>
+              <div class="d-flex align-center"
+                   v-if="type === 'staged'">
+                <v-autocomplete
+                    v-model="product.brandId"
+                    :items="brands"
+                    :item-value="'id'"
+                    :item-text="'name'"
+                    :disabled="!edit"
+                    label="Brand"
+                    prepend-icon="mdi-watermark"
+                    :rules="[(v) => !!v || 'A brand is required']"
+                    :messages="['Choose a BambaZonke Brand for this product']"
+                ></v-autocomplete>
+                <brands-create-brand-dialog
+                    class="ml-2"
+                    :brandCreateCallBack="brandCreateCallBack"
+                    :brands="brands"
+                />
+
+              </div>
             </div>
             <div class="col-6">
               <!--Category-->
@@ -84,34 +92,34 @@
                 Category:<u> {{ product.categoryName }}</u>
               </p>
               <v-autocomplete
-                v-if="type === 'staged'"
-                v-model="product.categoryId"
-                v-on:change="onCategoryChange()"
-                :items="categories"
-                :item-value="'id'"
-                :item-text="'name'"
-                :disabled="!edit"
-                label="Category"
-                prepend-icon="mdi-shape"
-                :rules="[(v) => !!v || 'A category is required']"
-                :messages="['Choose a BambaZonke category for this product']"
+                  v-if="type === 'staged'"
+                  v-model="product.categoryId"
+                  v-on:change="onCategoryChange()"
+                  :items="categories"
+                  :item-value="'id'"
+                  :item-text="'name'"
+                  :disabled="!edit"
+                  label="Category"
+                  prepend-icon="mdi-shape"
+                  :rules="[(v) => !!v || 'A category is required']"
+                  :messages="['Choose a BambaZonke category for this product']"
               ></v-autocomplete>
               <!--Sub Category-->
               <p style="color: Red" v-if="type == 'scraped'">
                 Sub Category:<u> {{ product.subCategoryName }}</u>
               </p>
               <v-autocomplete
-                v-if="type === 'staged'"
-                v-model="product.subCategoryId"
-                v-on:change="onCategoryChange(true)"
-                :items="subCategories"
-                :item-value="'id'"
-                :item-text="'name'"
-                :disabled="!edit"
-                label="Sub Category"
-                prepend-icon="mdi-shape"
-                :rules="[(v) => !!v || 'A sub category is required']"
-                :messages="[
+                  v-if="type === 'staged'"
+                  v-model="product.subCategoryId"
+                  v-on:change="onCategoryChange(true)"
+                  :items="subCategories"
+                  :item-value="'id'"
+                  :item-text="'name'"
+                  :disabled="!edit"
+                  label="Sub Category"
+                  prepend-icon="mdi-shape"
+                  :rules="[(v) => !!v || 'A sub category is required']"
+                  :messages="[
                   'Choose a BambaZonke sub category for this product',
                 ]"
               ></v-autocomplete>
@@ -123,62 +131,62 @@
           <div class="row mb-5">
             <div class="col-3">
               <v-text-field
-                :type="'number'"
-                class="mt-5"
-                label="Shipping Length (mm)"
-                v-model="product.shippingLength"
-                prepend-icon="mdi-ruler"
-                :rules="[(v) => !!v || 'Shipping Length is required']"
-                :disabled="!edit"
+                  :type="'number'"
+                  class="mt-5"
+                  label="Shipping Length (mm)"
+                  v-model="product.shippingLength"
+                  prepend-icon="mdi-ruler"
+                  :rules="[(v) => !!v || 'Shipping Length is required']"
+                  :disabled="!edit"
               ></v-text-field>
             </div>
             <div class="col-3">
               <v-text-field
-                :type="'number'"
-                class="mt-5"
-                label="Shipping Width (mm)"
-                v-model="product.shippingWidth"
-                prepend-icon="mdi-ruler"
-                :rules="[(v) => !!v || 'Shipping Width is required']"
-                :disabled="!edit"
+                  :type="'number'"
+                  class="mt-5"
+                  label="Shipping Width (mm)"
+                  v-model="product.shippingWidth"
+                  prepend-icon="mdi-ruler"
+                  :rules="[(v) => !!v || 'Shipping Width is required']"
+                  :disabled="!edit"
               ></v-text-field>
             </div>
             <div class="col-3">
               <v-text-field
-                :type="'number'"
-                class="mt-5"
-                label="Shipping Heigth (mm)"
-                v-model="product.shippingHeight"
-                prepend-icon="mdi-ruler"
-                :rules="[(v) => !!v || 'Shipping Heigth is required']"
-                :disabled="!edit"
+                  :type="'number'"
+                  class="mt-5"
+                  label="Shipping Heigth (mm)"
+                  v-model="product.shippingHeight"
+                  prepend-icon="mdi-ruler"
+                  :rules="[(v) => !!v || 'Shipping Heigth is required']"
+                  :disabled="!edit"
               ></v-text-field>
             </div>
             <div class="col-3">
               <v-text-field
-                :type="'number'"
-                class="mt-5"
-                label="Shipping Weight (kg)"
-                v-model="product.shippingWeight"
-                prepend-icon="mdi-weight-kilogram"
-                :rules="[(v) => !!v || 'Shipping Weight is required']"
-                :disabled="!edit"
+                  :type="'number'"
+                  class="mt-5"
+                  label="Shipping Weight (kg)"
+                  v-model="product.shippingWeight"
+                  prepend-icon="mdi-weight-kilogram"
+                  :rules="[(v) => !!v || 'Shipping Weight is required']"
+                  :disabled="!edit"
               ></v-text-field>
             </div>
           </div>
         </div>
         <div style="background-color: white" class="w-100 text-end">
           <v-progress-circular
-            v-if="saving"
-            :size="20"
-            indeterminate
-            color="primary"
+              v-if="saving"
+              :size="20"
+              indeterminate
+              color="primary"
           ></v-progress-circular>
           <v-btn
-            v-if="type === 'staged' && !saving"
-            color="green"
-            @click="saveProductInfo()"
-            :disabled="!edit"
+              v-if="type === 'staged' && !saving"
+              color="green"
+              @click="saveProductInfo()"
+              :disabled="!edit"
           >
             <span style="color: white">Save Product Information</span>
           </v-btn>
@@ -188,79 +196,76 @@
       <!-- <v-form ref="validProductForm"  v-model="validProductForm" lazy-validation> -->
 
       <div
-        class="row"
-        v-if="type == 'scraped'"
-        style="height: 95vh; overflow-y: auto; overflow-x: hidden"
-      >
+          class="row"
+          v-if="type === 'scraped'"
+          style="height: 95vh; overflow-y: auto; overflow-x: hidden">
         <div class="row mx-3">
-          <div class="col-3" style="height:100%" >
-            <v-card class="mt-10" style="height:100%"  justify="center" align="center">
-                <div style="text-align:center;">
-                  
-          
+          <div class="col-3" style="height:100%">
+            <v-card class="mt-10" style="height:100%" justify="center" align="center">
+              <div style="text-align:center;">
                 <img
-                  v-if="product.imageSrc && product.imageSrc != 'null' && product.imageSrc != ''"
-                  :src="product.imageSrc"
-                  alt="image"
-                  style="width: 100%; vertical-align:middle;"
+                    v-if="product.imageSrc && product.imageSrc != 'null' && product.imageSrc != ''"
+                    :src="product.imageSrc"
+                    alt="image"
+                    style="width: 100%; vertical-align:middle;"
                 />
                 <v-btn
-            color="primary"
-            rounded
-            dark
-            :loading="isSelecting"
-            @click="handleFileImport"
-            class="mt-5">
-          Upload Own Product Image
-        </v-btn>
-        <!-- Create a File Input that will be hidden but triggered with JavaScript -->
-        <input
-            ref="uploader"
-            class="d-none"
-            type="file"
-            @change="onNewFileUpload">
-              </div>              
+                    color="primary"
+                    rounded
+                    dark
+                    :loading="isSelecting"
+                    @click="handleFileImport"
+                    class="mt-5">
+                  Upload Own Product Image
+                </v-btn>
+                <!-- Create a File Input that will be hidden but triggered with JavaScript -->
+                <input
+                    ref="uploader"
+                    class="d-none"
+                    type="file"
+                    @change="onNewFileUpload">
+              </div>
             </v-card>
           </div>
           <div class="col-9" style="height:100%">
             <v-card class="mt-10" style="height:100%">
-              <v-card-title> Basic Details </v-card-title>
+              <v-card-title> Basic Details</v-card-title>
               <v-card-text>
                 <!--Name-->
                 <div class="col-12">
                   <v-text-field
-                    prepend-icon="mdi-tag-text-outline"
-                    class="mb-0"
-                    label="Name"
-                    color="black"
-                    v-model="product.name"
-                    :rules="[(v) => !!v || 'A name is required']"
-                    readonly
-                    style="color: black !important"
+                      prepend-icon="mdi-tag-text-outline"
+                      class="mb-0"
+                      label="Name"
+                      color="black"
+                      v-model="product.name"
+                      :rules="[(v) => !!v || 'A name is required']"
+                      readonly
+                      style="color: black !important"
                   >
                   </v-text-field>
                 </div>
                 <!--Description-->
                 <div v-if="product.description" class="col-12">
                   <v-textarea
-                    rows="2"
-                    class="mb-0"
-                    label="Description"
-                    v-model="product.description"
-                    :rules="[(v) => !!v || 'A description is required']"
-                    readonly
+                      rows="2"
+                      class="mb-0"
+                      label="Description"
+                      v-model="product.description"
+                      :rules="[(v) => !!v || 'A description is required']"
+                      readonly
                   ></v-textarea>
                 </div>
                 <!-- Price -->
                 <div class="col-6">
                   <!--Price-->
                   <v-text-field
-                    label="Price"
-                    v-model="product.price"
-                    prepend-icon="mdi-alpha-p-box-outline"
-                    :rules="[(v) => !!v || 'A price is required']"
-                    readonly
-                    class="mt-n5"
+                      label="Price"
+                      v-model="product.price"
+                      prepend-icon="mdi-alpha-p-box-outline"
+                      :rules="[(v) => !!v || 'A price is required']"
+                      readonly
+                      class="mt-n5"
                   ></v-text-field>
                 </div>
               </v-card-text>
@@ -271,7 +276,7 @@
         <div class="row mt-13 mx-3">
           <div class="col-12">
             <v-card>
-              <v-card-title> Brand & Categories </v-card-title>
+              <v-card-title> Brand & Categories</v-card-title>
               <v-card-text>
                 <div class="row mb-5 ml-3">
                   <div class="col-3">
@@ -310,42 +315,42 @@
                 <div class="row mb-5">
                   <div class="col-3">
                     <v-text-field
-                      class="mt-5"
-                      label="Shipping Length (mm)"
-                      v-model="product.shippingLength"
-                      prepend-icon="mdi-ruler"
-                      :rules="[(v) => !!v || 'Shipping Length is required']"
-                      readonly
+                        class="mt-5"
+                        label="Shipping Length (mm)"
+                        v-model="product.shippingLength"
+                        prepend-icon="mdi-ruler"
+                        :rules="[(v) => !!v || 'Shipping Length is required']"
+                        readonly
                     ></v-text-field>
                   </div>
                   <div class="col-3">
                     <v-text-field
-                      class="mt-5"
-                      label="Shipping Width (mm)"
-                      v-model="product.shippingWidth"
-                      prepend-icon="mdi-ruler"
-                      :rules="[(v) => !!v || 'Shipping Width is required']"
-                      readonly
+                        class="mt-5"
+                        label="Shipping Width (mm)"
+                        v-model="product.shippingWidth"
+                        prepend-icon="mdi-ruler"
+                        :rules="[(v) => !!v || 'Shipping Width is required']"
+                        readonly
                     ></v-text-field>
                   </div>
                   <div class="col-3">
                     <v-text-field
-                      class="mt-5"
-                      label="Shipping Heigth (mm)"
-                      v-model="product.shippingHeight"
-                      prepend-icon="mdi-ruler"
-                      :rules="[(v) => !!v || 'Shipping Heigth is required']"
-                      readonly
+                        class="mt-5"
+                        label="Shipping Heigth (mm)"
+                        v-model="product.shippingHeight"
+                        prepend-icon="mdi-ruler"
+                        :rules="[(v) => !!v || 'Shipping Heigth is required']"
+                        readonly
                     ></v-text-field>
                   </div>
                   <div class="col-3">
                     <v-text-field
-                      class="mt-5"
-                      label="Shipping Weight (kg)"
-                      v-model="product.shippingWeight"
-                      prepend-icon="mdi-weight-kilogram"
-                      :rules="[(v) => !!v || 'Shipping Weight is required']"
-                      readonly
+                        class="mt-5"
+                        label="Shipping Weight (kg)"
+                        v-model="product.shippingWeight"
+                        prepend-icon="mdi-weight-kilogram"
+                        :rules="[(v) => !!v || 'Shipping Weight is required']"
+                        readonly
                     ></v-text-field>
                   </div>
                 </div>
@@ -354,22 +359,6 @@
           </div>
         </div>
       </div>
-      <!-- <div style="background-color: white" class="w-100 text-end">
-        <v-progress-circular
-          v-if="saving"
-          :size="20"
-          indeterminate
-          color="primary"
-        ></v-progress-circular>
-        <v-btn
-          v-if="type === 'staged' && !saving"
-          color="green"
-          @click="saveProductInfo()"
-          :disabled="!edit"
-        >
-          <span style="color: white">Save Product Information</span>
-        </v-btn>
-      </div> -->
     </div>
     <v-snackbar v-model="snackbar" outlined color="success" :timeout="timeout">
       {{ snackBarText }}
@@ -404,19 +393,18 @@ export default {
       snackbar: false,
       snackBarText: "My timeout is set to 2000.",
       timeout: 2000,
-      certificates: null,
       newImage: null,
       certificates: [],
       isSelecting: false,
     };
   },
-  mounted() {},
+  mounted() {
+  },
   beforeMount() {
     this.$nextTick(async function () {
       // Clone the product to compare later
       this.originalProduct = baseMixin.methods.clone(this.product);
       await this.getData();
-      this.showDetail = true;
       this.loading = true;
       if (this.type === "staged") {
         const categories = await this.$store.dispatch("dataGate", {
@@ -431,11 +419,11 @@ export default {
             }
             if (this.product.categoryId) {
               this.subCategories =
-                baseMixin.methods.getObjectsWhereKeysHaveValues(
-                  this.allCategories,
-                  { parentId: this.product.categoryId },
-                  false
-                );
+                  baseMixin.methods.getObjectsWhereKeysHaveValues(
+                      this.allCategories,
+                      {parentId: this.product.categoryId},
+                      false
+                  );
             }
           });
         }
@@ -457,7 +445,7 @@ export default {
         const certificatesResponse = await this.$store.dispatch("dataGate", {
           tableName: "stagedProductCertificates",
           operation: "read",
-          whereCriteria: { stagedProductId: this.product.id },
+          whereCriteria: {stagedProductId: this.product.id},
         });
         if (certificatesResponse && certificatesResponse.data) {
           this.certificates = certificatesResponse.data;
@@ -475,6 +463,8 @@ export default {
           operation: "update",
         });
         await this.compareProduct();
+        // Clone the product to compare later
+        this.originalProduct = baseMixin.methods.clone(this.product);
         this.snackBarText = "Product Successfully Saved";
         this.snackbar = true;
         this.saving = false;
@@ -496,33 +486,33 @@ export default {
       if (!sub) {
         this.product.subCategoryId = null;
         this.subCategories = baseMixin.methods.getObjectsWhereKeysHaveValues(
-          this.allCategories,
-          { parentId: this.product.categoryId },
-          false
+            this.allCategories,
+            {parentId: this.product.categoryId},
+            false
         );
       }
       let certificateRequired = false;
       let subCertificateRequired = false;
       // Check subcategory
       const category = baseMixin.methods.getObjectsWhereKeysHaveValues(
-        this.allCategories,
-        { id: this.product.categoryId },
-        true
+          this.allCategories,
+          {id: this.product.categoryId},
+          true
       );
       if (category) {
         certificateRequired = category.certificateRequired;
       }
       // Check subcategory
       const subCategory = baseMixin.methods.getObjectsWhereKeysHaveValues(
-        this.allCategories,
-        { id: this.product.subCategoryId },
-        true
+          this.allCategories,
+          {id: this.product.subCategoryId},
+          true
       );
       if (subCategory) {
         subCertificateRequired = subCategory.certificateRequired;
       }
       this.product.certificateRequired =
-        certificateRequired || subCertificateRequired;
+          certificateRequired || subCertificateRequired;
     },
     async getData() {
       const categories = await this.$store.dispatch("dataGate", {
@@ -549,7 +539,7 @@ export default {
     },
     async compareProduct() {
       // Check if there is any difference between original and saved product
-      const logs = productMixin.methods.createProductLogs(this.product, this.originalProduct);
+      const logs = productMixin.methods.createProductLogs(this.product, this.originalProduct, this.$store.state.auth.user);
       // Save the logs
       for (let i = 0; i < logs.length; i++) {
         const logCreateResponse = await this.$store.dispatch("dataGate", {
@@ -567,7 +557,7 @@ export default {
       // Determine the name
       let fileName = this.newImage.name.split('.')[0];
       fileName = fileName.replaceAll(' ', '');
-      fileReader.onload = async function() {
+      fileReader.onload = async function () {
         const response = await self.$store.dispatch("callMiddlewareRoute", {
           route: "aws/uploadFile",
           fileName,
@@ -579,7 +569,7 @@ export default {
           // Save image
           const newImageToSave = self.product
           newImageToSave.imageSrc = response
-          
+
           const updateScrapedProductResponse = await self.$store.dispatch("dataGate", {
             primaryKey: "id",
             tableName: "scrapedProducts",
@@ -591,7 +581,7 @@ export default {
           }
         }
       },
-      fileReader.readAsDataURL(this.newImage)
+          fileReader.readAsDataURL(this.newImage)
     },
     handleFileImport() {
       this.isSelecting = true;
@@ -599,10 +589,18 @@ export default {
       // After obtaining the focus when closing the FilePicker, return the button state to normal
       window.addEventListener('focus', () => {
         this.isSelecting = false
-      }, { once: true });
+      }, {once: true});
 
       // Trigger click on the FileInput
       this.$refs.uploader.click();
+    },
+    brandCreateCallBack(newBrand) {
+      if (newBrand) {
+        // Add to list
+        this.brands.push(newBrand);
+        // Assign to product
+        this.product.brandId = newBrand.id;
+      }
     },
   },
 };
@@ -612,9 +610,11 @@ export default {
 .container {
   position: relative;
 }
+
 .loader {
   height: 60vh;
 }
+
 .center {
   margin: 0;
   position: absolute;
@@ -623,6 +623,7 @@ export default {
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
 }
+
 :root {
   --size: 200px;
   --icon-size: 40px;
@@ -634,6 +635,7 @@ export default {
   min-height: 30vh;
   place-items: center;
 }
+
 /* BOX STYLES*/
 .box {
   position: relative;
@@ -643,11 +645,13 @@ export default {
   transform: rotatex(345deg) rotateY(216deg);
   z-index: 0;
 }
+
 .face {
   position: absolute;
   height: 100%;
   width: 100%;
 }
+
 .bottom {
   transform: rotatex(-90deg);
   transform-origin: bottom center;
@@ -655,26 +659,31 @@ export default {
   z-index: 0;
   box-shadow: 0 var(--size) 3px #0005;
 }
+
 .front {
   background-color: #cb9869;
   z-index: 5;
 }
+
 .back {
   background-color: #af8e6f;
   transform: translatez(var(--size));
   z-index: 2;
 }
+
 .right {
   background-color: #8d745e;
   transform-origin: center left;
   z-index: 4;
 }
+
 .left {
   background-color: #ffc889;
   transform: rotatey(90deg);
   transform-origin: center right;
   z-index: 3;
 }
+
 .face.left::after,
 .face.right::after {
   content: "";
@@ -687,6 +696,7 @@ export default {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
 }
+
 /* COVER STYLES*/
 .top {
   transform: rotatex(90deg);
@@ -696,6 +706,7 @@ export default {
   transform-style: preserve-3d;
   cursor: pointer;
 }
+
 .cover-back,
 .cover-front {
   width: var(--size);
@@ -705,6 +716,7 @@ export default {
   transition: transform 0.5s 0.35s linear;
   z-index: 8;
 }
+
 .cover-back::after,
 .cover-front::after {
   content: "";
@@ -717,27 +729,33 @@ export default {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
 }
+
 .cover-front::after {
   top: 90%;
 }
+
 .cover-back {
   left: 0;
   bottom: 0;
   transform-origin: center bottom;
 }
+
 .top:active > .cover-back {
   transform: rotatex(-200deg);
   transition: transform 0.5s linear;
 }
+
 .cover-front {
   left: 0;
   top: 0;
   transform-origin: center top;
 }
+
 .top:active > .cover-back + .cover-right + .cover-left + .cover-front {
   transform: rotatex(200deg);
   transition: transform 0.5s linear;
 }
+
 .cover-left,
 .cover-right {
   height: var(--size);
@@ -747,24 +765,29 @@ export default {
   transition: transform 0.5s linear;
   z-index: 7;
 }
+
 .cover-left {
   left: 0;
   bottom: 0;
   transform-origin: center left;
 }
+
 .top:active > .cover-back + .cover-right + .cover-left {
   transform: rotatey(-190deg);
   transition: transform 0.5s 0.35s linear;
 }
+
 .cover-right {
   right: 0;
   top: 0;
   transform-origin: center right;
 }
+
 .top:active > .cover-back + .cover-right {
   transform: rotatey(190deg);
   transition: transform 0.5s 0.35s linear;
 }
+
 .content {
   width: 80%;
   height: 80%;
@@ -772,13 +795,12 @@ export default {
   bottom: 1px;
   display: grid;
   place-items: center;
-  transform: rotateY(-216deg) translatez(calc(var(--size) / -2))
-    translatex(-50%);
+  transform: rotateY(-216deg) translatez(calc(var(--size) / -2)) translatex(-50%);
   transition: transform 0.4s linear;
 }
+
 .top:active + .content {
-  transform: rotateY(-216deg) translatez(calc(var(--size) / -2))
-    translatex(-50%) translatey(-82%);
+  transform: rotateY(-216deg) translatez(calc(var(--size) / -2)) translatex(-50%) translatey(-82%);
   transition: transform 0.5s 1s cubic-bezier(0.24, 0.05, 0.66, 1.24);
 }
 
@@ -790,40 +812,46 @@ export default {
   bottom: 5px;
   left: 5px;
 }
+
 .icons div {
   margin: 2px;
   border-radius: 3px;
 }
+
 .arrow {
   height: 100%;
   width: 100%;
   clip-path: polygon(
-    21% 28%,
-    41% 39%,
-    52% 22%,
-    56% 29%,
-    48% 36%,
-    72% 38%,
-    84% 14%,
-    75% 19%,
-    67% 5%,
-    39% 5%
+      21% 28%,
+      41% 39%,
+      52% 22%,
+      56% 29%,
+      48% 36%,
+      72% 38%,
+      84% 14%,
+      75% 19%,
+      67% 5%,
+      39% 5%
   );
   background-color: var(--icon-color);
   position: absolute;
 }
+
 .arrow:nth-child(2) {
   transform: rotate(120deg);
 }
+
 .arrow:nth-child(3) {
   transform: rotate(-125deg);
 }
+
 .umbrella {
   height: var(--icon-size);
   width: var(--icon-size);
   position: relative;
   border: 1px solid var(--icon-color);
 }
+
 .umbrella::after {
   content: "";
   height: 40%;
@@ -833,6 +861,7 @@ export default {
   background-color: var(--icon-color);
   border-radius: 50% 50% 50% 50% / 90% 90% 10% 10%;
 }
+
 .umbrella::before {
   content: "";
   height: 80%;
@@ -845,12 +874,14 @@ export default {
   border-top: none;
   border-right: none;
 }
+
 .glass {
   height: var(--icon-size);
   width: var(--icon-size);
   position: relative;
   border: 1px solid var(--icon-color);
 }
+
 .glass::after {
   content: "";
   height: 60%;
@@ -861,19 +892,20 @@ export default {
   background-color: var(--icon-color);
   border-radius: 0% 0% 50% 50% / 0% 0% 100% 100%;
   clip-path: polygon(
-    0% 0%,
-    55% 0,
-    68% 20%,
-    54% 34%,
-    75% 55%,
-    61% 34%,
-    75% 19%,
-    67% 0,
-    100% 0%,
-    100% 100%,
-    0% 100%
+      0% 0%,
+      55% 0,
+      68% 20%,
+      54% 34%,
+      75% 55%,
+      61% 34%,
+      75% 19%,
+      67% 0,
+      100% 0%,
+      100% 100%,
+      0% 100%
   );
 }
+
 .glass::before {
   content: "";
   height: 95%;
@@ -882,12 +914,14 @@ export default {
   background-color: var(--icon-color);
   clip-path: polygon(15% 100%, 45% 90%, 40% 55%, 60% 55%, 55% 90%, 85% 100%);
 }
+
 .orientation {
   height: var(--icon-size);
   width: var(--icon-size);
   position: relative;
   border: 1px solid var(--icon-color);
 }
+
 .orientation::after,
 .orientation::before {
   content: "";
@@ -898,18 +932,20 @@ export default {
   position: absolute;
   background-color: var(--icon-color);
   clip-path: polygon(
-    50% 0,
-    80% 30%,
-    60% 30%,
-    60% 100%,
-    40% 100%,
-    40% 30%,
-    20% 30%
+      50% 0,
+      80% 30%,
+      60% 30%,
+      60% 100%,
+      40% 100%,
+      40% 30%,
+      20% 30%
   );
 }
+
 .orientation::after {
   left: 45%;
 }
+
 .base {
   height: 8%;
   width: 70%;
@@ -918,6 +954,7 @@ export default {
   position: absolute;
   background-color: var(--icon-color);
 }
+
 .recycled {
   height: calc(var(--icon-size) * 2);
   width: calc(var(--icon-size) * 2);
@@ -940,14 +977,15 @@ export default {
       #cb9869 14% 20%,
       var(--icon-color) 21% 22%,
       #0000 24%
-    ),
-    linear-gradient(
+  ),
+  linear-gradient(
       var(--icon-color) 48%,
       #0000 46% 54%,
       var(--icon-color) 54% 55%,
       #0000 57%
-    );
+  );
 }
+
 .label {
   height: calc(var(--icon-size) * 1.5);
   width: calc(var(--icon-size) * 2);
@@ -958,6 +996,7 @@ export default {
   top: 5px;
   left: 5px;
 }
+
 .label::before {
   content: "From: Duple \A To: Leandra";
   font-family: sans-serif;
@@ -969,6 +1008,7 @@ export default {
   right: 3px;
   top: 3px;
 }
+
 .label::after {
   height: 15px;
   width: 3px;
@@ -988,24 +1028,25 @@ export default {
   height: var(--pikachu-size);
   position: absolute;
 }
+
 .pikachu .ear {
   width: calc(var(--pikachu-size) * 0.174);
   height: calc(var(--pikachu-size) * 0.514);
   position: absolute;
   border-radius: 20% 80% 35% 35% / 77% 60% 40% 23%;
   background-image: linear-gradient(90deg, #0000 30%, #fff4 48% 53%, #0000 70%),
-    radial-gradient(
-      calc(var(--pikachu-size) * 0.2429) calc(var(--pikachu-size) * 0.4714) at
-        calc(var(--pikachu-size) * 0.0714) calc(var(--pikachu-size) * 0.3571),
+  radial-gradient(
+      calc(var(--pikachu-size) * 0.2429) calc(var(--pikachu-size) * 0.4714) at calc(var(--pikachu-size) * 0.0714) calc(var(--pikachu-size) * 0.3571),
       #e3d831 49%,
       #000 51%
-    );
+  );
   transform: rotate(30deg);
   top: -1%;
   right: 3%;
   animation: move-right 2s linear infinite;
   transform-origin: 0 70%;
 }
+
 .ear.left {
   transform: scalex(-1) rotate(30deg);
   animation: move 2s linear infinite;
@@ -1013,6 +1054,7 @@ export default {
   top: 3.5%;
   right: 95.5%;
 }
+
 @keyframes move-right {
   0%,
   40%,
@@ -1024,6 +1066,7 @@ export default {
     transform: rotate(33deg);
   }
 }
+
 @keyframes move {
   0%,
   40%,
@@ -1035,6 +1078,7 @@ export default {
     transform: scalex(-1) rotate(33deg);
   }
 }
+
 .pikachu .head {
   width: calc(var(--pikachu-size) * 0.693);
   height: calc(var(--pikachu-size) * 0.629);
@@ -1045,6 +1089,7 @@ export default {
   bottom: 6px;
   left: 22px;
 }
+
 .pikachu .head::before {
   width: calc(var(--pikachu-size) * 0.72);
   height: calc(var(--pikachu-size) * 0.5);
@@ -1055,42 +1100,37 @@ export default {
   bottom: -5px;
   left: -2px;
   background-image: radial-gradient(
-      calc(var(--pikachu-size) * 0.1285) calc(var(--pikachu-size) * 0.1714) at
-        calc(var(--pikachu-size) * 0.0714) calc(var(--pikachu-size) * 0.25),
+      calc(var(--pikachu-size) * 0.1285) calc(var(--pikachu-size) * 0.1714) at calc(var(--pikachu-size) * 0.0714) calc(var(--pikachu-size) * 0.25),
       #aa0515 50%,
       #0000 54%
-    ),
-    radial-gradient(
-      calc(var(--pikachu-size) * 0.1285) calc(var(--pikachu-size) * 0.1714) at
-        calc(var(--pikachu-size) * 0.65) calc(var(--pikachu-size) * 0.25),
+  ),
+  radial-gradient(
+      calc(var(--pikachu-size) * 0.1285) calc(var(--pikachu-size) * 0.1714) at calc(var(--pikachu-size) * 0.65) calc(var(--pikachu-size) * 0.25),
       #aa0515 50%,
       #0000 54%
-    ),
-    radial-gradient(
-      calc(var(--pikachu-size) * 0.45) calc(var(--pikachu-size) * 0.3714) at
-        calc(var(--pikachu-size) * 0.1428) calc(var(--pikachu-size) * 0.45),
+  ),
+  radial-gradient(
+      calc(var(--pikachu-size) * 0.45) calc(var(--pikachu-size) * 0.3714) at calc(var(--pikachu-size) * 0.1428) calc(var(--pikachu-size) * 0.45),
       #b0a828 50%,
       #0000 60%
-    ),
-    radial-gradient(
-      calc(var(--pikachu-size) * 0.7857) calc(var(--pikachu-size) * 0.5357) at
-        calc(var(--pikachu-size) * 0.4286) calc(var(--pikachu-size) * 0.1286),
+  ),
+  radial-gradient(
+      calc(var(--pikachu-size) * 0.7857) calc(var(--pikachu-size) * 0.5357) at calc(var(--pikachu-size) * 0.4286) calc(var(--pikachu-size) * 0.1286),
       #0000 50%,
       #b0a828 60%
-    ),
-    radial-gradient(
-      calc(var(--pikachu-size) * 0.7857) calc(var(--pikachu-size) * 0.5357) at
-        calc(var(--pikachu-size) * 0.3571) calc(var(--pikachu-size) * 0.4857),
+  ),
+  radial-gradient(
+      calc(var(--pikachu-size) * 0.7857) calc(var(--pikachu-size) * 0.5357) at calc(var(--pikachu-size) * 0.3571) calc(var(--pikachu-size) * 0.4857),
       #0001 50%,
       #0000 60%
-    ),
-    radial-gradient(
-      calc(var(--pikachu-size) * 0.3143) calc(var(--pikachu-size) * 0.4143) at
-        calc(var(--pikachu-size) * 0.3571) calc(var(--pikachu-size) * 0.25),
+  ),
+  radial-gradient(
+      calc(var(--pikachu-size) * 0.3143) calc(var(--pikachu-size) * 0.4143) at calc(var(--pikachu-size) * 0.3571) calc(var(--pikachu-size) * 0.25),
       #fff1 50%,
       #0000 70%
-    );
+  );
 }
+
 .pikachu .eye {
   width: calc(var(--pikachu-size) * 0.114);
   height: calc(var(--pikachu-size) * 0.136);
@@ -1101,6 +1141,7 @@ export default {
   top: 32%;
   left: 15%;
 }
+
 .pikachu .eye::after {
   content: "";
   width: 35%;
@@ -1111,12 +1152,15 @@ export default {
   top: 20%;
   right: 10%;
 }
+
 .pikachu .eye:nth-child(2)::after {
   left: 10%;
 }
+
 .pikachu .eye:nth-child(2) {
   left: 67%;
 }
+
 .pikachu .nouse {
   width: calc(var(--pikachu-size) * 0.043);
   height: calc(var(--pikachu-size) * 0.022);
@@ -1127,6 +1171,7 @@ export default {
   left: 47%;
   border-radius: 30% 30% 50% 50% / 30% 30% 70% 70%;
 }
+
 .pikachu .mouth {
   width: calc(var(--pikachu-size) * 0.2143);
   height: calc(var(--pikachu-size) * 0.04);
@@ -1135,6 +1180,7 @@ export default {
   left: 35%;
   overflow: hidden;
 }
+
 .pikachu .mouth::before,
 .pikachu .mouth::after {
   content: "";
@@ -1146,6 +1192,7 @@ export default {
   bottom: 1px;
   left: 0;
 }
+
 .pikachu .mouth::after {
   left: 50%;
 }

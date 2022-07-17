@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div class="">
+    <!--Loader-->
     <client-only>
       <v-overlay
         style="height: 80vh; margin-top: -60px"
@@ -7,8 +8,7 @@
         color="transparent"
         z-index="5"
         absolute
-        opacity="1"
-      >
+        opacity="1">
         <div class="text-center">
           <v-progress-circular
             :size="70"
@@ -20,25 +20,30 @@
         </div>
       </v-overlay>
     </client-only>
-    <!--Header-->
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mx-3">
-      <h1 class="h2">Staged Products</h1>
-      <!--Search would be here-->
-
-      <div class="btn-toolbar mb-2 mb-md-0">
-        <div class="btn-group me-2">
-          <export-modal :products="products" :exportTableName="'stagedProducts'" :exportSheetName="'Staged Products'" :exportCriteria="null" />
-        </div>
-      </div>
-    </div>
-    <hr class="mt-0 mb-2 mx-3">
+    <!--Filter-->
     <div v-if="!loading">
-      <!--Filter-->
-      <products-product-list-filter
-        :filterChangeCallBack="filterChangeCallBack"
-        :filter="filter"
-        :type="'staged'"
-      />
+      <!--Header-->
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mx-3">
+        <h4 class="">
+          Staged Products
+          <v-chip
+              class="ma-2"
+              color="primary"
+              label>
+            <v-icon left>
+              mdi-counter
+            </v-icon>
+            {{productCount}}
+          </v-chip>
+        </h4>
+        <!--Filter-->
+        <products-product-list-filter
+            v-if="filter"
+            :filterChangeCallBack="filterChangeCallBack"
+            :filter="filter"
+            :type="'staged'"/>
+      </div>
+      <hr class="mt-0 mb-2 mx-3">
       <!--Table-->
       <products-product-list
         :type="'staged'"
@@ -47,17 +52,19 @@
         :allBrands="allBrands"
         :deleteProductCallBack="deleteProductCallBack"
         :sortCallbackStaged="sortCallback"
-        :tableStyle="'height:60vh; overflow-y:auto; overflow-x: hidden;'"
+        :tableStyle="'height:81vh; overflow-y:auto; overflow-x: hidden;'"
       />
       <!--Pagination-->
       <template>
-        <div class="text-end">
+        <div class="d-flex justify-content-between px-3">
+          <div></div>
           <v-pagination
             color="primary"
             v-model="page"
             :length="Math.ceil(this.productCount / this.numberPerPage)"
             :total-visible="7"
           ></v-pagination>
+          <export-modal :products="products" :exportTableName="'stagedProducts'" :exportSheetName="'Staged Products'" :exportCriteria="null" />
         </div>
       </template>
     </div>
@@ -77,6 +84,7 @@ export default {
       page: 1,
       numberPerPage: 15,
       filter: {},
+      activeFilter: null,
       productCount: 0,
       products: [],
       allCategories: [],
@@ -84,26 +92,32 @@ export default {
       // Current criteria
       criteria: { deleted: 0, publish: 0 },
       sortCriteria: {},
-      href: "",
-      activeFilter: null
+      href: ""
     };
   },
   watch: {
     page(val) {
       this.loadProducts();
-      breadcrumbMixin.methods.savePage('stagedList', this.page)
+      breadcrumbMixin.methods.savePageAndFilter('stagedList', {page: this.page, filter: this.filter, sort: this.sortCriteria});
     },
   },
   beforeMount() {
     this.$nextTick(async function () {
       this.loading = true;
-      var loggedInUser = this.$store.state.auth.user;
-      console.log("loggedInUser", loggedInUser);
+      // Set page and filter from session
+      const pageInfo = breadcrumbMixin.methods.getPageWithSort('stagedList');
+      if (pageInfo.pagination) {
+        this.page = pageInfo.pagination.page;
+      }
+      if (pageInfo.filter) {
+        this.filter = pageInfo.filter;
+        this.activeFilter = pageInfo.filter;
+      }
+      if (pageInfo.sort) {
+        this.sortCriteria = pageInfo.sort;
+      }
       // Load Products
-      
-      const pageInfo = breadcrumbMixin.methods.getPage('stagedList')
-      this.page = pageInfo.page
-      await this.loadProducts();
+      await this.loadProducts(this.activeFilter, this.sortCriteria);
       await this.loadCategoriesAndBrands();
       this.loading = false;
     });
@@ -129,7 +143,7 @@ export default {
       const stagedProducts = await this.$store.dispatch("dataGate", {
         tableName: "stagedProducts",
         operation: "read",
-        whereCriteria: criteria ? criteria : { deleted: 0 },
+        whereCriteria: criteria ? {...criteria, deleted: 0, publish: 0 } : { deleted: 0 },
         sortCriteria: sortCrit ? sortCrit : {},
         page: this.page,
         numberPerPage: this.numberPerPage,
@@ -166,16 +180,22 @@ export default {
     async filterChangeCallBack(filter) {
       // Build the where clause
       if (filter) {
+        // Reset page
+        this.page = 1;
         this.activeFilter = filter;
+        breadcrumbMixin.methods.savePageAndFilter('stagedList', {page: this.page, filter: this.activeFilter, sort: this.sortCriteria});
         await this.loadProducts(filter);
       }
     },
     async sortCallback(crit) {
       // Build the where clause
       if (crit) {
-        if(this.activeFilter){
+        if (this.activeFilter) {
+          // Reset page
+          this.page = 1;
+          breadcrumbMixin.methods.savePageAndFilter('stagedList', {page: this.page, filter: this.activeFilter, sort: crit});
           await this.loadProducts(this.activeFilter, crit);
-        }else{
+        } else {
           await this.loadProducts(null, crit);
         }
       }

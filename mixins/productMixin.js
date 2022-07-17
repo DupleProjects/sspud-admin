@@ -88,7 +88,7 @@ export default {
                    productDetails: validProduct.productValidDetails,
             };
         },
-        createProductLogForProperty(product, originalProduct, property, logs, isNumber) {
+        createProductLogForProperty(product, originalProduct, property, logs, isNumber, user) {
             // Check if there is any difference between original and saved product
             if (isNumber) {
                 product[property] = Number(product[property])
@@ -96,44 +96,55 @@ export default {
             // Check each relevant property
             if (product[property] !== originalProduct[property]) {
                 var thisFromValue = ''
-                if(originalProduct[property] != null){
+                if (originalProduct[property] != null) {
                     thisFromValue = originalProduct[property];
                 }
                 var thisToValue = ''
-                if(product[property] != null){
+                if (product[property] != null) {
                     thisToValue = product[property];
                 }
                 const newLog = {
                     stagedProductId: product.id,
                     property,
                     fromValue: thisFromValue,
-                    toValue: thisToValue
+                    toValue: thisToValue,
+                    createdBy: user.id,
+                    updatedBy: user.id,
                 }
                 logs.push(newLog);
             }
         },
-        createProductLogs(product, originalProduct) {
+        createProductLogs(product, originalProduct, user) {
+            console.log('product', product)
+            console.log('originalProduct', originalProduct)
+            console.log('user', user)
             // Check if there is any difference between original and saved product
             const logs = [];
             // Check each relevant property
             // Name
-            this.createProductLogForProperty(product, originalProduct, 'name', logs);
+            this.createProductLogForProperty(product, originalProduct, 'name', logs, false,  user);
             // Description
-            this.createProductLogForProperty(product, originalProduct, 'description', logs);
+            this.createProductLogForProperty(product, originalProduct, 'description', logs, false,  user);
             // Category id
-            this.createProductLogForProperty(product, originalProduct, 'categoryId', logs);
+            this.createProductLogForProperty(product, originalProduct, 'categoryId', logs, false,  user);
             // Sub Category id
-            this.createProductLogForProperty(product, originalProduct, 'subCategoryId', logs);
+            this.createProductLogForProperty(product, originalProduct, 'subCategoryId', logs, false,  user);
             // brand id
-            this.createProductLogForProperty(product, originalProduct, 'brandId', logs);
+            this.createProductLogForProperty(product, originalProduct, 'brandId', logs, false,  user);
             // shippingLength
-            this.createProductLogForProperty(product, originalProduct, 'shippingLength', logs, true);
+            this.createProductLogForProperty(product, originalProduct, 'shippingLength', logs, true,  user);
             // shippingHeight
-            this.createProductLogForProperty(product, originalProduct, 'shippingHeight', logs, true);
+            this.createProductLogForProperty(product, originalProduct, 'shippingHeight', logs, true,  user);
             // shippingWidth
-            this.createProductLogForProperty(product, originalProduct, 'shippingWidth', logs, true);
+            this.createProductLogForProperty(product, originalProduct, 'shippingWidth', logs, true,  user);
             // shippingWeight
-            this.createProductLogForProperty(product, originalProduct, 'shippingWeight', logs, true);
+            this.createProductLogForProperty(product, originalProduct, 'shippingWeight', logs, true,  user);
+            // publish
+            this.createProductLogForProperty(product, originalProduct, 'publish', logs, true,  user);
+            // review required
+            this.createProductLogForProperty(product, originalProduct, 'reviewRequired', logs, true,  user);
+            // woo commerce id
+            this.createProductLogForProperty(product, originalProduct, 'wooCommerceId', logs, false,  user);
             return logs;
         }
     }

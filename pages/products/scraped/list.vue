@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pa-3">
     <client-only>
       <v-overlay
           style="height: 80vh; margin-top: -60px"
@@ -21,33 +21,47 @@
     </client-only>
     <!--Header-->
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mx-3">
-      <h1 class="h2">Scraped Products</h1>
-      <!--Search would be here-->
-
-      <div class="btn-toolbar mb-2 mb-md-0">
-        <div class="btn-group me-2">
-          <export-modal :products="products" :exportTableName="'scrapedProducts'" :exportSheetName="'Scraped Products'" />
-        </div>
-      </div>
-    </div>
-    <hr class="my-0 mx-3">
-    <div v-if="!loading">
+      <h4 class="">
+        Scraped Products
+        <v-chip
+            class="ma-2"
+            color="primary"
+            label>
+          <v-icon left>
+            mdi-counter
+          </v-icon>
+          {{productCount}}
+        </v-chip>
+      </h4>
+      <!--Filter-->
       <product-list-filter
-        :filter="filter" 
-        :filterChangeCallBack="filterChangeCallBackScraped" 
-        :type="'scraped'" 
+          v-if="filter && !loading"
+          :filter="filter"
+          :filterChangeCallBack="filterChangeCallBackScraped"
+          :type="'scraped'"
       />
+    </div>
+    <!--Filter-->
+    <div v-if="!loading">
       <!--Table-->
-      <products-product-list :type="'scraped'" :products="products" :canDelete="false" :sortCallback="sortCallback"  :shops="allShops" :tableStyle="'height:60vh; overflow-y:auto; overflow-x: hidden;'" />
+      <products-product-list
+          :type="'scraped'"
+          :products="products"
+          :canDelete="false"
+          :sortCallback="sortCallback"
+          :shops="allShops"
+          :tableStyle="'height:80vh; overflow-y:auto; overflow-x: hidden;'" />
       <!--Pagination-->
       <template>
-        <div class="text-end">
+        <div class="d-flex justify-content-between">
+          <div></div>
           <v-pagination
               color="primary"
               v-model="page"
               :length="Math.ceil(this.productCount / this.numberPerPage)"
               :total-visible="7"
           ></v-pagination>
+          <export-modal :products="products" :exportTableName="'scrapedProducts'" :exportSheetName="'Scraped Products'" />
         </div>
       </template>
     </div>
@@ -65,7 +79,7 @@ export default {
   mixins: [baseMixin,breadcrumbMixin],
   data() {
     return {
-      loading: false,
+      loading: true,
       page: 1,
       numberPerPage: 20,
       productCount: 0,
@@ -78,8 +92,8 @@ export default {
   },
   watch: {
     page(val) {
-      this.loadProducts()
-      breadcrumbMixin.methods.savePage('scrapedList', this.page)
+      this.loadProducts();
+      breadcrumbMixin.methods.savePageAndFilter('scrapedList', {page: this.page, filter: this.filter, sort: this.sortCriteria});
     },
     search(val) {
 
@@ -87,20 +101,28 @@ export default {
   },
   beforeMount() {
     this.$nextTick(async function () {
+      this.loading = true;
       // var loggedInUser = this.$store.state.auth.user
       // Load Products
-      const pageInfo = breadcrumbMixin.methods.getPage('scrapedList')
-      this.page = pageInfo.page
-      await this.loadProducts()
-
+      const pageInfo = breadcrumbMixin.methods.getPageWithSort('scrapedList');
+      if (pageInfo.pagination) {
+        this.page = pageInfo.pagination.page;
+      }
+      if (pageInfo.filter) {
+        this.filter = pageInfo.filter;
+      }
+      if (pageInfo.sort) {
+        this.sortCriteria = pageInfo.sort;
+      }
+      await this.loadProducts(this.sortCriteria, this.filter);
       const shopsReturn = await this.$store.dispatch('dataGate', {
         tableName: 'shops',
         operation: 'read',
       });
-
       if(shopsReturn.data){
         this.allShops = shopsReturn.data
       }
+      this.loading = false;
     })
   },
   unmounted() {
@@ -141,16 +163,22 @@ export default {
 
       // this.loading = false
     },
-    async sortCallback(crit) {
+    async sortCallback(sortCriteria) {
       // Build the where clause
-      if (crit) {
-        await this.loadProducts(crit);
+      if (sortCriteria) {
+        // Reset page
+        this.page = 1;
+        breadcrumbMixin.methods.savePageAndFilter('scrapedList', {page: this.page, filter: this.filter, sort: sortCriteria});
+        await this.loadProducts(sortCriteria);
       }
     },
     async filterChangeCallBackScraped(filter) {
       // Build the where clause
       if (filter) {
-        this.activeFilter = filter;
+        // Reset page
+        this.page = 1;
+        this.filter = filter;
+        breadcrumbMixin.methods.savePageAndFilter('scrapedList', {page: this.page, filter: this.filter, sort: this.sortCriteria});
         await this.loadProducts(null,filter);
       }
     },

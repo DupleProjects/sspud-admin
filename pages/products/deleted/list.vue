@@ -21,8 +21,29 @@
       </v-overlay>
     </client-only>
     <div v-if="!loading">
+      <!--Header-->
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mx-3">
+        <h4 class="">
+          Deleted Products
+          <v-chip
+              class="ma-2"
+              color="primary"
+              label>
+            <v-icon left>
+              mdi-counter
+            </v-icon>
+            {{productCount}}
+          </v-chip>
+        </h4>
+        <!--Filter-->
+        <products-product-list-filter
+            v-if="filter"
+            :filterChangeCallBack="filterChangeCallBack"
+            :filter="filter"
+            :type="'staged'"/>
+      </div>
+      <hr class="mt-0 mb-2 mx-3">
       <!--Table-->
-      <h2>Deleted Products</h2>
       <products-product-list
         :type="'staged'"
         :products="products"
@@ -30,17 +51,19 @@
         :allBrands="allBrands"
         :deleteProductCallBack="deleteProductCallBack"
         :sortCallbackStaged="sortCallback"
-        :tableStyle="'height:75vh; overflow-y:auto; overflow-x: hidden;'"
+        :tableStyle="'height:80vh; overflow-y:auto; overflow-x: hidden;'"
       />
       <!--Pagination-->
       <template>
-        <div class="text-end">
+        <div class="d-flex justify-content-between">
+          <div></div>
           <v-pagination
             color="primary"
             v-model="page"
             :length="Math.ceil(this.productCount / this.numberPerPage)"
             :total-visible="7"
           ></v-pagination>
+          <export-modal :products="products" :exportTableName="'stagedProducts'" :exportSheetName="'Staged Products'" :exportCriteria="null" />
         </div>
       </template>
     </div>
@@ -50,35 +73,48 @@
 <script>
 import baseMixin from "@/mixins/baseMixin.js";
 import breadcrumbMixin from "@/mixins/breadcrumbMixin.js";
+import exportModal from "@/components/dialogs/exportModal";
 export default {
+  components: { exportModal },
   mixins: [baseMixin,breadcrumbMixin],
   data() {
     return {
       loading: false,
       page: 1,
       numberPerPage: 20,
+      filter: {},
       productCount: 0,
       products: [],
       allCategories: [],
+      criteria: { deleted: 1 },
       allBrands: [],
       sortCriteria: {},
+      activeFilter: null
     };
   },
   watch: {
     page(val) {
       this.loadProducts();
-      breadcrumbMixin.methods.savePage('deletedList', this.page)
+      breadcrumbMixin.methods.savePageAndFilter('deletedList', {page: this.page, filter: this.activeFilter, sort: this.sortCriteria});
     },
     search(val) {},
   },
   beforeMount() {
     this.$nextTick(async function () {
       this.loading = true;
-      // var loggedInUser = this.$store.state.auth.user
+      const pageInfo = breadcrumbMixin.methods.getPageWithSort('deletedList');
+      if (pageInfo.pagination) {
+        this.page = pageInfo.pagination.page;
+      }
+      if (pageInfo.filter) {
+        this.filter = pageInfo.filter;
+        this.activeFilter = pageInfo.filter;
+      }
+      if (pageInfo.sort) {
+        this.sortCriteria = pageInfo.sort;
+      }
       // Load Products
-      const pageInfo = breadcrumbMixin.methods.getPage('deletedList')
-      this.page = pageInfo.page
-      await this.loadProducts();
+      await this.loadProducts(this.activeFilter, this.sortCriteria);
       await this.loadCategoriesAndBrands();
       this.loading = false;
     });
@@ -88,20 +124,25 @@ export default {
   },
   methods: {
     // Loading stuff
-    async loadProducts(crit) {
+    async loadProducts(criteria, sortCriteria) {
+      if (!criteria) {
+        criteria = this.criteria;
+      } else {
+        this.criteria = criteria;
+      }
       // Load the products
 
-      if (!crit) {
-        crit = this.sortCriteria;
+      if (!sortCriteria) {
+        sortCriteria = this.sortCriteria;
       } else {
-        this.sortCriteria = crit;
+        this.sortCriteria = sortCriteria;
       }
 
       const deletedProducts = await this.$store.dispatch("dataGate", {
         tableName: "stagedProducts",
         operation: "read",
-        whereCriteria: {deleted: 1},
-        sortCriteria: crit ? crit : {},
+        whereCriteria: criteria ? {...criteria, deleted: 1 } : { deleted: 1 },
+        sortCriteria: sortCriteria ? sortCriteria : {},
         page: this.page,
         numberPerPage: this.numberPerPage,
       });
@@ -134,10 +175,27 @@ export default {
     async deleteProductCallBack() {
       await this.loadProducts();
     },
-    async sortCallback(crit) {
+    async filterChangeCallBack(filter) {
       // Build the where clause
-      if (crit) {
-        await this.loadProducts(crit);
+      if (filter) {
+        // Reset page
+        this.page = 1;
+        this.activeFilter = filter;
+        breadcrumbMixin.methods.savePageAndFilter('deletedList', {page: this.page, filter: this.activeFilter, sort: this.sortCriteria});
+        await this.loadProducts(filter);
+      }
+    },
+    async sortCallback(sortCriteria) {
+      // Build the where clause
+      if (sortCriteria) {
+        // Reset page
+        this.page = 1;
+        if (this.activeFilter) {
+          breadcrumbMixin.methods.savePageAndFilter('deletedList', {page: this.page, filter: this.activeFilter, sort: sortCriteria});
+          await this.loadProducts(this.activeFilter, sortCriteria);
+        } else {
+          await this.loadProducts(null, sortCriteria);
+        }
       }
     },
   },

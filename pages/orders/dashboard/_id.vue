@@ -20,122 +20,79 @@
       </div>
     </div>
     <div v-if="order && !loading">
-      <div class="confluence-page-layout">
-        <div class="confluence-left-column" v-if="order.wooCommerceOrder">
+      <div class="row m-0" v-if="order.wooCommerceOrder">
+        <div class="col-3">
+          <!-- Order overview -->
+          <div class="confluence-card p-3">
+            <p class="lead"><strong>Order</strong> #{{order.wooCommerceOrder.id}}</p>
+            <v-alert
+                v-if="order.sspudOrder.status === 'Review Required'"
+                dense
+                text
+                type="error">
+              {{order.sspudOrder.reviewReason}}
+            </v-alert>
+            <hr class="mt-0">
+            <v-select
+                v-model="order.sspudOrder.status"
+                :items="['Queued', 'Order Placed At Providers', 'Processing At Transport Holdings', 'Review Required', 'In Transit To Depot', 'At Depot', 'n Transit To Customer', 'Order Complete']"
+                label="Order Status"
+                class="my-8"
+                :hide-details="true"
+                dense
+            ></v-select>
+            <v-select
+                v-model="order.sspudOrder.paymentStatus"
+                :items="['Awaiting Payment', 'Payment Received', 'Payment Cancelled']"
+                label="Payment Status"
+                class="my-8"
+                :hide-details="true"
+                dense
+            ></v-select>
+            <p v-if="order.wooCommerceOrder.customer_note"><strong>Customer Note</strong> {{order.wooCommerceOrder.customer_note}}</p>
+          </div>
+          <div class="confluence-card p-3 mt-3">
+            <a target="_blank" :href="getTrackingUrl()">
+              <v-icon
+                medium
+                class="mr-3"
+                color="blue darken-2">mdi-truck</v-icon>Tracking Link</a>
+          </div>
+
+          <orders-order-log v-if="showLogs" class="my-3" :order="order" :shops="shops" />
+        </div>
+        <div class="col-7">
+          <!-- Transport -->
+          <orders-transport-component :order="order.sspudOrder" />
+          <!-- Shops -->
+          <div v-for="(shop, index) of order.sspudOrderReferences" :key="index" class="order-shop-reference mb-3">
+            <orders-shop-order-component :shopOrder="shop" :shops="shops" :callBack="shopOrderUpdateCallBack" />
+          </div>
+          <!-- Price breakdown -->
+          <orders-payment-breakdown :order="order" :shops="shops" />
+        </div>
+        <div class="col-2">
           <div class="confluence-card p-2 mb-2">
             <p class="lead">
               Customer
             </p>
-            <p>{{order.wooCommerceOrder.billing.first_name}} {{order.wooCommerceOrder.billing.last_name}}</p>
-            <p>{{order.wooCommerceOrder.billing.email}}</p>
-            <p>{{order.wooCommerceOrder.billing.phone}}</p>
-          </div>
-          <div class="confluence-card p-2 my-2">
-            <p class="lead">
-              Billing
-            </p>
-            <p>{{order.wooCommerceOrder.billing.address_1}}</p>
-            <p v-if="order.wooCommerceOrder.billing.address_2 !== ''">{{order.wooCommerceOrder.billing.address_2}}</p>
-            <p>{{order.wooCommerceOrder.billing.city}}</p>
-            <p>{{order.wooCommerceOrder.billing.state}}</p>
-            <p>{{order.wooCommerceOrder.billing.country}}</p>
-            <p>{{order.wooCommerceOrder.billing.postcode}}</p>
+            <div class="">
+              <p class="mb-0">{{order.wooCommerceOrder.billing.first_name}} {{order.wooCommerceOrder.billing.last_name}}</p>
+              <p class="mb-0">{{order.wooCommerceOrder.billing.email}}</p>
+              <p class="mb-0">{{order.wooCommerceOrder.billing.phone}}</p>
+            </div>
           </div>
           <div class="confluence-card p-2 my-2">
             <p class="lead">
               Shipping
             </p>
-            <p>{{order.wooCommerceOrder.shipping.address_1}}</p>
-            <p v-if="order.wooCommerceOrder.shipping.address_2 !== ''">{{order.wooCommerceOrder.shipping.address_2}}</p>
-            <p>{{order.wooCommerceOrder.shipping.city}}</p>
-            <p>{{order.wooCommerceOrder.shipping.state}}</p>
-            <p>{{order.wooCommerceOrder.shipping.country}}</p>
-            <p>{{order.wooCommerceOrder.shipping.postcode}}</p>
-          </div>
-        </div>
-        <div class="order-main-section" v-if="order.wooCommerceOrder">
-          <div class="order-detail-grid">
-            <div class="confluence-card p-3">
-              <p class="lead"><strong>Order</strong> #{{order.wooCommerceOrder.id}}</p>
-              <v-alert
-                  v-if="order.sspudOrder.status === 'Review Required'"
-                  dense
-                  text
-                  type="error">
-                {{order.sspudOrder.reviewReason}}
-              </v-alert>
-              <hr class="mt-0">
-              <v-select
-                  v-model="order.sspudOrder.status"
-                  :items="['Awaiting Payment', 'Payment Received', 'Queued', 'Order Placed At Providers', 'Review Required', 'Processing At TH', 'In Transit To Depot', 'At Depot', 'n Transit To Customer', 'Order Complete']"
-                  label="Order Status"
-                  class="my-8"
-                  :hide-details="true"
-                  dense
-              ></v-select>
-              <v-select
-                  v-model="order.sspudOrder.paymentStatus"
-                  :items="['Awaiting Payment', 'Payment Received', 'Payment Cancelled']"
-                  label="Payment Status"
-                  class="my-8"
-                  :hide-details="true"
-                  dense
-              ></v-select>
-              <p><strong>Customer Note</strong> {{order.wooCommerceOrder.customer_note}}</p>
-            </div>
-            <div v-for="(shop, index) of order.sspudOrderReferences" :key="index" class="order-shop-reference">
-              <orders-shop-order-component :shopOrder="shop" :shops="shops" :callBack="shopOrderUpdateCallBack" />
-            </div>
-            <div class="confluence-card p-3">
-              <p class="lead">Payment Breakdown</p>
-              <div class="d-flex">
-                <div class="px-3">
-                  <p><strong>Date Paid</strong></p>
-                  <p><base-date :date="order.wooCommerceOrder.date_paid" /></p>
-                </div>
-                <div class="px-3">
-                  <p><strong>Payment Method</strong></p>
-                  <p>{{order.wooCommerceOrder.payment_method}}</p>
-                </div>
-              </div>
-              <div class="table-responsive">
-                <table class="table">
-                  <thead>
-                  <tr>
-                    <th scope="col">Payment</th>
-                    <th scope="col">Amount</th>
-                  </tr>
-                  </thead>
-                  <tbody class="table-group-divider">
-                  <tr v-for="(shop, index) of order.sspudOrderReferences" :key="index">
-                    <th scope="row">Shop {{shop.shopId}}</th>
-                    <td>P {{shop.total}}</td>
-                  </tr>
-                  <tr v-for="(fee_line, index) of order.wooCommerceOrder.fee_lines" :key="fee_line.id">
-                    <th scope="row">{{fee_line.name}}</th>
-                    <td>P {{fee_line.amount}}</td>
-                  </tr>
-                  <tr class="order-list-item">
-                    <th scope="row">Cart Tax</th>
-                    <td>P {{order.wooCommerceOrder.cart_tax}}</td>
-                  </tr>
-                  <tr class="order-list-item">
-                    <th scope="row">Shipping Tax</th>
-                    <td>P {{order.wooCommerceOrder.shipping_tax}}</td>
-                  </tr>
-                  <tr class="order-list-item">
-                    <th scope="row">Shipping Total</th>
-                    <td>P {{order.wooCommerceOrder.shipping_total}}</td>
-                  </tr>
-                  </tbody>
-                  <tfoot>
-                  <tr>
-                    <td>Total</td>
-                    <td>P {{getPaymentSum()}}</td>
-                  </tr>
-                  </tfoot>
-                </table>
-              </div>
+            <div class="">
+              <p class="mb-0">{{order.wooCommerceOrder.shipping.address_1}}</p>
+              <p class="mb-0" v-if="order.wooCommerceOrder.shipping.address_2 !== ''">{{order.wooCommerceOrder.shipping.address_2}}</p>
+              <p class="mb-0">{{order.wooCommerceOrder.shipping.city}}</p>
+              <p class="mb-0">{{order.wooCommerceOrder.shipping.state}}</p>
+              <p class="mb-0">{{order.wooCommerceOrder.shipping.country}}</p>
+              <p class="mb-0">{{order.wooCommerceOrder.shipping.postcode}}</p>
             </div>
           </div>
         </div>
@@ -154,7 +111,8 @@ export default {
     return {
       order: null,
       loading: false,
-      shops: []
+      shops: [],
+      showLogs: true,
     };
   },
   beforeMount() {
@@ -223,7 +181,55 @@ export default {
             operation: "update",
           });
         }
+        const shopName = this.getShopName(shopOrder.shopId)
+        const response = await this.$store.dispatch("dataGate", {
+          primaryKey: "id",
+          entity: {orderId: this.order.sspudOrder.id, event: 'Order Placed At ' + shopName, status: 1},
+          tableName: "orderLogs",
+          operation: "create",
+        });
+      } else if (shopOrder.status === 'Order Received') {
+
+        // If it is then check the other shop orders and if all are
+        // 'order received' then the overall order should be set to order received
+        let ordersReceived = true;
+        for (let i = 0; i < this.order.sspudOrderReferences.length; i++) {
+          if (this.order.sspudOrderReferences[i].status !== 'Order Received') {
+            ordersReceived = false;
+            break;
+          }
+        }
+        // Now check if the order status is not something that should not be reverted
+        if (ordersReceived &&
+            (this.order.sspudOrder.status === 'Order Placed At Providers')) {
+          this.order.sspudOrder.status = 'Processing At Transport Holdings';
+          const response = await this.$store.dispatch("dataGate", {
+            primaryKey: "id",
+            entity: {id: this.order.sspudOrder.id, status: 'Processing At Transport Holdings'},
+            tableName: "orders",
+            operation: "update",
+          });
+        }
+        const shopName = this.getShopName(shopOrder.shopId)
+        const response = await this.$store.dispatch("dataGate", {
+          primaryKey: "id",
+          entity: {orderId: this.order.sspudOrder.id, event: 'Order Received From ' + shopName, status: 1},
+          tableName: "orderLogs",
+          operation: "create",
+        });
       }
+      this.showLogs = false;
+      this.showLogs = true;
+    },
+    getShopName(shopId) {
+      const shop = baseMixin.methods.getObjectsWhereKeysHaveValues(this.shops, {id: shopId}, true);
+      if (shop) {
+        return shop.name;
+      }
+      return "";
+    },
+    getTrackingUrl() {
+      return process.env.apiURL + '/orders/tracking/' + this.order.sspudOrder.wooCommerceId
     }
   },
 };

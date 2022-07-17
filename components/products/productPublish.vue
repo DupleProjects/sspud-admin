@@ -1,98 +1,104 @@
 <template>
   <div
     v-if="product"
-    class="
-      product-publish-component
-      card
-      mt-4
-      fadeInUp
-      animated
-      animatedFadeInUp
-    ">
-    <div>
-      <v-alert
-        v-if="!product.publish"
-        border="right"
-        colored-border
-        :type="product.publish ? 'success' : 'error'"
-        elevation="2"
-      >
-        {{
-          product.publish
-            ? "This Product is published"
-            : "This Product is not published"
-        }}
-      </v-alert>
-      <v-alert
-        v-if="product.certificateRequired && certificates.length === 0"
-          border="right"
-          colored-border
-          type="error"
-          elevation="2">
-        This Product requires a certificates
-      </v-alert>
-      <v-card>
-      <div class="d-flex justify-content-between">
-        <div>
-          <v-card-title><h2>Product Certificates</h2></v-card-title>
-          <v-card-subtitle><p v-if="product.certificateRequired" class="text-muted">This product requires a certificate</p></v-card-subtitle>
+    class="product-publish-component fadeInUp animated animatedFadeInUp">
+    <div class="d-flex flex-column justify-content-between">
+      <div>
+        <!-- Heading -->
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap pt-5">
+          <p class="lead">Publish Detail</p>
+          <!--Search would be here-->
+          <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+              <!-- Publish Buttons -->
+              <v-progress-circular
+                  v-if="saving"
+                  :size="20"
+                  indeterminate
+                  color="primary"
+              ></v-progress-circular>
+              <v-btn
+                  small
+                  v-if="!product.publish && !saving"
+                  @click="publishProduct()"
+                  color="success">Publish</v-btn>
+              <v-btn
+                  small
+                  v-if="product.publish && !saving"
+                  @click="unpublishProduct()"
+                  color="warning">Unpublish</v-btn>
+            </div>
+          </div>
         </div>
-        
-        <v-btn
-            color="primary"
-            rounded
-            dark
-            :loading="isSelecting"
-            @click="handleFileImport"
-            class="mt-5 mr-5">
-          Upload File
-        </v-btn>
-        <!-- Create a File Input that will be hidden but triggered with JavaScript -->
-        <input
-            ref="uploader"
-            class="d-none"
-            type="file"
-            @change="onNewFileUpload"
-            accept=".pdf">
-      </div>
-      <v-card-text>
-      <hr class="mt-n5">
-      <div v-for="(certificate, index) of certificates" :key="index" class="d-flex justify-content-between border-bottom py-2 px-2 align-baseline">
-        <a class="link mb-0" @click="downloadCertificate(certificate)">{{getCertificateFileName(certificate)}}</a>
-        <div class="btn-group" role="group" aria-label="Basic example">
-          <button
-              @click="downloadCertificate(certificate)"
-              class="btn btn-primary">Download</button>
-          <button
-              @click="deleteCertificate(certificate)"
-              class="btn btn-danger">
-            Delete
-          </button>
+        <hr class="mt-0" />
+        <div class="d-flex justify-content-between publish-meta align-baseline">
+          <div class="flex-grow-1 d-flex justify-content-between px-3">
+            <p class="mb-0">Published</p>
+            <v-icon
+                v-if="!product.publish"
+                style="color:red;">mdi-close-thick</v-icon>
+            <v-icon
+                v-if="product.publish"
+                style="color:#53fd00;">mdi-check-bold</v-icon>
+          </div>
+          <div class="flex-grow-1">
+
+          </div>
+        </div>
+        <v-alert
+            v-if="product.certificateRequired && certificates.length === 0"
+            border="right"
+            colored-border
+            type="error"
+            elevation="2">
+          This Product requires a certificates
+        </v-alert>
+        <!-- Heading -->
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap pt-5">
+          <p class="lead">Documents <small v-if="product.certificateRequired" class="text-muted">(Required)</small></p>
+          <!--Search would be here-->
+          <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+              <v-btn
+                  color="primary"
+                  small
+                  dark
+                  :disabled="saving"
+                  :loading="isSelecting"
+                  @click="handleFileImport"
+                  class="">
+                Upload File
+              </v-btn>
+              <!-- Create a File Input that will be hidden but triggered with JavaScript -->
+              <input
+                  ref="uploader"
+                  class="d-none"
+                  type="file"
+                  @change="onNewFileUpload"
+                  accept=".pdf">
+            </div>
+          </div>
+        </div>
+        <hr class="mt-0" />
+        <!-- List of the files -->
+        <div v-for="(certificate, index) of certificates" :key="index" class="d-flex justify-content-between border-bottom py-2 px-2 align-baseline">
+          <a class="link mb-0" @click="downloadCertificate(certificate)">{{getCertificateFileName(certificate)}}</a>
+          <div class="btn-group" role="group" aria-label="Basic example">
+            <button
+                @click="downloadCertificate(certificate)"
+                class="btn btn-primary">Download</button>
+            <button
+                @click="deleteCertificate(certificate)"
+                class="btn btn-danger">
+              Delete
+            </button>
+          </div>
+        </div>
+        <div class="text-center no-certificates d-flex flex-column justify-content-center" v-if="certificates.length === 0">
+          <v-icon large style="color:#ffd200;">mdi-alert</v-icon>
+          <p>No certificates uploaded</p>
         </div>
       </div>
-      <div class="text-center no-certificates" v-if="certificates.length === 0">
-        <p>No certificates uploaded</p>
-      </div>
-      </v-card-text>
-      </v-card>
-      <!-- Publish Buttons -->
-      <div class="text-end py-3">
-        <v-progress-circular
-            v-if="saving"
-            :size="20"
-            indeterminate
-            color="primary"
-        ></v-progress-circular>
-        <v-btn
-            v-if="!product.publish && !saving"
-            @click="publishProduct()"
-            color="primary">Publish Product</v-btn>
-        <v-btn
-            v-if="product.publish && !saving"
-            @click="unpublishProduct()"
-            color="warning">Unpublish Product</v-btn>
-      </div>
-          
     </div>
     <v-snackbar v-model="snackbar" :timeout="timeout">
       {{ snackBarText }}
@@ -154,6 +160,7 @@
 
 <script>
 import productMixin from "@/mixins/productMixin.js";
+import baseMixin from "@/mixins/baseMixin";
 
 export default {
   props: {
@@ -178,14 +185,17 @@ export default {
       netCertificateRequired: false,
       allBrands: [],
       allScrapedBrands: [],
-      unlinkedEntities: false
+      unlinkedEntities: false,
+      // Used to compare at the end
+      originalProduct: null,
     }
   },
   beforeMount() {
     this.$nextTick(async function () {
+      // Clone the product to compare later
+      this.originalProduct = baseMixin.methods.clone(this.product);
       await this.loadCertificates();
-      
-      
+
       // BZ Category Details
       const categories = await this.$store.dispatch("dataGate", {
         tableName: "mappedCategories",
@@ -360,7 +370,9 @@ export default {
         if (response.success) {
           // Remove review required if we are publishing
           this.product.reviewRequired = false;
-          this.product.publish = !this.product.publish;
+          this.product.wooCommerceId = response.wooCommerceId;
+          this.product.publish = true;
+          await this.compareProduct();
           this.snackBarText = "Product Successfully Published!";
           this.snackbar = true;
         } else {
@@ -440,6 +452,23 @@ export default {
         this.snackbar = true;
       }
       this.saving = false;
+    },
+    async compareProduct() {
+      // Check if there is any difference between original and saved product
+      const logs = productMixin.methods.createProductLogs(this.product, this.originalProduct, this.$store.state.auth.user);
+      console.log('logs', logs)
+      // Save the logs
+      for (let i = 0; i < logs.length; i++) {
+        // Only handle the publish and review required property here
+        if (logs[i].property === 'publish' || logs[i].property === 'reviewRequired' || logs[i].property === 'wooCommerceId') {
+          const logCreateResponse = await this.$store.dispatch("dataGate", {
+            tableName: "stagedProductLogs",
+            operation: "create",
+            primaryKey: 'id',
+            entity: logs[i]
+          });
+        }
+      }
     },
     async saveProduct() {
       const response = await this.$store.dispatch("dataGate", {
@@ -537,6 +566,9 @@ export default {
   padding: 20px;
 }
 .no-certificates {
-  height: 15vh
+  height: 40vh
+}
+.publish-meta {
+  min-height: 20vh
 }
 </style>

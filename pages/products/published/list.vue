@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pa-3">
     <client-only>
       <v-overlay
           style="height: 80vh; margin-top: -60px"
@@ -20,39 +20,47 @@
       </v-overlay>
     </client-only>
     <!--Header-->
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mx-3">
-      <h1 class="h2">Published Products</h1>
-      <!--Search would be here-->
-
-      <div class="btn-toolbar mb-2 mb-md-0">
-        <div class="btn-group me-2">
-          <export-modal :products="products" :exportTableName="'stagedProducts'" :exportSheetName="'Published Products'" :exportCriteria="{publish:1,deleted:0}" />
-        </div>
-      </div>
-    </div>
-    <hr class="my-0 mx-3">
     <div v-if="!loading">
-      <product-list-filter
-        :filterChangeCallBack="filterChangeCallBack"
-        :filter="filter"
-        :type="'staged'"
-      />
+      <!--Header-->
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mx-3">
+        <h4 class="">
+          Published Products
+          <v-chip
+              class="ma-2"
+              color="primary"
+              label>
+            <v-icon left>
+              mdi-counter
+            </v-icon>
+            {{productCount}}
+          </v-chip>
+        </h4>
+        <!--Filter-->
+        <products-product-list-filter
+            v-if="filter"
+            :filterChangeCallBack="filterChangeCallBack"
+            :filter="filter"
+            :type="'staged'"/>
+      </div>
+      <hr class="mt-0 mb-2 mx-3">
       <products-product-list
           :type="'published'"
           :allCategories="allCategories"
           :allBrands="allBrands"
           :products="products"
           :sortCallbackStaged="sortCallback"
-          :tableStyle="'height:60vh; overflow-y:auto; overflow-x: hidden;'" />
+          :tableStyle="'height:80vh; overflow-y:auto; overflow-x: hidden;'" />
       <!--Pagination-->
       <template>
-        <div class="text-end">
+        <div class="d-flex justify-content-between">
+          <div></div>
           <v-pagination
               color="primary"
               v-model="page"
               :length="Math.ceil(this.productCount / this.numberPerPage)"
               :total-visible="7"
           ></v-pagination>
+          <export-modal :products="products" :exportTableName="'stagedProducts'" :exportSheetName="'Published Products'" :exportCriteria="{publish:1,deleted:0}" />
         </div>
       </template>
     </div>
@@ -84,7 +92,7 @@ export default {
   watch: {
     page(val) {
       this.loadProducts()
-      breadcrumbMixin.methods.savePage('publishedList', this.page)
+      breadcrumbMixin.methods.savePageAndFilter('publishedList', {page: this.page, filter: this.activeFilter, sort: this.sortCriteria});
     },
     search(val) {
 
@@ -93,11 +101,20 @@ export default {
   beforeMount() {
     this.$nextTick(async function () {
       this.loading = true;
-      // var loggedInUser = this.$store.state.auth.user
+      // Set page and filter from session
+      const pageInfo = breadcrumbMixin.methods.getPageWithSort('publishedList');
+      if (pageInfo.pagination) {
+        this.page = pageInfo.pagination.page;
+      }
+      if (pageInfo.filter) {
+        this.filter = pageInfo.filter;
+        this.activeFilter = pageInfo.filter;
+      }
+      if (pageInfo.sort) {
+        this.sortCriteria = pageInfo.sort;
+      }
       // Load Products
-      const pageInfo = breadcrumbMixin.methods.getPage('publishedList')
-      this.page = pageInfo.page
-      await this.loadProducts();
+      await this.loadProducts(this.activeFilter, this.sortCriteria);
       await this.loadCategoriesAndBrands();
       this.loading = false;
     })
@@ -125,7 +142,7 @@ export default {
       const scrapedProducts = await this.$store.dispatch('dataGate', {
         tableName: 'stagedProducts',
         operation: 'read',
-        whereCriteria: criteria ? criteria : {deleted: 0, publish: 1},
+        whereCriteria: criteria ? {...criteria, deleted: 0, publish: 1 } : {deleted: 0, publish: 1},
         sortCriteria: sortCrit ? sortCrit : {},
         page: this.page,
         numberPerPage: this.numberPerPage
@@ -157,35 +174,25 @@ export default {
       }
     },
     async filterChangeCallBack(filter) {
-      // Build the where clause
+      // Build the where clauses
       if (filter) {
-        const criteria = {
-          deleted: 0, publish: 0
-        }
-        if (filter.name) {
-          criteria.name = { like: filter.name }
-        }
-        if (filter.categoryId === null) {
-          delete filter.categoryId;
-        }
-        if (filter.subCategoryId === null) {
-          delete filter.subCategoryId;
-        }
-        if (filter.brandId === null) {
-          delete filter.brandId;
-        }
-        this.criteria = criteria;
+        // Reset page
+        this.page = 1;
         this.activeFilter = filter;
+        breadcrumbMixin.methods.savePageAndFilter('publishedList', {page: this.page, filter: this.activeFilter, sort: this.sortCriteria});
         await this.loadProducts(filter);
       }
     },
-    async sortCallback(crit) {
+    async sortCallback(sortCriteria) {
       // Build the where clause
-      if (crit) {
-        if(this.activeFilter){
-          await this.loadProducts(this.activeFilter, crit);
-        }else{
-          await this.loadProducts(null, crit);
+      if (sortCriteria) {
+        // Reset page
+        this.page = 1;
+        if (this.activeFilter) {
+          breadcrumbMixin.methods.savePageAndFilter('publishedList', {page: this.page, filter: this.activeFilter, sort: sortCriteria});
+          await this.loadProducts(this.activeFilter, sortCriteria);
+        } else {
+          await this.loadProducts(null, sortCriteria);
         }
       }
     },
