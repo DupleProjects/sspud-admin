@@ -61,10 +61,18 @@ export default {
 
     search(val) {
       this.filteredCategories = this.categories.filter((category) => {
+        
+      // this.page = 1;
         return (
             category.name.toLowerCase().includes(val.toLowerCase())
         )
       })
+      this.page = 1;
+      if(this.filteredCategories && this.filteredCategories.length > 0){
+        this.categoryCount = this.filteredCategories.length
+      }else{
+        this.categoryCount = 1
+      }
       this.setPage()
     },
   },
