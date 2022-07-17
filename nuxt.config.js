@@ -17,7 +17,7 @@ if (process.env.NODE_ENV === 'production') {
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: "%s - sspud-admin",
+    titleTemplate: "%s - Management",
     title: "SSPUD",
     htmlAttrs: {
       lang: "en",
