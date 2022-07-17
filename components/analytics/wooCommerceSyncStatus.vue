@@ -3,7 +3,7 @@
     <div class="confluence-card p-3">
       <p class="lead mb-0">Woo Commerce Sync Status</p>
       <hr>
-      <div class="d-flex justify-content-between" v-if="!loading">
+      <div class="d-flex justify-content-around" v-if="!loading">
         <div
             v-bind:class="{ 'error-warning' : stagedProductsCount !== wcProductsCount}"
             class="chart-container">
@@ -32,12 +32,31 @@
           </div>
         </div>
         <div
+            v-bind:class="{ 'error-warning' : sspudCount !== wcOrderCount}"
             class="chart-container">
+          <div class="text-center m-3">
+            <img
+                v-if="stagedProductsCount !== wcProductsCount"
+                :src="require(`assets/images/alarm.png`)"
+                alt="image"
+                class="alarm-image"
+            />
+          </div>
           <charts-pie-chart
-              v-if="categoryChartData.datasets[0].data.length > 0"
-              :chartdata="categoryChartData"
-              :options="categoryChartOptions"
-              :name="'Products'" />
+              v-if="orderChartData.datasets[0].data.length > 0"
+              :chartdata="orderChartData"
+              :options="orderChartOptions"
+              :name="'Orders'" />
+          <div class="text-center mt-2">
+            <v-alert
+                v-if="stagedProductsCount !== wcProductsCount"
+                style="font-size: small; margin-bottom: 0 !important;"
+                dense
+                color="error"
+                text>
+              <strong>Warning!</strong> The amount of orders on SSPUD and those on the Woo Commerce site do not match
+            </v-alert>
+          </div>
         </div>
       </div>
       <div class="d-flex flex-column justify-content-center" v-if="loading">
@@ -67,8 +86,8 @@ export default {
       stagedProductsCount: null,
       wcProductsCount: null,
       productPublishDifferenceCount: null,
-      categoryChartData: {
-        labels: ['SSPUD Published', 'Woo Commerce'],
+      orderChartData: {
+        labels: ['SSPUD Orders', 'Woo Commerce Orders'],
         datasets: [
           {
             backgroundColor: ['#00D8FF', '#41B883'],
@@ -76,7 +95,7 @@ export default {
           }
         ]
       },
-      categoryChartOptions: {
+      orderChartOptions: {
         responsive: true,
         maintainAspectRatio: false
       },
@@ -94,11 +113,14 @@ export default {
         maintainAspectRatio: false
       },
       totalProducts: null,
+      sspudCount: null,
+      wcOrderCount: null,
       progressData: []
     };
   },
   async mounted() {
     await this.loadProductData();
+    await this.loadOrderData();
     this.loading = false;
   },
   methods: {
@@ -123,6 +145,16 @@ export default {
       }
       // Add to chart
       this.productChartData.datasets[0].data = [this.stagedProductsCount, this.wcProductsCount];
+    },
+    async loadOrderData() {
+      const wooCommerceResponse = await this.$store.dispatch("callMiddlewareRoute", {
+        route: 'orders/wooCommerceOrderReport'
+      });
+      console.log('wooCommerceResponse', wooCommerceResponse)
+      this.sspudCount = wooCommerceResponse.sspudCount;
+      this.wcOrderCount = wooCommerceResponse.wcOrderCount;
+      // Add to chart
+      this.orderChartData.datasets[0].data = [this.sspudCount, this.wcOrderCount];
     },
   },
 };
