@@ -98,15 +98,6 @@
             </v-list-item-content>
           </v-list-item>
           <v-list-item
-              class="v-list-item--link">
-            <v-list-item-action>
-              <v-icon :color="'yellow'">mdi-alert</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title v-text="userEmail"/>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item
               v-on:click="signOut()"
               class="v-list-item--link">
             <v-list-item-action>
