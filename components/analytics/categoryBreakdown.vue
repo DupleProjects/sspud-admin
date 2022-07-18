@@ -1,12 +1,14 @@
 <template>
   <div class="p-3">
     <div class="confluence-card p-3">
-      <p class="lead mb-0">Category Breakdown</p>
-      <hr>
+      <div class="header-style">
+        <p class="lead mb-0"><strong>Category Breakdown</strong></p>
+      </div>
+      <hr class="header-hr">
       <div class="d-flex justify-content-between">
         <div v-if="totalProducts" class="w-100 progress-container d-flex flex-column justify-content-center">
           <!--Staged Products-->
-          <p class="text-muted">*Non deleted</p>
+          <p v-if="progressData.length > 0" class="text-muted">*Non deleted</p>
           <div
               v-for="(dataPoint, index) of progressData"
               :key="index"
@@ -184,5 +186,12 @@ export default {
 .progress-container {
   flex: 1;
 
+}
+.header-style {
+  color: #1976d2 !important;
+}
+
+.header-hr {
+  color: #1976d2 !important;
 }
 </style>

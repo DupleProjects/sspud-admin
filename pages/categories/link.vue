@@ -134,7 +134,8 @@ export default {
       breadcrumbMixin.methods.savePage('scrapedCategoryList', this.page)
     },
     search(val) {
-      if (val && val !== "") {
+      this.page = 1;
+      if (val && val != "") {
         this.loadScrapedCategories({
           name: {
             like: val,
