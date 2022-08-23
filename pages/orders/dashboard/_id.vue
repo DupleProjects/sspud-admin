@@ -1,14 +1,15 @@
 <template>
   <div>
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mx-3">
+      <h4 class="">
+        <v-icon color="black" width="40" height="40" class="icon me-2" light>
+          mdi-dropbox
+        </v-icon>
+        Order Dashboard
+      </h4>
+    </div>
+    <hr class="mt-0 mb-2 mx-3">
     <div class="container">
-      <header class="d-flex align-items-center pb-3 mx-3 border-bottom">
-        <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
-         <v-icon color="black" width="40" height="40" class="icon me-2" light>
-            mdi-dropbox
-          </v-icon>
-          <span class="fs-4">Order Dashboard</span>
-        </a>
-      </header>
       <div class="text-center" style="margin-left:auto; margin-right:auto;">
         <v-progress-circular
             v-if="loading"
@@ -59,11 +60,13 @@
                 color="blue darken-2">mdi-truck</v-icon>Tracking Link</a>
           </div>
 
-          <orders-order-log v-if="showLogs" class="my-3" :order="order" :shops="shops" />
+          <orders-order-log v-if="showLogs" class="my-3" :order="order.sspudOrder" :shops="shops" />
         </div>
         <div class="col-7">
           <!-- Transport -->
-          <orders-transport-component :order="order.sspudOrder" />
+          <orders-transport-component
+              v-if="order.sspudOrder.status !== 'Review Required' && order.sspudOrder.status !== 'Queued'"
+              :order="order.sspudOrder" />
           <!-- Shops -->
           <div v-for="(shop, index) of order.sspudOrderReferences" :key="index" class="order-shop-reference mb-3">
             <orders-shop-order-component :shopOrder="shop" :shops="shops" :callBack="shopOrderUpdateCallBack" />

@@ -33,13 +33,10 @@
             text
             @click="exportModal = false"
             :href="exportHref"
-            :disabled="disableExport"
-          >
+            :disabled="disableExport">
             Export
           </v-btn>
-          <v-btn :disabled="loading" color="primary" text @click="closeExport"
-            >Close</v-btn
-          >
+          <v-btn :disabled="loading" color="primary" text @click="closeExport">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -110,7 +107,7 @@ export default {
     },
     async showExport(exportAll) {
       console.log("EXPORT ALL BOOLEAN", exportAll);
-      if (exportAll && exportAll == true) {
+      if (exportAll && exportAll === true) {
         console.log("EXPORT ALL ROUTE CALLED", exportAll);
         const exportReturn = await this.$store.dispatch("callMiddlewareRoute", {
           route: "excelExport/createAllExcel",
