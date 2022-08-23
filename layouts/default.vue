@@ -6,8 +6,7 @@
         :mini-variant="miniVariant"
         :clipped="clipped"
         fixed
-        app
-    >
+        app>
       <v-list>
         <v-list-item
             @click.stop="miniVariant = !miniVariant"

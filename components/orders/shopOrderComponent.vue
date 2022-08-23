@@ -63,6 +63,7 @@
           <th scope="col">Product</th>
           <th scope="col">Quantity</th>
           <th scope="col">Price</th>
+          <th scope="col"></th>
         </tr>
         </thead>
         <tbody class="table-group-divider">
@@ -72,9 +73,19 @@
           <th scope="row">{{product.name}}</th>
           <td>{{product.quantity}}</td>
           <td>R {{product.originalPrice * product.quantity}}</td>
+          <td>
+            <v-icon
+                v-on:click="removeShopProduct(product)"
+                color="error"
+                width="40"
+                height="40"
+                class="icon-btn"
+                light>
+              mdi-delete
+            </v-icon>
+          </td>
         </tr>
-        <tr
-            class="order-list-item">
+        <tr class="order-list-item">
           <th scope="row">Delivery Cost</th>
           <td>1</td>
           <td>R {{getShop(shopOrder.shopId).deliveryCost}}</td>
@@ -170,6 +181,9 @@ export default {
       this.saving = true;
       reference.status = 'Order Received';
       await this.saveShopReference(reference);
+    },
+    async removeShopProduct(product) {
+
     }
   },
 };
@@ -187,5 +201,8 @@ export default {
 .orderReceived {
   color: #0076c0 !important;
   box-shadow: rgba(18, 211, 176, 0.55) 0px 1px 5px 2px !important;
+}
+.icon-btn {
+  cursor: pointer;
 }
 </style>
