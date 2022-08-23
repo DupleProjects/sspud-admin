@@ -63,7 +63,7 @@
             :length="Math.ceil(this.productCount / this.numberPerPage)"
             :total-visible="7"
           ></v-pagination>
-          <export-modal :products="products" :exportTableName="'stagedProducts'" :exportSheetName="'Deleted Products'" :exportCriteria="null" />
+          <export-modal :products="products" :exportTableName="'stagedProducts'" :exportSheetName="'Deleted Products'" :exportCriteria="criteria" />
         </div>
       </template>
     </div>
